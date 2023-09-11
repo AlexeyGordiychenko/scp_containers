@@ -12,10 +12,17 @@ class RbTree {
   struct Node;  // forward declaration of node
 
  public:
-  // RbTree();
-  // ~RbTree();
-
   Node *root;
+  RbTree() { root = nullptr; }
+  ~RbTree() { DeallocateNode(root); }
+
+  void DeallocateNode(Node *node) {
+    if (node) {
+      DeallocateNode(node->left);
+      DeallocateNode(node->right);
+      delete node;
+    }
+  }
 
   void insert(const T &data) {
     Node *new_node = new Node(data);
@@ -23,7 +30,7 @@ class RbTree {
     Node *b = nullptr;
     while (a != nullptr) {
       b = a;
-      if (Compare()(new_node->data, a->data)) {
+      if (Compare()(*new_node->data, *a->data)) {
         a = a->left;
       } else {
         a = a->right;
@@ -33,7 +40,7 @@ class RbTree {
     if (b == nullptr) {
       new_node->color = false;
       root = new_node;
-    } else if (Compare()(new_node->data, b->data)) {
+    } else if (Compare()(*new_node->data, *b->data)) {
       b->left = new_node;
     } else {
       b->right = new_node;
@@ -48,7 +55,7 @@ class RbTree {
     if (node != nullptr) {
       // std::cout << prefix;
       // std::cout << (is_left ? "├──" : "└──");
-      std::cout << node->data << std::endl;
+      std::cout << *node->data << std::endl;
       print(prefix + (is_left ? "   " : "│  "), node->right, false);
       print(prefix + (is_left ? "   " : "│  "), node->left, true);
     } else {
@@ -59,23 +66,24 @@ class RbTree {
 
  private:
   struct Node {
-    T data;
+    T *data;
     Node *left;
     Node *right;
     Node *parent;
     bool color;  // true if red, false if black
 
     Node()
-        : data(nullptr),
+        : data(new T()),
           left(nullptr),
           right(nullptr),
           parent(nullptr),
           color(true){};
     Node(const T &data)
-        : data(data),
+        : data(new T(data)),
           left(nullptr),
           right(nullptr),
           parent(nullptr),
           color(true){};
+    ~Node() { delete data; }
   };
 };
