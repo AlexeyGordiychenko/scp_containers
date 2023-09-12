@@ -1,9 +1,11 @@
 CC=g++
 CPPFLAGS=-Wall -Wextra -Werror -std=c++17 -g -fmax-errors=1
 
-.PHONY: rbtree
+.PHONY: force
 
-rbtree:
+force:
+
+%: %.cc force
 	rm -f $@ || true
-	$(CC) $(CPPFLAGS) $@.cc -o $@
+	$(CC) $(CPPFLAGS) $< -o $@
 	./$@
