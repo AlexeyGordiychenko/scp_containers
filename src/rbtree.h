@@ -20,26 +20,31 @@ class RbTree {
   RbTree() = default;
   virtual ~RbTree() = default;
 
-  void insert(const T &data) {
-    auto new_node = std::make_shared<Node>(data);
+  void insert(const T &data, bool duplicates = false) {
     NodePtr a = root;
     NodePtr b = nullptr;
 
+    bool is_left = false;
     while (a != nullptr) {
       b = a;
-      if (Compare()(*new_node->data_, *a->data_)) {
+      if (!duplicates && data == *a->data_) {
+        return;
+      }
+      is_left = Compare()(data, *a->data_);
+      if (is_left) {
         a = a->left_;
       } else {
         a = a->right_;
       }
     }
 
+    auto new_node = std::make_shared<Node>(data);
     new_node->parent_ = b;
 
     if (b == nullptr) {
       new_node->color_ = false;
       root = std::move(new_node);
-    } else if (Compare()(*new_node->data_, *b->data_)) {
+    } else if (is_left) {
       b->left_ = std::move(new_node);
     } else {
       b->right_ = std::move(new_node);
