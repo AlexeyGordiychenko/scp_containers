@@ -27,10 +27,10 @@ class RbTree {
     bool is_left = false;
     while (a != nullptr) {
       b = a;
-      if (!duplicates && data == *a->data_) {
+      if (!duplicates && key(data) == key(*a->data_)) {
         return;
       }
-      is_left = Compare()(data, *a->data_);
+      is_left = Compare()(key(data), key(*a->data_));
       if (is_left) {
         a = a->left_;
       } else {
@@ -61,7 +61,7 @@ class RbTree {
     if (node != nullptr) {
       // std::cout << prefix;
       // std::cout << (is_left ? "├──" : "└──");
-      std::cout << *node->data_ << std::endl;
+      std::cout << key(*node->data_) << std::endl;
       print(prefix + (is_left ? "   " : "│  "), node->right_, false);
       print(prefix + (is_left ? "   " : "│  "), node->left_, true);
     } else {
@@ -84,4 +84,5 @@ class RbTree {
     Node(const Node &) = delete;
     ~Node() = default;
   };
+  auto key(const T &data) const { return KeyOfValue()(data); }
 };
