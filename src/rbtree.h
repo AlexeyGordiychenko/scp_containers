@@ -6,8 +6,7 @@
 // _Compare, _Alloc> int main(void) { std::_Rb_tree; }
 
 // RbTree class declaration
-template <class T, class KeyOfValue, class Compare = std::less<T>,
-          class Alloc = std::allocator<T>>
+template <class T, class KeyOfValue, class Compare = std::less<T>>
 class RbTree {
  private:
   struct Node;  // forward declaration of node

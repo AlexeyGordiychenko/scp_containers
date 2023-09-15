@@ -15,7 +15,7 @@ struct GetKeyMap {
 
 int main() {
   {
-    RbTree<int, GetKeySet, std::less<int>, std::allocator<int>> tree;
+    RbTree<int, GetKeySet, std::less<int>> tree;
     int a = 9;
     tree.insert(a);
     tree.insert(7);
@@ -29,9 +29,7 @@ int main() {
   }
 
   {
-    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>,
-           std::allocator<int>>
-        tree;
+    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
     tree.insert(std::make_pair(9, "nine"));
     tree.insert(std::make_pair(7, "seven"));
     tree.insert(std::make_pair(15, "fifteen"));
