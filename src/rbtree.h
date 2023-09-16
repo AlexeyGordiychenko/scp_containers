@@ -19,6 +19,53 @@ class RbTree {
   RbTree() = default;
   virtual ~RbTree() = default;
 
+  /*
+    ITERATOR CLASS
+  */
+
+  class RbTreeIterator {
+    NodePtr node_;
+
+   public:
+    RbTreeIterator(NodePtr node) : node_(node) {}
+
+    const T &operator*() const { return *node_->data_; }
+
+    RbTreeIterator &operator++() {
+      if (node_->right_) {
+        node_ = node_->right_;
+        while (node_->left_) {
+          node_ = node_->left_;
+        }
+      } else {
+        NodePtr temp;
+        while ((temp = node_->parent_.lock()) && node_ == temp->right_) {
+          node_ = temp;
+        }
+        node_ = temp;
+      }
+      return *this;
+    }
+
+    bool operator==(const RbTreeIterator &other) const {
+      return node_ == other.node_;
+    }
+
+    bool operator!=(const RbTreeIterator &other) const {
+      return !(*this == other);
+    }
+  };
+
+  RbTreeIterator begin() const {
+    NodePtr node = root;
+    while (node && node->left_) {
+      node = node->left_;
+    }
+    return RbTreeIterator(node);
+  }
+
+  RbTreeIterator end() const { return RbTreeIterator(nullptr); }
+
   void insert(const T &data, bool duplicates = false) {
     NodePtr a = root;
     NodePtr b = nullptr;

@@ -24,8 +24,15 @@ int main() {
     tree.insert(5);
     tree.insert(2);
     tree.insert(2);
+    tree.insert(22);
+    tree.insert(18);
+    tree.insert(25);
     a = 1;
     tree.print();
+    for (auto i = tree.begin(); i != tree.end(); ++i) {
+      std::cout << *i << " ";
+    }
+    std::cout << std::endl;
   }
 
   {
@@ -38,6 +45,27 @@ int main() {
     tree.insert(std::make_pair(2, "two"));
     tree.insert(std::make_pair(2, "two"));
     tree.print();
+    for (auto i = tree.begin(); i != tree.end(); ++i) {
+      std::cout << (*i).second << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  {
+    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    for (auto i = tree.begin(); i != tree.end(); ++i) {
+      std::cout << (*i).second << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  {
+    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    tree.insert(std::make_pair(2, "two"));
+    for (auto i = tree.begin(); i != tree.end(); ++i) {
+      std::cout << (*i).second << " ";
+    }
+    std::cout << std::endl;
   }
 
   std::cout << "finish" << std::endl;
