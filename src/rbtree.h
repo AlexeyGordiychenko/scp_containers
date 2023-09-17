@@ -24,14 +24,18 @@ class RbTree {
   */
 
   class RbTreeIterator {
-    NodePtr node_;
-
    public:
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type = T;
+    using difference_type = std::ptrdiff_t;
+    using pointer = value_type *;
+    using reference = value_type &;
+
     RbTreeIterator(NodePtr node) : node_(node) {}
 
-    const T &operator*() const { return *node_->data_; }
+    const reference operator*() const { return *node_->data_; }
 
-    T *operator->() { return node_->data_.get(); }
+    pointer operator->() { return node_->data_.get(); }
 
     RbTreeIterator &operator++() {
       if (node_->right_) {
@@ -84,6 +88,9 @@ class RbTree {
       --(*this);
       return temp;
     }
+
+   private:
+    NodePtr node_;
   };
 
   RbTreeIterator begin() const {
