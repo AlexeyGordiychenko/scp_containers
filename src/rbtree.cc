@@ -36,7 +36,7 @@ int main() {
     }
     std::cout << std::endl;
     std::cout << "SET BACKWARD ITERATOR" << std::endl;
-    for (auto i = tree.rbegin(); i != tree.rend(); i--) {
+    for (auto i = tree.rbegin(); i != tree.rend(); i++) {
       std::cout << *i << " ";
     }
     std::cout << std::endl;
@@ -63,7 +63,7 @@ int main() {
     }
     std::cout << std::endl;
     std::cout << "MAP BACKWARD ITERATOR" << std::endl;
-    for (auto i = tree.rbegin(); i != tree.rend(); --i) {
+    for (auto i = tree.rbegin(); i != tree.rend(); ++i) {
       std::cout << i->second << " ";
     }
     std::cout << std::endl;
@@ -76,7 +76,7 @@ int main() {
       std::cout << (*i).second << " ";
     }
     std::cout << std::endl;
-    for (auto i = tree.rbegin(); i != tree.rend(); --i) {
+    for (auto i = tree.rbegin(); i != tree.rend(); ++i) {
       std::cout << (*i).second << " ";
     }
     std::cout << std::endl;

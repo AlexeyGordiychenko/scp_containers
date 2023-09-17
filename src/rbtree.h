@@ -12,17 +12,21 @@ class RbTree {
   struct Node;  // forward declaration of node
 
  public:
+  // type aliases
   using NodePtr = std::shared_ptr<Node>;
   using NodeParentPtr = std::weak_ptr<Node>;
   using DataPtr = std::unique_ptr<T>;
-  NodePtr root;
+
+  // fields
+  NodePtr root_;
+
+  // constructors and destructor
   RbTree() = default;
+  RbTree &operator=(const RbTree &) = delete;
+  RbTree(const RbTree &) = delete;
   virtual ~RbTree() = default;
 
-  /*
-    ITERATOR CLASS
-  */
-
+  // iterator
   class RbTreeIterator {
    public:
     using iterator_category = std::bidirectional_iterator_tag;
@@ -93,31 +97,32 @@ class RbTree {
     NodePtr node_;
   };
 
+  // iterator methods
   RbTreeIterator begin() const {
-    NodePtr node = root;
+    NodePtr node = root_;
     while (node && node->left_) {
       node = node->left_;
     }
     return RbTreeIterator(node);
   }
 
-  RbTreeIterator end() const { return RbTreeIterator(nullptr); }
+  RbTreeIterator end() const { return RbTreeIterator(sentinel_node_); }
 
-  RbTreeIterator rbegin() const {
-    NodePtr node = root;
-    while (node && node->right_) {
-      node = node->right_;
-    }
-    return RbTreeIterator(node);
+  std::reverse_iterator<RbTreeIterator> rbegin() const {
+    return std::reverse_iterator<RbTreeIterator>(end());
   }
 
-  RbTreeIterator rend() const { return RbTreeIterator(nullptr); }
+  std::reverse_iterator<RbTreeIterator> rend() const {
+    return std::reverse_iterator<RbTreeIterator>(begin());
+  }
 
+  // RB tree methods
   void insert(const T &data, bool duplicates = false) {
-    NodePtr a = root;
+    NodePtr a = root_;
     NodePtr b = nullptr;
 
     bool is_left = false;
+    // while (a != nullptr && a != sentinel_node_) {
     while (a != nullptr) {
       b = a;
       if (!duplicates && key(data) == key(*a->data_)) {
@@ -132,15 +137,20 @@ class RbTree {
     }
 
     auto new_node = std::make_shared<Node>(data);
-    new_node->parent_ = b;
 
     if (b == nullptr) {
+      sentinel_node_ = std::make_shared<Node>();
       new_node->color_ = false;
-      root = std::move(new_node);
-    } else if (is_left) {
-      b->left_ = std::move(new_node);
+      new_node->parent_ = sentinel_node_;
+      root_ = std::move(new_node);
+      sentinel_node_->left_ = root_;
     } else {
-      b->right_ = std::move(new_node);
+      new_node->parent_ = b;
+      if (is_left) {
+        b->left_ = std::move(new_node);
+      } else {
+        b->right_ = std::move(new_node);
+      }
     }
   }
 
@@ -161,7 +171,7 @@ class RbTree {
       std::cout << std::endl;
     }
   };
-  void print() const { print("", root, false); };
+  void print() const { print("", root_, false); };
 
  private:
   struct Node {
@@ -169,13 +179,15 @@ class RbTree {
     NodePtr left_;
     NodePtr right_;
     NodeParentPtr parent_;
-    bool color_;  // true if red, false if black
+    bool color_ = true;  // true if red, false if black
 
-    Node() : color_(true){};
+    Node() = default;
     Node(const T &data) : data_(std::make_unique<T>(data)), color_(true){};
     Node &operator=(const Node &) = delete;
     Node(const Node &) = delete;
     ~Node() = default;
   };
+  NodePtr sentinel_node_;
+
   auto key(const T &data) const { return KeyOfValue()(data); }
 };
