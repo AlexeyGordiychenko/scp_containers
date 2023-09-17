@@ -31,12 +31,12 @@ int main() {
     a = 1;
     tree.print();
     std::cout << "SET FORWARD ITERATOR" << std::endl;
-    for (auto i = tree.begin(); i != tree.end(); ++i) {
+    for (auto i = tree.begin(); i != tree.end(); i++) {
       std::cout << *i << " ";
     }
     std::cout << std::endl;
     std::cout << "SET BACKWARD ITERATOR" << std::endl;
-    for (auto i = tree.rbegin(); i != tree.rend(); --i) {
+    for (auto i = tree.rbegin(); i != tree.rend(); i--) {
       std::cout << *i << " ";
     }
     std::cout << std::endl;
@@ -59,12 +59,12 @@ int main() {
     tree.print();
     std::cout << "MAP FORWARD ITERATOR" << std::endl;
     for (auto i = tree.begin(); i != tree.end(); ++i) {
-      std::cout << (*i).second << " ";
+      std::cout << i->second << " ";
     }
     std::cout << std::endl;
     std::cout << "MAP BACKWARD ITERATOR" << std::endl;
     for (auto i = tree.rbegin(); i != tree.rend(); --i) {
-      std::cout << (*i).second << " ";
+      std::cout << i->second << " ";
     }
     std::cout << std::endl;
   }

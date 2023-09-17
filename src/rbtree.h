@@ -31,6 +31,8 @@ class RbTree {
 
     const T &operator*() const { return *node_->data_; }
 
+    T *operator->() { return node_->data_.get(); }
+
     RbTreeIterator &operator++() {
       if (node_->right_) {
         node_ = node_->right_;
@@ -69,6 +71,18 @@ class RbTree {
 
     bool operator!=(const RbTreeIterator &other) const {
       return !(*this == other);
+    }
+
+    RbTreeIterator operator++(int) {
+      RbTreeIterator temp = *this;
+      ++(*this);
+      return temp;
+    }
+
+    RbTreeIterator operator--(int) {
+      RbTreeIterator temp = *this;
+      --(*this);
+      return temp;
     }
   };
 
