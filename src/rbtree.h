@@ -47,6 +47,22 @@ class RbTree {
       return *this;
     }
 
+    RbTreeIterator &operator--() {
+      if (node_->left_) {
+        node_ = node_->left_;
+        while (node_->right_) {
+          node_ = node_->right_;
+        }
+      } else {
+        NodePtr temp;
+        while ((temp = node_->parent_.lock()) && node_ == temp->left_) {
+          node_ = temp;
+        }
+        node_ = temp;
+      }
+      return *this;
+    }
+
     bool operator==(const RbTreeIterator &other) const {
       return node_ == other.node_;
     }
@@ -65,6 +81,16 @@ class RbTree {
   }
 
   RbTreeIterator end() const { return RbTreeIterator(nullptr); }
+
+  RbTreeIterator rbegin() const {
+    NodePtr node = root;
+    while (node && node->right_) {
+      node = node->right_;
+    }
+    return RbTreeIterator(node);
+  }
+
+  RbTreeIterator rend() const { return RbTreeIterator(nullptr); }
 
   void insert(const T &data, bool duplicates = false) {
     NodePtr a = root;
