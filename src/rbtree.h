@@ -27,19 +27,20 @@ class RbTree {
   virtual ~RbTree() = default;
 
   // iterator
+  template <bool isConst>
   class RbTreeIterator {
    public:
     using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = T;
+    using value_type = std::conditional_t<isConst, const T, T>;
     using difference_type = std::ptrdiff_t;
     using pointer = value_type *;
     using reference = value_type &;
 
     RbTreeIterator(NodePtr node) : node_(node) {}
 
-    const reference operator*() const { return *node_->data_; }
+    reference operator*() const { return *node_->data_; }
 
-    pointer operator->() { return node_->data_.get(); }
+    pointer operator->() const { return node_->data_.get(); }
 
     RbTreeIterator &operator++() {
       if (node_->right_) {
@@ -97,23 +98,44 @@ class RbTree {
     NodePtr node_;
   };
 
+  using iterator = RbTreeIterator<false>;
+  using const_iterator = RbTreeIterator<true>;
+
   // iterator methods
-  RbTreeIterator begin() const {
+  iterator begin() const {
     NodePtr node = root_;
     while (node && node->left_) {
       node = node->left_;
     }
-    return RbTreeIterator(node);
+    return iterator(node);
   }
 
-  RbTreeIterator end() const { return RbTreeIterator(sentinel_node_); }
+  iterator end() const { return iterator(sentinel_node_); }
 
-  std::reverse_iterator<RbTreeIterator> rbegin() const {
-    return std::reverse_iterator<RbTreeIterator>(end());
+  const_iterator cbegin() const {
+    NodePtr node = root_;
+    while (node && node->left_) {
+      node = node->left_;
+    }
+    return const_iterator(node);
   }
 
-  std::reverse_iterator<RbTreeIterator> rend() const {
-    return std::reverse_iterator<RbTreeIterator>(begin());
+  const_iterator cend() const { return const_iterator(sentinel_node_); }
+
+  std::reverse_iterator<iterator> rbegin() const {
+    return std::reverse_iterator<iterator>(end());
+  }
+
+  std::reverse_iterator<iterator> rend() const {
+    return std::reverse_iterator<iterator>(begin());
+  }
+
+  std::reverse_iterator<const_iterator> crbegin() const {
+    return std::reverse_iterator<const_iterator>(cend());
+  }
+
+  std::reverse_iterator<const_iterator> crend() const {
+    return std::reverse_iterator<const_iterator>(cbegin());
   }
 
   // RB tree methods
