@@ -6,7 +6,8 @@
 // _Compare, _Alloc> int main(void) { std::_Rb_tree; }
 
 // RbTree class declaration
-template <class T, class KeyOfValue, class Compare = std::less<T>>
+template <class Key, class Value, class KeyOfValue,
+          class Compare = std::less<Value>>
 class RbTree {
  private:
   struct Node;  // forward declaration of node
@@ -15,7 +16,7 @@ class RbTree {
   // type aliases
   using NodePtr = std::shared_ptr<Node>;
   using NodeParentPtr = std::weak_ptr<Node>;
-  using DataPtr = std::unique_ptr<T>;
+  using DataPtr = std::unique_ptr<Value>;
 
   // fields
   NodePtr root_;
@@ -31,7 +32,7 @@ class RbTree {
   class RbTreeIterator {
    public:
     using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = std::conditional_t<isConst, const T, T>;
+    using value_type = std::conditional_t<isConst, const Value, Value>;
     using difference_type = std::ptrdiff_t;
     using pointer = value_type *;
     using reference = value_type &;
@@ -139,7 +140,7 @@ class RbTree {
   }
 
   // RB tree methods
-  void insert(const T &data, bool duplicates = false) {
+  void insert(const Value &data, bool duplicates = false) {
     NodePtr a = root_;
     NodePtr b = nullptr;
 
@@ -176,15 +177,15 @@ class RbTree {
     }
   }
 
-  void remove(const T &);
+  void remove(const Value &);
 
-  iterator find(const T &data) const {
+  iterator find(const Key &key) const {
     NodePtr tnode = root_;
     while (tnode != nullptr) {
-      if (GetKey(data) == GetKey(*tnode->data_)) {
+      if (key == GetKey(*tnode->data_)) {
         return iterator(tnode);
       }
-      if (Compare()(GetKey(data), GetKey(*tnode->data_))) {
+      if (Compare()(key, GetKey(*tnode->data_))) {
         tnode = tnode->left_;
       } else {
         tnode = tnode->right_;
@@ -218,12 +219,13 @@ class RbTree {
     bool color_ = true;  // true if red, false if black
 
     Node() = default;
-    Node(const T &data) : data_(std::make_unique<T>(data)), color_(true){};
+    Node(const Value &data)
+        : data_(std::make_unique<Value>(data)), color_(true){};
     Node &operator=(const Node &) = delete;
     Node(const Node &) = delete;
     ~Node() = default;
   };
   NodePtr sentinel_node_;
 
-  auto GetKey(const T &data) const { return KeyOfValue()(data); }
+  auto GetKey(const Value &data) const { return KeyOfValue()(data); }
 };

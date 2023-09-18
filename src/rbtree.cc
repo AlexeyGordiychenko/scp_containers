@@ -17,7 +17,7 @@ struct GetKeyMap {
 int main() {
   std::cout << "SET TEST" << std::endl;
   {
-    RbTree<int, GetKeySet, std::less<int>> tree;
+    RbTree<int, int, GetKeySet, std::less<int>> tree;
     int a = 9;
     tree.insert(a);
     tree.insert(7);
@@ -45,7 +45,7 @@ int main() {
 
   {
     std::cout << "MAP TEST" << std::endl;
-    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
     tree.insert(std::make_pair(9, "nine"));
     tree.insert(std::make_pair(7, "seven"));
     tree.insert(std::make_pair(15, "fifteen"));
@@ -72,7 +72,7 @@ int main() {
 
   {
     std::cout << "MAP EMPTY TEST" << std::endl;
-    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
     for (auto i = tree.begin(); i != tree.end(); ++i) {
       std::cout << (*i).second << " ";
     }
@@ -85,7 +85,7 @@ int main() {
 
   {
     std::cout << "MAP SINGLE ELEMENT TEST" << std::endl;
-    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
     tree.insert(std::make_pair(2, "two"));
     std::cout << "MAP SINGLE ELEMENT FORWARD ITERATOR" << std::endl;
     for (auto i = tree.begin(); i != tree.end(); ++i) {
@@ -101,7 +101,7 @@ int main() {
 
   {
     std::cout << "SET TEST2" << std::endl;
-    RbTree<int, GetKeySet, std::less<int>> tree;
+    RbTree<int, int, GetKeySet, std::less<int>> tree;
     tree.insert(30);
     tree.insert(20);
     tree.insert(10);
@@ -121,7 +121,7 @@ int main() {
 
   {
     std::cout << "SET CHANGE NON-CONST ITERATOR" << std::endl;
-    RbTree<int, GetKeySet, std::less<int>> tree;
+    RbTree<int, int, GetKeySet, std::less<int>> tree;
     tree.insert(5);
     tree.insert(3);
     tree.insert(8);
@@ -139,7 +139,7 @@ int main() {
 
   {
     std::cout << "MAP CHANGE NON-CONST ITERATOR" << std::endl;
-    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
     tree.insert(std::make_pair(5, "five"));
     tree.insert(std::make_pair(3, "three"));
     tree.insert(std::make_pair(8, "eight"));
@@ -157,7 +157,7 @@ int main() {
 
   {
     std::cout << "MAP FIND TEST" << std::endl;
-    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
     tree.insert(std::make_pair(9, "nine"));
     tree.insert(std::make_pair(7, "seven"));
     tree.insert(std::make_pair(15, "fifteen"));
@@ -171,7 +171,7 @@ int main() {
 
     std::array a = {16, 6, 25, 30};
     for (auto i = a.begin(); i != a.end(); ++i) {
-      auto pos = tree.find(std::make_pair(*i, ""));
+      auto pos = tree.find(*i);
       if (pos != tree.end()) {
         std::cout << "  " << pos->second << std::endl;
       } else {
