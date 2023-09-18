@@ -147,10 +147,10 @@ class RbTree {
     // while (a != nullptr && a != sentinel_node_) {
     while (a != nullptr) {
       b = a;
-      if (!duplicates && key(data) == key(*a->data_)) {
+      if (!duplicates && GetKey(data) == GetKey(*a->data_)) {
         return;
       }
-      is_left = Compare()(key(data), key(*a->data_));
+      is_left = Compare()(GetKey(data), GetKey(*a->data_));
       if (is_left) {
         a = a->left_;
       } else {
@@ -177,7 +177,21 @@ class RbTree {
   }
 
   void remove(const T &);
-  bool find(const T &) const;
+
+  iterator find(const T &data) const {
+    NodePtr tnode = root_;
+    while (tnode != nullptr) {
+      if (GetKey(data) == GetKey(*tnode->data_)) {
+        return iterator(tnode);
+      }
+      if (Compare()(GetKey(data), GetKey(*tnode->data_))) {
+        tnode = tnode->left_;
+      } else {
+        tnode = tnode->right_;
+      }
+    }
+    return end();
+  };
   void print(const std::string &prefix, const NodePtr &node,
              bool is_left) const {
     // ┌
@@ -186,7 +200,7 @@ class RbTree {
     if (node != nullptr) {
       // std::cout << prefix;
       // std::cout << (is_left ? "├──" : "└──");
-      std::cout << key(*node->data_) << std::endl;
+      std::cout << GetKey(*node->data_) << std::endl;
       print(prefix + (is_left ? "   " : "│  "), node->right_, false);
       print(prefix + (is_left ? "   " : "│  "), node->left_, true);
     } else {
@@ -211,5 +225,5 @@ class RbTree {
   };
   NodePtr sentinel_node_;
 
-  auto key(const T &data) const { return KeyOfValue()(data); }
+  auto GetKey(const T &data) const { return KeyOfValue()(data); }
 };

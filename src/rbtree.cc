@@ -1,5 +1,6 @@
 #include "rbtree.h"
 
+#include <array>
 #include <iostream>
 
 struct GetKeySet {
@@ -152,6 +153,31 @@ int main() {
       std::cout << i->second << " ";
     }
     std::cout << std::endl;
+  }
+
+  {
+    std::cout << "MAP FIND TEST" << std::endl;
+    RbTree<std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    tree.insert(std::make_pair(9, "nine"));
+    tree.insert(std::make_pair(7, "seven"));
+    tree.insert(std::make_pair(15, "fifteen"));
+    tree.insert(std::make_pair(6, "six"));
+    tree.insert(std::make_pair(5, "five"));
+    tree.insert(std::make_pair(2, "two"));
+    tree.insert(std::make_pair(2, "two"));
+    tree.insert(std::make_pair(22, "twenty-two"));
+    tree.insert(std::make_pair(18, "eighteen"));
+    tree.insert(std::make_pair(25, "twenty-five"));
+
+    std::array a = {16, 6, 25, 30};
+    for (auto i = a.begin(); i != a.end(); ++i) {
+      auto pos = tree.find(std::make_pair(*i, ""));
+      if (pos != tree.end()) {
+        std::cout << "  " << pos->second << std::endl;
+      } else {
+        std::cout << "  Not found" << std::endl;
+      }
+    }
   }
 
   std::cout << "finish" << std::endl;
