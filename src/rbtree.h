@@ -1,9 +1,5 @@
 #include <iostream>
 #include <memory>
-// #include <map>;
-// template<class _Key, class _Val, class _KeyOfValue, class _Compare, class
-// _Alloc = std::allocator<_Val>> class std::_Rb_tree<_Key, _Val, _KeyOfValue,
-// _Compare, _Alloc> int main(void) { std::_Rb_tree; }
 
 // RbTree class declaration
 template <class Key, class Value, class KeyOfValue,
@@ -13,19 +9,10 @@ class RbTree {
   struct Node;  // forward declaration of node
 
  public:
-  // type aliases
+  // type aliases for smart pointers to Node
   using NodePtr = std::shared_ptr<Node>;
   using NodeParentPtr = std::weak_ptr<Node>;
   using DataPtr = std::unique_ptr<Value>;
-
-  // fields
-  NodePtr root_;
-
-  // constructors and destructor
-  RbTree() = default;
-  RbTree &operator=(const RbTree &) = delete;
-  RbTree(const RbTree &) = delete;
-  virtual ~RbTree() = default;
 
   // iterator
   template <bool isConst>
@@ -99,8 +86,27 @@ class RbTree {
     NodePtr node_;
   };
 
+  // type aliases
+  using key_type = Key;
+  using value_type = Value;
+  using difference_type = std::ptrdiff_t;
+  using key_compare = Compare;
+  using value_compare = Compare;
+  using reference = value_type &;
+  using const_reference = const value_type &;
+  using pointer = value_type *;
+  using const_pointer = const value_type *;
   using iterator = RbTreeIterator<false>;
   using const_iterator = RbTreeIterator<true>;
+
+  // fields
+  NodePtr root_;
+
+  // constructors and destructor
+  RbTree() = default;
+  RbTree &operator=(const RbTree &) = delete;
+  RbTree(const RbTree &) = delete;
+  virtual ~RbTree() = default;
 
   // iterator methods
   iterator begin() const {
@@ -140,7 +146,7 @@ class RbTree {
   }
 
   // RB tree methods
-  void insert(const Value &data, bool duplicates = false) {
+  void insert(const_reference data, bool duplicates = false) {
     NodePtr a = root_;
     NodePtr b = nullptr;
 
@@ -151,7 +157,7 @@ class RbTree {
       if (!duplicates && GetKey(data) == GetKey(*a->data_)) {
         return;
       }
-      is_left = Compare()(GetKey(data), GetKey(*a->data_));
+      is_left = key_compare()(GetKey(data), GetKey(*a->data_));
       if (is_left) {
         a = a->left_;
       } else {
@@ -177,15 +183,15 @@ class RbTree {
     }
   }
 
-  void remove(const Value &);
+  void remove(const_reference data);
 
-  iterator find(const Key &key) const {
+  iterator find(const key_type &key) const {
     NodePtr tnode = root_;
     while (tnode != nullptr) {
       if (key == GetKey(*tnode->data_)) {
         return iterator(tnode);
       }
-      if (Compare()(key, GetKey(*tnode->data_))) {
+      if (key_compare()(key, GetKey(*tnode->data_))) {
         tnode = tnode->left_;
       } else {
         tnode = tnode->right_;
@@ -219,13 +225,13 @@ class RbTree {
     bool color_ = true;  // true if red, false if black
 
     Node() = default;
-    Node(const Value &data)
-        : data_(std::make_unique<Value>(data)), color_(true){};
+    Node(const_reference data)
+        : data_(std::make_unique<value_type>(data)), color_(true){};
     Node &operator=(const Node &) = delete;
     Node(const Node &) = delete;
     ~Node() = default;
   };
   NodePtr sentinel_node_;
 
-  auto GetKey(const Value &data) const { return KeyOfValue()(data); }
+  auto GetKey(const_reference data) const { return KeyOfValue()(data); }
 };
