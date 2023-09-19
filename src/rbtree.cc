@@ -186,6 +186,12 @@ int main() {
     }
   }
 
+  {
+    std::cout << "MAX SIZE" << std::endl;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    std::cout << tree.max_size() << std::endl;
+  }
+
   std::cout << "finish" << std::endl;
   return 0;
 }

@@ -71,7 +71,7 @@ class map final {
   // capacity
   bool empty() const noexcept {}
   size_type size() const noexcept {}
-  size_type max_size() const noexcept {}
+  size_type max_size() const noexcept { return tree_.max_size() }
 
   // map modifiers
   void clear(void) {}

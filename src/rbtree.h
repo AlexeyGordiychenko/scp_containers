@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include <memory>
 
 // RbTree class declaration
@@ -98,6 +99,8 @@ class RbTree {
   using const_pointer = const value_type *;
   using iterator = RbTreeIterator<false>;
   using const_iterator = RbTreeIterator<true>;
+
+  using size_type = size_t;
 
   // fields
   NodePtr root_;
@@ -222,6 +225,15 @@ class RbTree {
     }
   };
   void print() const { print("", root_, false); };
+
+  size_type max_size() {
+    // this is a rough estimate
+    // 3 * sizeof(void *) - because size of node doesn't include some extra
+    // overhead of smart pointers (shared, weak) so we compensate it with an
+    // extra 2*pointer size (estimate) for each (3 total), so 3*2 = 6
+    size_t node_size = sizeof(Node) + sizeof(Value) + 6 * sizeof(void *);
+    return std::numeric_limits<size_t>::max() / node_size;
+  }
 
  private:
   struct Node {
