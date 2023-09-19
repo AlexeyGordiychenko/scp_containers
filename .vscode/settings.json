@@ -1,0 +1,19 @@
+{
+    "C_Cpp.default.compilerPath": "/usr/bin/g++",
+    "C_Cpp.errorSquiggles": "enabled",
+    "files.associations": {
+        "*.sql": "sql",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "array": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "optional": "cpp",
+        "string_view": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "streambuf": "cpp"
+    }
+}

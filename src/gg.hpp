@@ -1,0 +1,3 @@
+class sad {
+ void sadsad();
+};
