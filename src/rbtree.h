@@ -146,16 +146,16 @@ class RbTree {
   }
 
   // RB tree methods
-  void insert(const_reference data, bool duplicates = false) {
+  std::pair<iterator, bool> insert(const_reference data,
+                                   bool duplicates = false) {
     NodePtr a = root_;
     NodePtr b = nullptr;
 
     bool is_left = false;
-    // while (a != nullptr && a != sentinel_node_) {
     while (a != nullptr) {
       b = a;
       if (!duplicates && GetKey(data) == GetKey(*a->data_)) {
-        return;
+        return std::make_pair(iterator(a), false);
       }
       is_left = key_compare()(GetKey(data), GetKey(*a->data_));
       if (is_left) {
@@ -171,16 +171,17 @@ class RbTree {
       sentinel_node_ = std::make_shared<Node>();
       new_node->color_ = false;
       new_node->parent_ = sentinel_node_;
-      root_ = std::move(new_node);
+      root_ = new_node;
       sentinel_node_->left_ = root_;
     } else {
       new_node->parent_ = b;
       if (is_left) {
-        b->left_ = std::move(new_node);
+        b->left_ = new_node;
       } else {
-        b->right_ = std::move(new_node);
+        b->right_ = new_node;
       }
     }
+    return std::make_pair(iterator(new_node), true);
   }
 
   void remove(const_reference data);

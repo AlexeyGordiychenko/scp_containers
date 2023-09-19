@@ -164,8 +164,14 @@ int main() {
     tree.insert(std::make_pair(6, "six"));
     tree.insert(std::make_pair(5, "five"));
     tree.insert(std::make_pair(2, "two"));
-    tree.insert(std::make_pair(2, "two"));
-    tree.insert(std::make_pair(22, "twenty-two"));
+    auto test = tree.insert(std::make_pair(2, "two"));
+    std::cout << test.second << std::endl;
+    std::cout << test.first->first << std::endl;
+    std::cout << test.first->second << std::endl;
+    auto test2 = tree.insert(std::make_pair(22, "twenty-two"));
+    std::cout << test2.second << std::endl;
+    std::cout << test2.first->first << std::endl;
+    std::cout << test2.first->second << std::endl;
     tree.insert(std::make_pair(18, "eighteen"));
     tree.insert(std::make_pair(25, "twenty-five"));
 
