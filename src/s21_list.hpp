@@ -8,6 +8,13 @@ namespace s21 {
     template <class T>
     class list
     {
+         typedef  T value_type;
+        typedef  T& reference;
+        typedef  const T& const_reference;
+        typedef  ListIterator<T> iterator;
+        typedef  ListConstIterator<T> const_iterator;
+        typedef  size_t size_type;
+        typedef  s21_node<T> node;
 
     private:
         s21_node<T>* front_null_;
@@ -19,6 +26,7 @@ namespace s21 {
         //s21_node<T> null_node_;
 
         void init();
+        void init_many(size_type n);
         //  {
         //     node* null_node_a = new node;
         //     node* null_node_b = new node;
@@ -29,18 +37,6 @@ namespace s21 {
         // }
 
     public:
-
-
-
-
-        typedef  T value_type;
-        typedef  T& reference;
-        typedef  const T& const_reference;
-        typedef  ListIterator<T> iterator;
-        typedef  ListConstIterator<T> const_iterator;
-        typedef  size_t size_type;
-        typedef  s21_node<T> node;
-
         list();
         list(size_type n);
         list(std::initializer_list<value_type> const& items);
@@ -75,40 +71,24 @@ namespace s21 {
     };
 
     template <class T>
-    inline list<T>::list()
+    inline void list<T>::init()
     {
-        // node* null_node_a = new node;
-        // node* null_node_b = new node;
+        node* null_node_a = new node;
+        node* null_node_b = new node;
+        front_null_ = null_node_a;
+        back_null_ = null_node_b;
+        front_null_->next_ = back_null_;
+        back_null_->prev_ = front_null_;
 
-        // // front_ = a;
-        // // back_ = a;
-        // // null_node_->prev_ = null_node_;
-        // // null_node_->next_ = null_node_;
-
-        // front_null_ = null_node_a;
-        // back_null_ = null_node_b;
-        // front_null_->next_ = back_null_;
-        // back_null_->prev_ = front_null_;
-
-        //node* a = new node;
-        // null_node_ = new node;
-        // front_ = null_node_;
-        // back_ = null_node_;
-
-        // null_node_->next_ = null_node_;
-        // null_node_->prev_ = null_node_;
-
-        // back_->next_ = front_;
-        // front_->prev_ = back_;
-
+        back_null_->next_ = front_null_;
+        front_null_->prev_ = back_null_;
     }
 
     template <class T>
-    inline list<T>::list(size_type n)
+    inline void list<T>::init_many(size_type n)
     {
         init();
-        node *old = new node;
-        old->prev_ = front_null_;
+        node *old = front_null_;
         for (int i = 0; i < n; i++) {
             node* new_node = new node;
             new_node->data_ = new T;
@@ -116,7 +96,57 @@ namespace s21 {
             old->next_ = new_node;
             old = new_node;
         }
+        old->next_ = back_null_;
         back_null_->prev_ = old;
+    }
+
+    template <class T>
+    inline list<T>::list()
+    {
+        init();
+    }
+
+    template <class T>
+    inline list<T>::list(size_type n)
+    {
+        init();
+        init_many(n);
+        // node *old = front_null_;
+        // for (int i = 0; i < n; i++) {
+        //     node* new_node = new node;
+        //     new_node->data_ = new T;
+        //     new_node->prev_ = old;
+        //     old->next_ = new_node;
+        //     old = new_node;
+        // }
+        // old->next_ = back_null_;
+        // back_null_->prev_ = old;
+    }
+
+    template <class T>
+    inline list<T>::list(std::initializer_list<value_type> const &items)
+    {
+        init();
+        node *old = front_null_;
+        for (auto i = items.begin(); i != items.end(); ++i) {
+            node* new_node = new node;
+            new_node->data_ = i;
+            new_node->prev_ = old;
+            old->next_ = new_node;
+            old = new_node;
+        }
+          old->next_ = back_null_;
+        back_null_->prev_ = old;
+        // node *old = front_null_;
+        // for (int i = 0; i < n; i++) {
+        //     node* new_node = new node;
+        //     new_node->data_ = new T;
+        //     new_node->prev_ = old;
+        //     old->next_ = new_node;
+        //     old = new_node;
+        // }
+        // old->next_ = back_null_;
+        // back_null_->prev_ = old;
     }
 
     template <class T>

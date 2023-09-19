@@ -1,3 +1,0 @@
-class sad {
- void sadsad();
-};
