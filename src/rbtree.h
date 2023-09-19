@@ -185,11 +185,16 @@ class RbTree {
 
   void remove(const_reference data);
 
-  iterator find(const key_type &key) const {
+  iterator find(const key_type &key) { return iterator(find_node(key)); };
+  const_iterator find(const key_type &key) const {
+    return const_iterator(find_node(key));
+  };
+
+  NodePtr find_node(const key_type &key) const {
     NodePtr tnode = root_;
     while (tnode != nullptr) {
       if (key == GetKey(*tnode->data_)) {
-        return iterator(tnode);
+        return tnode;
       }
       if (key_compare()(key, GetKey(*tnode->data_))) {
         tnode = tnode->left_;
@@ -197,8 +202,9 @@ class RbTree {
         tnode = tnode->right_;
       }
     }
-    return end();
+    return sentinel_node_;
   };
+
   void print(const std::string &prefix, const NodePtr &node,
              bool is_left) const {
     // ┌
