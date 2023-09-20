@@ -1,3 +1,6 @@
+#ifndef CPP2_S21_CONTAINERS_SRC_LIST_LIST_H_
+#define CPP2_S21_CONTAINERS_SRC_LIST_LIST_H_
+
 #include "s21_node.hpp"
 #include "s21_ListIterator.hpp"
 #include "s21_ListConstIterator.hpp"
@@ -205,17 +208,29 @@ namespace s21 {
         return size_ == 0;
     }
 
-    // template <class T>
-    // inline list<T>::size_type list<T>::size()
-    // {
-    //     return size_;
-    // }
+    template <class T>
+    inline typename list<T>::iterator list<T>::begin()
+    {
+        return iterator(front_null_->next_);
+    }
 
-    // template <class T>
-    // inline list<T>::size_type list<T>::max_size()
-    // {
-    //     return 384307168202282325;
-    // }
+    template <class T>
+    inline typename list<T>::iterator list<T>::end()
+    {
+        return iterator(back_null_->prev_);
+    }
+
+    template <class T>
+    inline typename list<T>::size_type list<T>::size()
+    {
+        return size_;
+    }
+
+    template <class T>
+    inline typename list<T>::size_type list<T>::max_size()
+    {
+        return 384307168202282325;
+    }
 
     template <class T>
     inline void list<T>::push_back(const_reference value)
@@ -263,3 +278,5 @@ namespace s21 {
     }
 
 };
+
+#endif 

@@ -1,3 +1,6 @@
+#ifndef CPP2_S21_CONTAINERS_SRC_LIST_NODE_H_
+#define CPP2_S21_CONTAINERS_SRC_LIST_NODE_H_
+
 #include  <cstdlib>
 
 namespace s21 {
@@ -26,3 +29,5 @@ namespace s21 {
     inline s21_node<T>::~s21_node()
     {}
 }
+
+#endif
