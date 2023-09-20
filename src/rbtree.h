@@ -184,6 +184,7 @@ class RbTree {
         b->right_ = new_node;
       }
     }
+    nodes_count_++;
     return std::make_pair(iterator(new_node), true);
   }
 
@@ -208,6 +209,9 @@ class RbTree {
     }
     return sentinel_node_;
   };
+
+  size_type size() const { return nodes_count_; }
+  bool empty() const { return nodes_count_ == 0; }
 
   void print(const std::string &prefix, const NodePtr &node,
              bool is_left) const {
@@ -251,6 +255,7 @@ class RbTree {
     ~Node() = default;
   };
   NodePtr sentinel_node_;
+  size_type nodes_count_ = 0;
 
   auto GetKey(const_reference data) const { return KeyOfValue()(data); }
 };

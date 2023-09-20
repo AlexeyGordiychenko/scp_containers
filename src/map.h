@@ -13,8 +13,7 @@ class map final {
       return value.first;
     }
   };
-  using BinaryTree = RbTree<Key, std::pair<const Key, Value>,
-                            GetKey<std::pair<const Key, Value>>, Compare>;
+  using BinaryTree = RbTree<Key, std::pair<const Key, Value>, GetKey, Compare>;
 
  public:
   using key_type = Key;
@@ -69,9 +68,9 @@ class map final {
   const_iterator cend() const noexcept { return tree_.cend(); }
 
   // capacity
-  bool empty() const noexcept {}
-  size_type size() const noexcept {}
-  size_type max_size() const noexcept { return tree_.max_size() }
+  bool empty() const noexcept { return tree_.empty(); }
+  size_type size() const noexcept { return tree_.size(); }
+  size_type max_size() const noexcept { return tree_.max_size(); }
 
   // map modifiers
   void clear(void) {}
