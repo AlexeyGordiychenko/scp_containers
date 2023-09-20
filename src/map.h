@@ -73,7 +73,7 @@ class map final {
   size_type max_size() const noexcept { return tree_.max_size(); }
 
   // map modifiers
-  void clear(void) {}
+  void clear() {}
   std::pair<iterator, bool> insert(const_reference value) {
     return tree_.insert(value);
   }
@@ -88,7 +88,9 @@ class map final {
   void merge(map& source) {}
 
   // map lookup
-  bool contains(const Key& key) const { return tree_.contains(key); }
+  bool contains(const Key& key) const {
+    return tree_.find(key) != tree_.cend();
+  }
 
  private:
   BinaryTree tree_;
