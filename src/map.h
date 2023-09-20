@@ -33,9 +33,9 @@ class map final {
       tree_.insert(item);
     }
   }
-  map(const map& m) : tree_(m.tree_) {}
-  map(map&& m) : tree_(std::move(m.tree_)) {}
-  ~map() {}
+  map(const map& m) : tree_(m.tree_) {}        // TODO
+  map(map&& m) : tree_(std::move(m.tree_)) {}  // TODO
+  ~map() {}                                    // TODO
 
   // assignment operator oveload for moving an object
   map& operator=(map&& m) noexcept {
@@ -73,7 +73,7 @@ class map final {
   size_type max_size() const noexcept { return tree_.max_size(); }
 
   // map modifiers
-  void clear() {}
+  void clear() {}  // TODO
   std::pair<iterator, bool> insert(const_reference value) {
     return tree_.insert(value);
   }
@@ -82,10 +82,10 @@ class map final {
     return tree_.insert(std::make_pair(key, obj));
   }
   std::pair<iterator, bool> insert_or_assign(const key_type& key,
-                                             mapped_type&& obj) {}
-  void erase(iterator pos) {}
-  void swap(map& other) noexcept {}
-  void merge(map& source) {}
+                                             mapped_type&& obj) {}  // TODO
+  void erase(iterator pos) {}                                       // TODO
+  void swap(map& other) noexcept {}                                 // TODO
+  void merge(map& source) {}                                        // TODO
 
   // map lookup
   bool contains(const Key& key) const {
