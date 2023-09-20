@@ -217,13 +217,21 @@ class RbTree {
              bool is_left) const {
     // ┌
     std::cout << prefix;
-    std::cout << (is_left ? "└──" : "├──");
+    std::cout << (is_left ? "\033[0;36m┗━━\033[0m" : "\033[0;35m┣━━\033[0m");
     if (node != nullptr) {
       // std::cout << prefix;
       // std::cout << (is_left ? "├──" : "└──");
-      std::cout << GetKey(*node->data_) << std::endl;
-      print(prefix + (is_left ? "   " : "│  "), node->right_, false);
-      print(prefix + (is_left ? "   " : "│  "), node->left_, true);
+      if (node->color_) {
+        std::cout << "\033[1;31m" << GetKey(*node->data_) << "\033[0m"
+                  << std::endl;
+      } else {
+        std::cout << "\033[1;40m" << GetKey(*node->data_) << "\033[0m"
+                  << std::endl;
+      }
+      print(prefix + (is_left ? "   " : "\033[0;35m┃  \033[0m"), node->right_,
+            false);
+      print(prefix + (is_left ? "   " : "\033[0;36m┃  \033[0m"), node->left_,
+            true);
     } else {
       std::cout << std::endl;
     }
