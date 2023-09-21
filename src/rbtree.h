@@ -83,6 +83,8 @@ class RbTree {
       return temp;
     }
 
+    friend class RbTree;
+
    private:
     NodePtr node_;
   };
