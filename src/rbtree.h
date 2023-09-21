@@ -186,6 +186,7 @@ class RbTree {
         b->right_ = new_node;
       }
     }
+    insert_balance(new_node);
     nodes_count_++;
     return std::make_pair(iterator(new_node), true);
   }
@@ -239,6 +240,108 @@ class RbTree {
     }
   };
   void print() const { print("", root_, false); };
+
+  // balancing functions
+
+  void insert_balance(NodePtr node) {
+    NodePtr parent_node = nullptr;
+    NodePtr grand_parent_node = nullptr;
+    while (node && node != root_ && node->color_ &&
+           (parent_node = node->parent_.lock()) && parent_node->color_ &&
+           (grand_parent_node = parent_node->parent_.lock())) {
+      // Case : A, Parent of node is left child of Grand-parent of node
+      if (parent_node == grand_parent_node->left_) {
+        NodePtr uncle_node = grand_parent_node->right_;
+
+        // Case : 1, The uncle of node is also red, only recoloring required
+        if (uncle_node != nullptr && uncle_node->color_ == true) {
+          grand_parent_node->color_ = true;
+          parent_node->color_ = false;
+          uncle_node->color_ = false;
+          node = grand_parent_node;
+        } else {
+          // Case : 2, node is right child of its parent, left-rotation
+          // required
+          if (node == parent_node->right_) {
+            rotate_left(parent_node);
+            node = parent_node;
+            parent_node = node->parent_.lock();
+          }
+          // Case : 3, node is left child of its parent, right-rotation
+          // required
+          rotate_right(grand_parent_node);
+          std::swap(parent_node->color_, grand_parent_node->color_);
+          node = parent_node;
+        }
+      }
+
+      // Case : B, Parent of node is right child of Grand-parent of node
+      else {
+        NodePtr uncle_node = grand_parent_node->left_;
+
+        // Case : 1, The uncle of node is also red, only recoloring required
+        if ((uncle_node) && (uncle_node->color_)) {
+          grand_parent_node->color_ = true;
+          parent_node->color_ = false;
+          uncle_node->color_ = false;
+          node = grand_parent_node;
+        } else {
+          // Case : 2, node is left child of its parent, right-rotation
+          // required
+          if (node == parent_node->left_) {
+            rotate_right(parent_node);
+            node = parent_node;
+            parent_node = node->parent_.lock();
+          }
+          // Case : 3, node is right child of its parent, left-rotation
+          // required
+          rotate_left(grand_parent_node);
+          std::swap(parent_node->color_, grand_parent_node->color_);
+          node = parent_node;
+        }
+      }
+    }
+    root_->color_ = false;
+  }
+
+  void rotate_left(NodePtr node) {
+    NodePtr right_child = node->right_;
+    node->right_ = right_child->left_;
+
+    if (node->right_ != nullptr) node->right_->parent_ = node;
+
+    right_child->parent_ = node->parent_;
+    NodePtr parent = node->parent_.lock();
+    if (!parent)
+      root_ = right_child;
+    else if (node == parent->left_)
+      parent->left_ = right_child;
+    else
+      parent->right_ = right_child;
+
+    right_child->left_ = node;
+    node->parent_ = right_child;
+  }
+
+  void rotate_right(NodePtr node) {
+    NodePtr left_child = node->left_;
+    node->left_ = left_child->right_;
+
+    if (node->left_ != nullptr) node->left_->parent_ = node;
+
+    left_child->parent_ = node->parent_;
+
+    NodePtr parent = node->parent_.lock();
+    if (!parent)
+      root_ = left_child;
+    else if (node == parent->left_)
+      parent->left_ = left_child;
+    else
+      parent->right_ = left_child;
+
+    left_child->right_ = node;
+    node->parent_ = left_child;
+  }
 
   size_type max_size() {
     // this is a rough estimate
