@@ -157,10 +157,10 @@ class RbTree {
     bool is_left = false;
     while (a != nullptr) {
       b = a;
-      if (!duplicates && GetKey(data) == GetKey(*a->data_)) {
+      if (!duplicates && get_key(data) == get_key(*a->data_)) {
         return std::make_pair(iterator(a), false);
       }
-      is_left = key_compare()(GetKey(data), GetKey(*a->data_));
+      is_left = key_compare()(get_key(data), get_key(*a->data_));
       if (is_left) {
         a = a->left_;
       } else {
@@ -198,10 +198,10 @@ class RbTree {
   NodePtr find_node(const key_type &key) const {
     NodePtr tnode = root_;
     while (tnode != nullptr) {
-      if (key == GetKey(*tnode->data_)) {
+      if (key == get_key(*tnode->data_)) {
         return tnode;
       }
-      if (key_compare()(key, GetKey(*tnode->data_))) {
+      if (key_compare()(key, get_key(*tnode->data_))) {
         tnode = tnode->left_;
       } else {
         tnode = tnode->right_;
@@ -222,10 +222,10 @@ class RbTree {
       // std::cout << prefix;
       // std::cout << (is_left ? "├──" : "└──");
       if (node->color_) {
-        std::cout << "\033[1;31m" << GetKey(*node->data_) << "\033[0m"
+        std::cout << "\033[1;31m" << get_key(*node->data_) << "\033[0m"
                   << std::endl;
       } else {
-        std::cout << "\033[1;40m" << GetKey(*node->data_) << "\033[0m"
+        std::cout << "\033[1;40m" << get_key(*node->data_) << "\033[0m"
                   << std::endl;
       }
       print(prefix + (is_left ? "   " : "\033[0;35m┃  \033[0m"), node->right_,
@@ -265,5 +265,5 @@ class RbTree {
   NodePtr sentinel_node_;
   size_type nodes_count_ = 0;
 
-  auto GetKey(const_reference data) const { return KeyOfValue()(data); }
+  auto get_key(const_reference data) const { return KeyOfValue()(data); }
 };
