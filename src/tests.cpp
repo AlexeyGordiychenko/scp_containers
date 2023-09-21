@@ -33,15 +33,22 @@ int main(int argc, char **argv) {
 }
 
 TEST(s21_list_test, insert) {
-    test_obj a;
-    test_obj b;
-    test_obj c;
-    list<test_obj> list_a{a,b,c};
-    EXPECT_EQ(list_a.back().id, c.id);
-    EXPECT_EQ(list_a.front().id, a.id);
-    test_obj d;
+    test_obj arr[5];
+    list<test_obj> list_a{arr[1],arr[2],arr[3]};
+    EXPECT_EQ(list_a.back().id, arr[3].id);
+    EXPECT_EQ(list_a.front().id, arr[1].id);
+    EXPECT_EQ(list_a.size(), 3);
+    test_obj &d = arr[0];
     list_a.insert(list_a.begin(), d);
-    EXPECT_EQ(list_a.front().id, d.id);
+    EXPECT_EQ(list_a.front().id, arr[0].id);
+    EXPECT_EQ(list_a.size(), 4);
+    test_obj &e = arr[4];
+    list_a.insert(list_a.end(), arr[4]);
+    EXPECT_EQ(list_a.back().id, arr[4].id);
+    EXPECT_EQ(list_a.size(), 5);
+    int c = arr[0].id;
+    for(auto i : list_a)
+        EXPECT_EQ(i.id, c++);
 }
 
 TEST(s21_list_test, iterator) {

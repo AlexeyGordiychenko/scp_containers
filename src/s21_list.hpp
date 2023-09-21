@@ -265,13 +265,14 @@ namespace s21 {
     template <class T>
     inline typename list<T>::iterator list<T>::insert(iterator pos, const_reference value)
     {
-        // node* new_node = new node;
-        // new_node->data_ = new value_type(value);//&value;
-        // new_node->prev_ = pos.ptr_->prev_;
-        // new_node->next_ = pos.ptr_;
-        // pos.ptr_->prev_ = new_node;
-        // size_++;
-        // return iterator(new_node);
+        node* new_node = new node;
+        new_node->data_ = new value_type(value);//&value;
+        new_node->prev_ = pos.ptr_->prev_;
+        new_node->next_ = pos.ptr_;
+        pos.ptr_->prev_->next_ = new_node;
+        pos.ptr_->prev_ = new_node;
+        size_++;
+        return iterator(new_node);
     }
 
     template <class T>
