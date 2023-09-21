@@ -254,29 +254,40 @@ namespace s21 {
     template <class T>
     inline void list<T>::clear()
     {
+        node* n = front_null_;
+        while(n != back_null_) {
+            delete n->data_;
+            n = n->next_;
+        }
+        size_ = 0;
+    }
+
+    template <class T>
+    inline typename list<T>::iterator list<T>::insert(iterator pos, const_reference value)
+    {
+        // node* new_node = new node;
+        // new_node->data_ = new value_type(value);//&value;
+        // new_node->prev_ = pos.ptr_->prev_;
+        // new_node->next_ = pos.ptr_;
+        // pos.ptr_->prev_ = new_node;
+        // size_++;
+        // return iterator(new_node);
     }
 
     template <class T>
     inline void list<T>::push_back(const_reference value)
     {
         node* new_back = new node;
-        int g = value;
         new_back->data_ = new value_type(value);//&value;
-        // new_node->prev_ = back_->prev_;
-        // new_node->next_ = back_;
-        // node* front = null_node_->next_;
-        // node* back = null_node->prev_;
-        // new_node->next_ = null_node_;
-        // new_node->prev_ = back;
-        // back = new_node;
-        // null_node_
-
         node* old_back = back_null_->prev_;
         new_back->prev_ = old_back;
         new_back->next_ = back_null_;
         old_back->next_ = new_back;
         //old back prev same
         back_null_->prev_ = new_back;
+
+        size_++;
+        
 
         // new_back->prev_ = back_;
         // back_->next_ = new_back;
@@ -299,6 +310,7 @@ namespace s21 {
         new_front->next_ = old_front;
         old_front->prev_ = new_front;
         front_null_->next_ = new_front;
+        size_++;
     }
 
 };

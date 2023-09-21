@@ -32,7 +32,19 @@ int main(int argc, char **argv) {
   return RUN_ALL_TESTS();
 }
 
-TEST(s21_list_test, iterator_for_cycle) {
+TEST(s21_list_test, insert) {
+    test_obj a;
+    test_obj b;
+    test_obj c;
+    list<test_obj> list_a{a,b,c};
+    EXPECT_EQ(list_a.back().id, c.id);
+    EXPECT_EQ(list_a.front().id, a.id);
+    test_obj d;
+    list_a.insert(list_a.begin(), d);
+    EXPECT_EQ(list_a.front().id, d.id);
+}
+
+TEST(s21_list_test, iterator) {
     test_obj a;
     test_obj b;
     test_obj c;
@@ -42,6 +54,16 @@ TEST(s21_list_test, iterator_for_cycle) {
     EXPECT_EQ((*(list_a.begin())).id, a.id);
     EXPECT_EQ((*(++list_a.begin())).id, b.id);
     EXPECT_EQ((*(--list_a.end())).id, c.id);
+}
+
+TEST(s21_list_test, list_clear) {
+    test_obj a;
+    test_obj b;
+    test_obj c;
+    list<test_obj> list_a{a,b,c};
+    EXPECT_EQ(list_a.size(), 3);
+    list_a.clear();
+    EXPECT_EQ(list_a.size(), 0);
 }
 
 // TEST(s21_list_test, construct_list_size_with_test_obj) {
@@ -55,12 +77,14 @@ TEST(s21_list_test, operator_assign) {
     test_obj b;
     test_obj c;
     list<test_obj> list_a{a,b,c};
+    EXPECT_EQ(list_a.size(), 3);
     EXPECT_EQ(list_a.back().id, c.id);
     EXPECT_EQ(list_a.front().id, a.id);
     test_obj d;
     test_obj e;
     test_obj f;
     list_a = list<test_obj>{d, e, f};
+     EXPECT_EQ(list_a.size(), 3);
     EXPECT_EQ(list_a.back().id, f.id);
     EXPECT_EQ(list_a.front().id, d.id);
 }
@@ -72,6 +96,7 @@ TEST(s21_list_test, copy_constructor) {
     list<test_obj> list_a{list<test_obj>{a,b,c}};
     EXPECT_EQ(list_a.back().id, c.id);
     EXPECT_EQ(list_a.front().id, a.id);
+    EXPECT_EQ(list_a.size(), 3);
 }
 
 TEST(s21_list_test, moved_constructor) {
@@ -81,6 +106,7 @@ TEST(s21_list_test, moved_constructor) {
     list<test_obj> list_a{list<test_obj>{a,b,c}};
     EXPECT_EQ(list_a.back().id, c.id);
     EXPECT_EQ(list_a.front().id, a.id);
+    EXPECT_EQ(list_a.size(), 3);
 }
 
 TEST(s21_list_test, construct_initializer_list) {
@@ -90,6 +116,7 @@ TEST(s21_list_test, construct_initializer_list) {
     list<test_obj> l{a,b,c};
     EXPECT_EQ(l.back().id, c.id);
     EXPECT_EQ(l.front().id, a.id);
+    EXPECT_EQ(l.size(), 3);
 }
 
 TEST(s21_list_test, push_back) {
@@ -100,12 +127,15 @@ TEST(s21_list_test, push_back) {
     l.push_back(a);
     EXPECT_EQ(l.front(), a);
     EXPECT_EQ(l.back(), a);
+    EXPECT_EQ(l.size(), 1);
     l.push_back(b);
     EXPECT_EQ(l.back(), b);
     EXPECT_EQ(l.front(), a);
+    EXPECT_EQ(l.size(), 2);
     l.push_back(c);
     EXPECT_EQ(l.back(), c);
     EXPECT_EQ(l.front(), a);
+    EXPECT_EQ(l.size(), 3);
 }
 
 TEST(s21_list_test, push_front) {
@@ -116,10 +146,13 @@ TEST(s21_list_test, push_front) {
     l.push_back(a);
     EXPECT_EQ(l.front(), a);
     EXPECT_EQ(l.back(), a);
+    EXPECT_EQ(l.size(), 1);
     l.push_back(b);
     EXPECT_EQ(l.back(), b);
     EXPECT_EQ(l.front(), a);
+    EXPECT_EQ(l.size(), 2);
     l.push_back(c);
     EXPECT_EQ(l.back(), c);
     EXPECT_EQ(l.front(), a);
+    EXPECT_EQ(l.size(), 3);
 }

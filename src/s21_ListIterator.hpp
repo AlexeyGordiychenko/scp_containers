@@ -4,7 +4,12 @@
 #include "s21_node.hpp"
 #include "s21_list.hpp"
 
+//template <class T> class list;
+
 namespace s21 {
+
+    
+
     template<class T>
     class ListIterator
     {
@@ -22,6 +27,8 @@ namespace s21 {
             bool operator!=(const ListIterator<T>& other) const;
             T& operator*() const;
             T* operator->() const;
+
+        //friend class list<T>;
     };
 
     template <class T>
