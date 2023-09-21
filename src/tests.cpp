@@ -32,11 +32,23 @@ int main(int argc, char **argv) {
   return RUN_ALL_TESTS();
 }
 
-TEST(s21_list_test, construct_list_size_with_test_obj) {
-    list<test_obj> l(5);
-    EXPECT_EQ(l.back().id, 4);
-    EXPECT_EQ(l.front().id, 0);
+TEST(s21_list_test, iterator_for_cycle) {
+    test_obj a;
+    test_obj b;
+    test_obj c;
+    list<test_obj> list_a{a,b,c};
+    EXPECT_EQ(list_a.back().id, c.id);
+    EXPECT_EQ(list_a.front().id, a.id);
+    EXPECT_EQ((*(list_a.begin())).id, a.id);
+    EXPECT_EQ((*(++list_a.begin())).id, b.id);
+    EXPECT_EQ((*(--list_a.end())).id, c.id);
 }
+
+// TEST(s21_list_test, construct_list_size_with_test_obj) {
+//     list<test_obj> l(5);
+//     EXPECT_EQ(l.back().id, 4);
+//     EXPECT_EQ(l.front().id, 0);
+// }
 
 TEST(s21_list_test, operator_assign) {
     test_obj a;

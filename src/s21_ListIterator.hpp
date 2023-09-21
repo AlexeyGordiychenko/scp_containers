@@ -19,12 +19,18 @@ namespace s21 {
             ListIterator<T>& operator++();
             ListIterator<T>& operator--();
             bool operator==(const ListIterator<T>& other) const;
+            bool operator!=(const ListIterator<T>& other) const;
             T& operator*() const;
             T* operator->() const;
     };
 
     template <class T>
     inline ListIterator<T>::ListIterator(node* ptr) : ptr_(ptr) {}
+
+    template <class T>
+    inline ListIterator<T>::~ListIterator()
+    {
+    }
 
     template <class T>
     inline ListIterator<T>& ListIterator<T>::operator++()
@@ -44,6 +50,12 @@ namespace s21 {
     inline bool ListIterator<T>::operator==(const ListIterator<T>& other) const
     {
         return ptr_ == other.ptr_;
+    }
+
+    template <class T>
+    inline bool ListIterator<T>::operator!=(const ListIterator<T>& other) const
+    {
+        return ptr_ != other.ptr_;
     }
 
     template <class T>

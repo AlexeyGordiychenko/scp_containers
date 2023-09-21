@@ -11,7 +11,8 @@ namespace s21 {
         private:
             
         public:
-            const T* data_;
+            //const T* data_;
+            T* data_;
             s21_node* prev_;
             s21_node* next_;
             int id = rand();
