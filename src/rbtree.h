@@ -215,6 +215,14 @@ class RbTree {
 
   size_type size() const { return nodes_count_; }
   bool empty() const { return nodes_count_ == 0; }
+  size_type max_size() {
+    // this is a rough estimate
+    // 3 * sizeof(void *) - because size of node doesn't include some extra
+    // overhead of smart pointers (shared, weak) so we compensate it with an
+    // extra 2*pointer size (estimate) for each (3 total), so 3*2 = 6
+    size_t node_size = sizeof(Node) + sizeof(Value) + 6 * sizeof(void *);
+    return std::numeric_limits<size_t>::max() / node_size;
+  }
 
   void print(const std::string &prefix, const NodePtr &node,
              bool is_left) const {
@@ -337,15 +345,6 @@ class RbTree {
 
     left_child->right_ = node;
     node->parent_ = left_child;
-  }
-
-  size_type max_size() {
-    // this is a rough estimate
-    // 3 * sizeof(void *) - because size of node doesn't include some extra
-    // overhead of smart pointers (shared, weak) so we compensate it with an
-    // extra 2*pointer size (estimate) for each (3 total), so 3*2 = 6
-    size_t node_size = sizeof(Node) + sizeof(Value) + 6 * sizeof(void *);
-    return std::numeric_limits<size_t>::max() / node_size;
   }
 
  private:
