@@ -71,6 +71,11 @@ TEST(s21_list_test, list_clear) {
     EXPECT_EQ(list_a.size(), 3);
     list_a.clear();
     EXPECT_EQ(list_a.size(), 0);
+    int j = 0;
+    for (auto i : list_a) 
+        j++;
+    EXPECT_EQ(j, 0);
+
 }
 
 // TEST(s21_list_test, construct_list_size_with_test_obj) {

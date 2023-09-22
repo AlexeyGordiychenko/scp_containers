@@ -86,8 +86,8 @@ namespace s21 {
         front_null_->next_ = back_null_;
         back_null_->prev_ = front_null_;
 
-        back_null_->next_ = front_null_;
-        front_null_->prev_ = back_null_;
+        // back_null_->next_ = front_null_;
+        // front_null_->prev_ = back_null_;
     }
 
     template <class T>
@@ -193,6 +193,27 @@ namespace s21 {
     template <class T>
     inline list<T>::~list()
     {
+        clear();
+        delete front_null_;
+        delete back_null_;
+        size_ = 0;
+    }
+
+     template <class T>
+    inline void list<T>::clear()
+    {
+        node* n = front_null_->next_;
+        while(n != back_null_) {
+            delete n->data_;
+            node* del = n;
+            n = n->next_;
+            delete del;
+        }
+        front_null_->next_ = back_null_;
+        back_null_->prev_ = front_null_;
+        // back_null_->next_ = front_null_;
+        // front_null_->prev_ = back_null_;
+        size_ = 0;
     }
 
     template <class T>
@@ -202,12 +223,15 @@ namespace s21 {
         front_null_ = l.front_null_;
         size_ = l.size();
         
-        l.back_null_ = nullptr;
-        l.front_null_ = nullptr;
-        l.size_ = 0;
+        //destructor called for temporary object
+        //need to save nodes from freeing by clear method
+        l.back_null_ = new node;
+        l.front_null_ = new node;
+        l.front_null_->next_ = l.back_null_;
 
         return *this;
     }
+    
 
     template <class T>
     inline typename list<T>::const_reference list<T>::front() {
@@ -249,17 +273,6 @@ namespace s21 {
     inline typename list<T>::size_type list<T>::max_size()
     {
         return 384307168202282325;
-    }
-
-    template <class T>
-    inline void list<T>::clear()
-    {
-        node* n = front_null_;
-        while(n != back_null_) {
-            delete n->data_;
-            n = n->next_;
-        }
-        size_ = 0;
     }
 
     template <class T>
