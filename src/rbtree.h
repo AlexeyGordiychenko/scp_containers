@@ -249,6 +249,15 @@ class RbTree {
   };
   void print() const { print("", root_, false); };
 
+  bool is_valid_tree() {
+    int black_count = 0;
+    // The root is always black
+    if (root_ && root_->color_) {
+      return false;
+    }
+    return is_valid_node(root_, black_count);
+  }
+
   // balancing functions
 
   void insert_balance(NodePtr node) {
@@ -366,4 +375,32 @@ class RbTree {
   size_type nodes_count_ = 0;
 
   auto get_key(const_reference data) const { return KeyOfValue()(data); }
+
+  bool is_valid_node(NodePtr node, int &black_count, int path_black_count = 0) {
+    // Base case: we've reached a leaf node (null node)
+    if (!node) {
+      // All paths from root to leaf have the same number of black nodes
+      if (black_count == 0) {
+        black_count = path_black_count;
+      }
+      return path_black_count == black_count;
+    }
+
+    // Red nodes can't have red children
+    if (node->color_) {
+      if ((node->left_ && node->left_->color_) ||
+          (node->right_ && node->right_->color_)) {
+        return false;
+      }
+    }
+
+    // Count black nodes along the path
+    if (!node->color_) {
+      path_black_count++;
+    }
+
+    // Check left and right subtrees
+    return is_valid_node(node->left_, black_count, path_black_count) &&
+           is_valid_node(node->right_, black_count, path_black_count);
+  }
 };
