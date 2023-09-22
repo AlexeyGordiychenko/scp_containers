@@ -24,14 +24,16 @@ target_compile_options(
 target_include_directories(
   all_containers_test
   PRIVATE
-  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/s21_containers
+  ${CMAKE_BINARY_DIR}/s21_containersplus
+  ${CMAKE_BINARY_DIR}/lib
 )
 
 target_link_libraries(
   all_containers_test
+  GTest::gtest_main
   containers_lib
   containersplus_lib
-  GTest::gtest_main
 )
 
 include(GoogleTest)
