@@ -297,13 +297,16 @@ class RbTree {
 
   void rotate_left(NodePtr node) {
     NodePtr right_child = node->right_;
-    node->right_ = right_child->left_;
-
-    if (node->right_ != nullptr) node->right_->parent_ = node;
-
-    right_child->parent_ = node->parent_;
     NodePtr parent = node->parent_.lock();
-    if (!parent)
+
+    node->right_ = right_child->left_;
+    if (node->right_) {
+      node->right_->parent_ = node;
+    }
+
+    right_child->parent_ = parent;
+
+    if (!parent || parent == sentinel_node_)
       root_ = right_child;
     else if (node == parent->left_)
       parent->left_ = right_child;
@@ -316,14 +319,16 @@ class RbTree {
 
   void rotate_right(NodePtr node) {
     NodePtr left_child = node->left_;
-    node->left_ = left_child->right_;
-
-    if (node->left_ != nullptr) node->left_->parent_ = node;
-
-    left_child->parent_ = node->parent_;
-
     NodePtr parent = node->parent_.lock();
-    if (!parent)
+
+    node->left_ = left_child->right_;
+    if (node->left_) {
+      node->left_->parent_ = node;
+    }
+
+    left_child->parent_ = parent;
+
+    if (!parent || parent == sentinel_node_)
       root_ = left_child;
     else if (node == parent->left_)
       parent->left_ = left_child;
