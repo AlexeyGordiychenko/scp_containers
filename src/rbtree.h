@@ -248,54 +248,45 @@ class RbTree {
     NodePtr grand_parent_node = nullptr;
     while (node && node != root_ && node->color_ &&
            (parent_node = node->parent_.lock()) && parent_node->color_ &&
-           (grand_parent_node = parent_node->parent_.lock())) {
-      // Case : A, Parent of node is left child of Grand-parent of node
-      if (parent_node == grand_parent_node->left_) {
-        NodePtr uncle_node = grand_parent_node->right_;
+           (grand_parent_node = parent_node->parent_.lock()) &&
+           grand_parent_node != sentinel_node_) {
+      bool is_left_parent = (parent_node == grand_parent_node->left_);
+      bool is_left = (node == parent_node->left_);
+      NodePtr uncle_node =
+          is_left_parent ? grand_parent_node->right_ : grand_parent_node->left_;
 
-        // Case : 1, The uncle of node is also red, only recoloring required
-        if (uncle_node != nullptr && uncle_node->color_ == true) {
-          grand_parent_node->color_ = true;
-          parent_node->color_ = false;
-          uncle_node->color_ = false;
-          node = grand_parent_node;
-        } else {
-          // Case : 2, node is right child of its parent, left-rotation
-          // required
-          if (node == parent_node->right_) {
+      // Case : 1, The uncle of node is also red, only recoloring required
+      if (!node_is_black(uncle_node)) {
+        grand_parent_node->color_ = true;
+        parent_node->color_ = false;
+        uncle_node->color_ = false;
+        node = grand_parent_node;
+      } else {
+        // Case : 2, node is right child of its parent if parent is left child
+        // of grandparent and vice versa, rotation required
+        if ((is_left_parent && !is_left) || (!is_left_parent && is_left)) {
+          if (is_left_parent) {
             rotate_left(parent_node);
-            node = parent_node;
-            parent_node = node->parent_.lock();
-          }
-          // Case : 3, node is left child of its parent, right-rotation
-          // required
-          rotate_right(grand_parent_node);
-          std::swap(parent_node->color_, grand_parent_node->color_);
-          node = parent_node;
-        }
-      }
-
-      // Case : B, Parent of node is right child of Grand-parent of node
-      else {
-        NodePtr uncle_node = grand_parent_node->left_;
-
-        // Case : 1, The uncle of node is also red, only recoloring required
-        if ((uncle_node) && (uncle_node->color_)) {
-          grand_parent_node->color_ = true;
-          parent_node->color_ = false;
-          uncle_node->color_ = false;
-          node = grand_parent_node;
-        } else {
-          // Case : 2, node is left child of its parent, right-rotation
-          // required
-          if (node == parent_node->left_) {
+          } else {
             rotate_right(parent_node);
-            node = parent_node;
-            parent_node = node->parent_.lock();
           }
-          // Case : 3, node is right child of its parent, left-rotation
-          // required
-          rotate_left(grand_parent_node);
+          node = parent_node;
+          parent_node = node->parent_.lock();
+          grand_parent_node = parent_node->parent_.lock();
+          is_left = (node == parent_node->left_);
+          is_left_parent = (parent_node == grand_parent_node->left_);
+          uncle_node = is_left_parent ? grand_parent_node->right_
+                                      : grand_parent_node->left_;
+        }
+
+        // Case : 3, node is left child of its parent if parent is left child of
+        // grandparent and vice versa, rotation required
+        if ((is_left_parent && is_left) || (!is_left_parent && !is_left)) {
+          if (is_left_parent) {
+            rotate_right(grand_parent_node);
+          } else {
+            rotate_left(grand_parent_node);
+          }
           std::swap(parent_node->color_, grand_parent_node->color_);
           node = parent_node;
         }
