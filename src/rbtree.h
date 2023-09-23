@@ -224,30 +224,40 @@ class RbTree {
     return std::numeric_limits<size_t>::max() / node_size;
   }
 
-  void print(const std::string &prefix, const NodePtr &node,
-             bool is_left) const {
-    // ┌
+  void print(const std::string &prefix, const NodePtr &node, bool is_left,
+             bool colored) const {
     std::cout << prefix;
-    std::cout << (is_left ? "\033[0;36m┗━━\033[0m" : "\033[0;35m┣━━\033[0m");
+    std::string left_color = "", right_color = "", reset_color = "",
+                red_node_color = "", black_node_color = "";
+    if (colored) {
+      left_color = kCyanColor;
+      right_color = kMagentaColor;
+      reset_color = kResetColor;
+      red_node_color = kRedColorBold;
+      black_node_color = kBlackColorBold;
+    }
+    if (is_left) {
+      std::cout << left_color + "┗━━" << reset_color;
+    } else {
+      std::cout << right_color + "┣━━" + reset_color;
+    }
+
     if (node != nullptr) {
-      // std::cout << prefix;
-      // std::cout << (is_left ? "├──" : "└──");
       if (node->color_) {
-        std::cout << "\033[1;31m" << get_key(*node->data_) << "\033[0m"
-                  << std::endl;
+        std::cout << red_node_color;
       } else {
-        std::cout << "\033[1;40m" << get_key(*node->data_) << "\033[0m"
-                  << std::endl;
+        std::cout << black_node_color;
       }
-      print(prefix + (is_left ? "   " : "\033[0;35m┃  \033[0m"), node->right_,
-            false);
-      print(prefix + (is_left ? "   " : "\033[0;36m┃  \033[0m"), node->left_,
-            true);
+      std::cout << get_key(*node->data_) << reset_color << std::endl;
+      print(prefix + (is_left ? "   " : right_color + "┃  " + reset_color),
+            node->right_, false, colored);
+      print(prefix + (is_left ? "   " : left_color + "┃  " + reset_color),
+            node->left_, true, colored);
     } else {
       std::cout << std::endl;
     }
   };
-  void print() const { print("", root_, false); };
+  void print(bool colored = true) const { print("", root_, false, colored); };
 
   bool is_valid_tree() {
     int black_count = 0;
@@ -373,6 +383,11 @@ class RbTree {
   };
   NodePtr sentinel_node_;
   size_type nodes_count_ = 0;
+  const std::string kCyanColor = "\033[0;36m";
+  const std::string kMagentaColor = "\033[0;35m";
+  const std::string kRedColorBold = "\033[1;31m";
+  const std::string kBlackColorBold = "\033[1;30m";
+  const std::string kResetColor = "\033[0m";
 
   auto get_key(const_reference data) const { return KeyOfValue()(data); }
 
