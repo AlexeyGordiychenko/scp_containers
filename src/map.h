@@ -73,7 +73,7 @@ class map final {
   size_type max_size() const noexcept { return tree_.max_size(); }
 
   // map modifiers
-  void clear() {}  // TODO
+  void clear() { tree_.clear(); }
   std::pair<iterator, bool> insert(const_reference value) {
     return tree_.insert(value);
   }

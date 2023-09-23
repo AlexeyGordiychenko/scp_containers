@@ -38,4 +38,12 @@ int main() {
       std::cout << i->first << std::endl;
     }
   }
+  {
+    std::cout << "MAP TEST CLEAR" << std::endl;
+    s21::map<int, std::string> m;
+    m.insert({1, "one"});
+    m.insert({3, "three"});
+    m.clear();
+    std::cout << m.empty() << std::endl;
+  }
 }

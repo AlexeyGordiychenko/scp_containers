@@ -238,6 +238,12 @@ class RbTree {
     nodes_count_--;
   }
 
+  void clear() {
+    clear_recursive(root_);
+    root_ = nullptr;
+    nodes_count_ = 0;
+  }
+
   iterator find(const key_type &key) { return iterator(find_node(key)); };
   const_iterator find(const key_type &key) const {
     return const_iterator(find_node(key));
@@ -531,5 +537,12 @@ class RbTree {
     // Check left and right subtrees
     return is_valid_node(node->left_, black_count, path_black_count) &&
            is_valid_node(node->right_, black_count, path_black_count);
+  }
+
+  void clear_recursive(NodePtr &node) {
+    if (!node) return;
+    clear_recursive(node->left_);
+    clear_recursive(node->right_);
+    node.reset();
   }
 };

@@ -33,10 +33,10 @@ void FillTree(std::vector<int>& values_to_insert,
     // std::cout << value << ",";
   }
   // std::cout << std::endl << "Deleted values: " << std::endl;
-  // for (auto value : values_to_delete) {
-  //   tree.erase(tree.find(value));
-  //   std::cout << value << ",";
-  // }
+  for (auto value : values_to_delete) {
+    tree.erase(tree.find(value));
+    // std::cout << value << ",";
+  }
   // std::cout << std::endl;
 }
 
@@ -107,9 +107,22 @@ void Test4() {
   OutputTree(tree, false);
 }
 
+void Test5() {
+  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  std::vector<int> values_to_insert = {789, 188, 12,  454, 82,  474, 203,
+                                       418, 330, 279, 282, 996, 676, 252,
+                                       43,  131, 851, 971, 270, 266};
+  std::vector<int> values_to_delete = {188};
+  FillTree(values_to_insert, values_to_delete, tree);
+  std::cout << tree.empty() << std::endl;
+  tree.clear();
+  std::cout << tree.empty() << std::endl;
+}
+
 int main() {
   // Test1();
   // Test2();
-  for (int i = 0; i < 10; i++) Test3(1000, 1, 10000);
+  // for (int i = 0; i < 10; i++) Test3(1000, 1, 10000);
   // Test4();
+  Test5();
 }
