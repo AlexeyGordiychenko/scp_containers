@@ -282,14 +282,14 @@ class RbTree {
       NodePtr uncle_node =
           is_left_parent ? grand_parent_node->right_ : grand_parent_node->left_;
 
-      // Case : 1, The uncle of node is also red, only recoloring required
+      // Case 1: The uncle of node is also red, only recoloring required
       if (!node_is_black(uncle_node)) {
         grand_parent_node->color_ = true;
         parent_node->color_ = false;
         uncle_node->color_ = false;
         node = grand_parent_node;
       } else {
-        // Case : 2, node is right child of its parent if parent is left child
+        // Case 2: The node is right child of its parent if parent is left child
         // of grandparent and vice versa, rotation required
         if ((is_left_parent && !is_left) || (!is_left_parent && is_left)) {
           if (is_left_parent) {
@@ -306,8 +306,8 @@ class RbTree {
                                       : grand_parent_node->left_;
         }
 
-        // Case : 3, node is left child of its parent if parent is left child of
-        // grandparent and vice versa, rotation required
+        // Case 3: The node is left child of its parent if parent is left child
+        // of grandparent and vice versa, rotation required
         if ((is_left_parent && is_left) || (!is_left_parent && !is_left)) {
           if (is_left_parent) {
             rotate_right(grand_parent_node);
