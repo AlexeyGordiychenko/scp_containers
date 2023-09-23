@@ -191,7 +191,52 @@ class RbTree {
     return std::make_pair(iterator(new_node), true);
   }
 
-  void remove(const_reference data);
+  void erase(iterator pos) {
+    if (pos == end()) return;
+
+    NodePtr node_to_replace, node_to_delete, node = pos.node_;
+
+    // If the node has both children, then node_to_delete is set
+    // to the inorder successor of the node. Otherwise, node_to_delete is set to
+    // the node
+    if (node->left_ && node->right_) {
+      iterator it(node);
+      ++it;
+      node_to_delete = it.node_;
+    } else {
+      node_to_delete = node;
+    }
+
+    // Set node_to_replace to the non-null child of node_to_delete, if any.
+    node_to_replace = (node_to_delete->left_ ? node_to_delete->left_
+                                             : node_to_delete->right_);
+    // Save the parent of the node to delete
+    NodePtr parent = node_to_delete->parent_.lock();
+
+    // Update the parents
+    if (node_to_replace) {
+      node_to_replace->parent_ = parent;
+    }
+    if (parent == sentinel_node_) {
+      root_ = node_to_replace;
+    } else if (node_to_delete == parent->left_) {
+      parent->left_ = node_to_replace;
+    } else {
+      parent->right_ = node_to_replace;
+    }
+
+    // Move the data of the node, if needed
+    if (node_to_delete != node) {
+      node->data_ = std::move(node_to_delete->data_);
+    }
+
+    // If the node to delete is black, we need to balance the tree
+    if (!node_to_delete->color_) {
+      delete_balance(node_to_replace, parent);
+    }
+
+    nodes_count_--;
+  }
 
   iterator find(const key_type &key) { return iterator(find_node(key)); };
   const_iterator find(const key_type &key) const {
@@ -320,6 +365,66 @@ class RbTree {
       }
     }
     root_->color_ = false;
+  }
+
+  void delete_balance(NodePtr node, NodePtr parent) {
+    // Continue until the node is the root or the node becomes red
+    while (node != root_ && (node_is_black(node))) {
+      bool is_left = (node == parent->left_);
+      NodePtr sibling = is_left ? parent->right_ : parent->left_;
+
+      // Case 1: The sibling is red
+      if (node_is_red(sibling)) {
+        set_node_color(sibling, false);
+        set_node_color(parent, true);
+        if (is_left) {
+          rotate_left(parent);
+          sibling = parent->right_;
+        } else {
+          rotate_right(parent);
+          sibling = parent->left_;
+        }
+      }
+
+      // Case 2: The sibling is black, and both of its children are black
+      if (node_is_black(sibling->left_) && node_is_black(sibling->right_)) {
+        set_node_color(sibling, true);
+        node = parent;
+        parent = parent->parent_.lock();
+      } else {
+        // Case 3: The sibling is black, its near child is red, and its far
+        // child is black
+        NodePtr near_child = is_left ? sibling->left_ : sibling->right_;
+        NodePtr far_child = is_left ? sibling->right_ : sibling->left_;
+
+        // we need to check only one child, because of the first if
+        if (node_is_black(far_child)) {
+          set_node_color(near_child, false);
+          set_node_color(sibling, true);
+          if (is_left) {
+            rotate_right(sibling);
+            sibling = parent->right_;
+          } else {
+            rotate_left(sibling);
+            sibling = parent->left_;
+          }
+          near_child = is_left ? sibling->left_ : sibling->right_;
+          far_child = is_left ? sibling->right_ : sibling->left_;
+        }
+        // Case 4: The sibling is black, and its far child is red
+        set_node_color(sibling, parent->color_);
+        set_node_color(parent, false);
+        set_node_color(far_child, false);
+        if (is_left) {
+          rotate_left(parent);
+        } else {
+          rotate_right(parent);
+        }
+        node = root_;
+      }
+    }
+    // Ensure the node is always black
+    if (node != nullptr) node->color_ = false;
   }
 
   void rotate_left(NodePtr node) {
