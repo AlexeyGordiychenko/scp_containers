@@ -69,11 +69,10 @@ namespace s21 {
         void pop_front();
         void swap(list& other);
         void merge(list& other);
-        void splice(const_iterator pos, list& other);
+        void splice(const_iterator pos, list& other); //!!!!
         void reverse();
         void unique();
         void sort();
-
     };
 
     template <class T>
@@ -253,11 +252,106 @@ namespace s21 {
     }
 
     template <class T>
+    inline void list<T>::erase(iterator pos) {
+      node* ptr =  pos.ptr_;
+      if (ptr == null_node_) return;
+      node* prev = ptr->prev_;
+      node* next = ptr->next_;
+      prev->next_ = next;
+      next->prev_ = prev;
+      delete ptr->data_;
+      delete ptr;
+      size_--;
+      //iterator ivalid after erase
+      //https://www.geeksforgeeks.org/iterator-invalidation-cpp/
+    }
+
+    template <class T>
     inline void list<T>::push_back(const_reference value) { insert(end(), value); }
+
+    template <class T>
+    inline void list<T>::pop_back() {
+      erase(--end());
+      // node *del = null_node_->prev_;
+      // null_node_->prev_ = del->prev_;
+      // del->prev_->next_ = null_node_;
+      // delete del->data_;
+      // delete del;
+      // size_--;
+    }
 
     template <class T>
     inline void list<T>::push_front(const_reference value) { insert(begin(), value); }
 
-};
+    template <class T>
+    inline void list<T>::pop_front() {
+      erase(begin());
+      // node *del = null_node_->next_;
+      // null_node_->next_ = del->next_;
+      // del->next_->prev_ = null_node_;
+      // delete del->data_;
+      // delete del;
+      // size_--;
+    }
+
+    template <class T>
+    inline void list<T>::swap(list& other) {
+      node *tmp_node = this->null_node_;
+      this->null_node_ = other.null_node_;
+      other.null_node_ = tmp_node;
+      size_type tmp_size = this->size_;
+      this->size_ = other.size_;
+      other.size_ = tmp_size;
+    }
+
+    template <class T>
+    inline void list<T>::merge(list& other) {
+      //sort!!
+    }
+
+    template <class T>
+    inline void list<T>::splice(const_iterator pos, list& other) {
+      node* start = other.null_node_->next_;
+      node* end = other.null_node_->prev_;
+      pos.ptr_->prev_->next_ = start;
+      start->prev_ = pos.ptr_->prev_;
+      pos.ptr_->prev_ = end;
+      end->next_ = pos.ptr_;
+      size_ += other.size_;
+
+      other.init(other.null_node_);
+      // start->prev_ = pos.ptr->prev_;
+      // pos.ptr->pre
+      // start->prev_ = 
+      // pos->prev-
+    }
+
+    template <class T>
+    inline void list<T>::reverse() {
+      node* n = null_node_->next_;
+      while(n->data_) {
+        node* next = n->next_;
+        n->next_ = n->prev_;
+        n->prev_ = next;
+        n = next;
+      }
+      n = null_node_->next_;
+      null_node_->next_ = null_node_->prev_;
+      null_node_->prev_ = n;
+    }
+
+    template <class T>
+    inline void list<T>::unique() {
+      node* n = null_node_->next_;
+      value_type* next_data;
+      while(next_data = n->next_->data_) {
+        node* next = n->next_;
+        if (*next_data == *n->data_)
+          erase(iterator(n));
+        n = next;
+      }
+    }
+
+    };  // namespace s21
 
 #endif 

@@ -2,13 +2,15 @@
     "C_Cpp.default.compilerPath": "/usr/bin/g++",
     "C_Cpp.errorSquiggles": "enabled",
     "files.associations": {
-        "*.sql": "sql",
-        "*.tcc": "cpp",
-        "deque": "cpp",
-        "list": "cpp",
-        "string": "cpp",
-        "unordered_map": "cpp",
-        "vector": "cpp",
-        "initializer_list": "cpp"
+      "*.sql": "sql",
+      "*.tcc": "cpp",
+      "deque": "cpp",
+      "list": "cpp",
+      "string": "cpp",
+      "unordered_map": "cpp",
+      "vector": "cpp",
+      "initializer_list": "cpp",
+      "array": "cpp",
+      "string_view": "cpp"
     }
 }

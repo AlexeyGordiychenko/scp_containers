@@ -15,10 +15,11 @@ namespace s21 {
     {
         typedef  s21_node<T> node;
 
-        private:
+        protected:
             node* ptr_;
         public:
             ListIterator(node* ptr);
+            ListIterator(const ListIterator<T>& it);
             ~ListIterator();
 
             ListIterator<T>& operator++();
@@ -33,6 +34,9 @@ namespace s21 {
 
     template <class T>
     inline ListIterator<T>::ListIterator(node* ptr) : ptr_(ptr) {}
+
+    template <class T>
+    inline ListIterator<T>::ListIterator(const ListIterator<T>& it) : ptr_(it.ptr_) {};
 
     template <class T>
     inline ListIterator<T>::~ListIterator()

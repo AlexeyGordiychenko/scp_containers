@@ -32,17 +32,110 @@ int main(int argc, char **argv) {
   return RUN_ALL_TESTS();
 }
 
+TEST(s21_list_test, unique) {
+    list<int> list_a{0,0,1,1,2,3,3};
+    EXPECT_EQ(list_a.size(), 7);
+    list_a.unique();
+    EXPECT_EQ(list_a.size(), 4);
+    int c = 0;
+    for(auto i : list_a)
+          EXPECT_EQ(i, c++);
+}
+
+TEST(s21_list_test, splice) {
+     test_obj arr[7];
+    list<test_obj> list_a{arr[0],arr[5],arr[6]};
+    list<test_obj> list_b{arr[1],arr[2],arr[3],arr[4]};
+    EXPECT_EQ(list_a.size(), 3);
+    EXPECT_EQ(list_b.size(), 4);
+    auto it = ++list_a.begin(); 
+    list_a.splice(it, list_b);
+    EXPECT_EQ(list_a.size(), 7);
+    EXPECT_EQ(list_b.size(), 0);
+    int c = arr[0].id;
+    for(auto i : list_a)
+          EXPECT_EQ(i.id, c++);
+}
+
+TEST(s21_list_test, reverse) {
+     test_obj arr[7];
+    list<test_obj> list_a{arr[0],arr[1],arr[2]};
+    EXPECT_EQ(list_a.size(), 3);
+    int c = arr[0].id;
+    for(auto i : list_a)
+          EXPECT_EQ(i.id, c++);
+    list_a.reverse();
+    EXPECT_EQ(list_a.size(), 3);
+    c = arr[2].id;
+    for(auto i : list_a)
+          EXPECT_EQ(i.id, c--);
+}
+
+TEST(s21_list_test, erase) {
+    test_obj arr[3];
+    list<test_obj> list_a{arr[0],arr[2],arr[1]};
+    auto it = ++list_a.begin(); 
+    EXPECT_EQ(it->id, arr[2].id);
+    EXPECT_EQ(list_a.size(), 3);
+    list_a.erase(it);
+    EXPECT_EQ(list_a.size(), 2);
+    int c = arr[0].id;
+    for(auto i : list_a)
+          EXPECT_EQ(i.id, c++);
+}
+
+TEST(s21_list_test, swap) {
+    test_obj arr[7];
+    list<test_obj> list_a{arr[0],arr[1],arr[2]};
+    list<test_obj> list_b{arr[3],arr[4],arr[5],arr[6]};
+    list_a.swap(list_b);
+    EXPECT_EQ(list_a.back().id, arr[6].id);
+    EXPECT_EQ(list_a.front().id, arr[3].id);
+    EXPECT_EQ(list_a.size(), 4);
+    EXPECT_EQ(list_b.back().id, arr[2].id);
+    EXPECT_EQ(list_b.front().id, arr[0].id);
+    EXPECT_EQ(list_b.size(), 3);
+}
+
+TEST(s21_list_test, pop_back) {
+     test_obj arr[5];
+    list<test_obj> list_a{arr[1],arr[2],arr[3]};
+    EXPECT_EQ(list_a.back().id, arr[3].id);
+    EXPECT_EQ(list_a.front().id, arr[1].id);
+    EXPECT_EQ(list_a.size(), 3);
+    list_a.pop_back();
+    EXPECT_EQ(list_a.front().id, arr[1].id);
+    EXPECT_EQ(list_a.back().id, arr[2].id);
+    EXPECT_EQ(list_a.size(), 2);
+    int c = arr[1].id;
+    for(auto i : list_a)
+        EXPECT_EQ(i.id, c++);
+}
+
+TEST(s21_list_test, pop_front) {
+     test_obj arr[5];
+    list<test_obj> list_a{arr[1],arr[2],arr[3]};
+    EXPECT_EQ(list_a.back().id, arr[3].id);
+    EXPECT_EQ(list_a.front().id, arr[1].id);
+    EXPECT_EQ(list_a.size(), 3);
+    list_a.pop_front();
+    EXPECT_EQ(list_a.front().id, arr[2].id);
+    EXPECT_EQ(list_a.back().id, arr[3].id);
+    EXPECT_EQ(list_a.size(), 2);
+    int c = arr[2].id;
+    for(auto i : list_a)
+        EXPECT_EQ(i.id, c++);
+}
+
 TEST(s21_list_test, insert) {
     test_obj arr[5];
     list<test_obj> list_a{arr[1],arr[2],arr[3]};
     EXPECT_EQ(list_a.back().id, arr[3].id);
     EXPECT_EQ(list_a.front().id, arr[1].id);
     EXPECT_EQ(list_a.size(), 3);
-    test_obj &d = arr[0];
-    list_a.insert(list_a.begin(), d);
+    list_a.insert(list_a.begin(), arr[0]);
     EXPECT_EQ(list_a.front().id, arr[0].id);
     EXPECT_EQ(list_a.size(), 4);
-    test_obj &e = arr[4];
     list_a.insert(list_a.end(), arr[4]);
     EXPECT_EQ(list_a.back().id, arr[4].id);
     EXPECT_EQ(list_a.size(), 5);
@@ -75,7 +168,6 @@ TEST(s21_list_test, list_clear) {
     for (auto i : list_a) 
         j++;
     EXPECT_EQ(j, 0);
-
 }
 
 // TEST(s21_list_test, construct_list_size_with_test_obj) {
