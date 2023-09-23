@@ -83,9 +83,9 @@ class map final {
   }
   std::pair<iterator, bool> insert_or_assign(const key_type& key,
                                              mapped_type&& obj) {}  // TODO
-  void erase(iterator pos) {}                                       // TODO
-  void swap(map& other) noexcept {}                                 // TODO
-  void merge(map& source) {}                                        // TODO
+  void erase(iterator pos) { tree_.erase(pos); }
+  void swap(map& other) noexcept {}  // TODO
+  void merge(map& source) {}         // TODO
 
   // map lookup
   bool contains(const Key& key) const {

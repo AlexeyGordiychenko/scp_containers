@@ -23,4 +23,19 @@ int main() {
     std::cout << m.contains(2) << std::endl;
     std::cout << m.contains(1) << std::endl;
   }
+  {
+    std::cout << "MAP TEST ERASE" << std::endl;
+    s21::map<int, std::string> m;
+    m.insert({1, "one"});
+    auto it = m.insert({3, "three"});
+    std::cout << "before" << std::endl;
+    for (auto i = m.begin(); i != m.end(); i++) {
+      std::cout << i->first << std::endl;
+    }
+    m.erase(it.first);
+    std::cout << "after" << std::endl;
+    for (auto i = m.begin(); i != m.end(); i++) {
+      std::cout << i->first << std::endl;
+    }
+  }
 }
