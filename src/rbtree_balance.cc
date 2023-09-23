@@ -74,6 +74,9 @@ void Test2() {
   tree.erase(it8.first);
   tree.erase(it9.first);
   tree.print();
+  for (auto it = tree.begin(); it != tree.end(); it++) {
+    std::cout << *it << std::endl;
+  }
 }
 
 void Test3(int n, int from, int to) {
@@ -89,9 +92,9 @@ void Test3(int n, int from, int to) {
   for (int i = 0; i < n; ++i) {
     int value = GenerateRandomNumber(gen, from, to);
     values_to_insert.push_back(value);
-    // if (GenerateRandomNumber(gen, 0, 3) == 0) {
-    // values_to_delete.push_back(value);
-    // }
+    if (GenerateRandomNumber(gen, 0, 3) == 0) {
+      values_to_delete.push_back(value);
+    }
   }
   FillTree(values_to_insert, values_to_delete, tree);
   OutputTree(tree, false);

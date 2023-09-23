@@ -115,6 +115,9 @@ class RbTree {
 
   // iterator methods
   iterator begin() const {
+    if (!root_) {
+      return end();
+    }
     NodePtr node = root_;
     while (node && node->left_) {
       node = node->left_;
@@ -125,6 +128,9 @@ class RbTree {
   iterator end() const { return iterator(sentinel_node_); }
 
   const_iterator cbegin() const {
+    if (!root_) {
+      return end();
+    }
     NodePtr node = root_;
     while (node && node->left_) {
       node = node->left_;
