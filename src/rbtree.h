@@ -391,6 +391,15 @@ class RbTree {
 
   auto get_key(const_reference data) const { return KeyOfValue()(data); }
 
+  bool node_is_black(const NodePtr &node) const {
+    return !node || !node->color_;
+  }
+  bool node_is_red(const NodePtr node) const { return node && node->color_; }
+
+  void set_node_color(NodePtr &node, bool color) {
+    if (node) node->color_ = color;
+  }
+
   bool is_valid_node(NodePtr node, int &black_count, int path_black_count = 0) {
     // Base case: we've reached a leaf node (null node)
     if (!node) {
