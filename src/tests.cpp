@@ -32,6 +32,21 @@ int main(int argc, char **argv) {
   return RUN_ALL_TESTS();
 }
 
+TEST(s21_list_test, merger) {
+    list<int> list_a{1,3,5};
+    list<int> list_b{2,4};
+    EXPECT_EQ(list_a.size(), 3);
+    EXPECT_EQ(list_b.size(), 2);
+    list_a.merge(list_b);
+    EXPECT_EQ(list_a.size(), 5);
+    EXPECT_EQ(list_a.front(), 1);
+    EXPECT_EQ(list_a.back(), 5);
+    int c = 1;
+    for(auto i : list_a)
+          EXPECT_EQ(i, c++);
+    EXPECT_EQ(list_b.size(), 0);
+}
+
 TEST(s21_list_test, unique) {
     list<int> list_a{0,0,1,1,2,3,3};
     EXPECT_EQ(list_a.size(), 7);

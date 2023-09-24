@@ -32,6 +32,8 @@ namespace s21 {
 
         void init(node *node);
         void init_many(size_type n);
+        void merge_sort(list& m);
+        node* tail();
         //  {
         //     node* null_node_a = new node;
         //     node* null_node_b = new node;
@@ -189,8 +191,8 @@ namespace s21 {
     inline void list<T>::clear()
     {
         node* n = null_node_->next_;
-        while(n != null_node_) {
-            delete n->data_;
+        while(n->data_) {
+            //delete n->data_;
             node* del = n;
             n = n->next_;
             delete del;
@@ -305,11 +307,6 @@ namespace s21 {
     }
 
     template <class T>
-    inline void list<T>::merge(list& other) {
-      //sort!!
-    }
-
-    template <class T>
     inline void list<T>::splice(const_iterator pos, list& other) {
       node* start = other.null_node_->next_;
       node* end = other.null_node_->prev_;
@@ -350,6 +347,80 @@ namespace s21 {
           erase(iterator(n));
         n = next;
       }
+    }
+
+    template <class T>
+    inline void list<T>::sort() {}
+
+    template <class T>
+    inline void list<T>::merge(list& other) {
+      //sort!!
+      list* tmp = new list;
+      node* n1 = null_node_->next_;
+      node* n2 = other.null_node_->next_;
+      while(n1->data_ && n2->data_)
+      {
+        node *insrt;
+        if (*n1->data_ < *n2->data_) {
+          insrt = n1;
+          n1 = n1->next_;
+        }
+        else {
+          insrt = n2;
+          n2 = n2->next_;
+        }
+
+        tmp->tail()->set_next(insrt);
+        tmp->size_++;
+      }
+
+      while(n1->data_) {
+        tmp->tail()->set_next(n1);
+        n1 = n1->next_;
+        tmp->size_++;
+      }
+      while(n2->data_) {
+        tmp->tail()->set_next(n2);
+        n2 = n2->next_;
+        tmp->size_++;
+      }
+
+      swap(*tmp);
+      tmp->init(tmp->null_node_);
+      other.init(other.null_node_);
+      delete tmp;
+
+      // null_node_->next_ = tmp.null_node_->next_;
+      // null_node_->prev_ = tmp.null_node_->prev_;
+      // node *dummy1 = new node;
+      // node *dummy2 = new node;
+      // int a = 1;
+      // int b = 2;
+      // dummy1->data_ = &a;
+      // dummy2->data_ = &b;
+      // tmp.null_node_->next_ = dummy1;
+      // tmp.null_node_->prev_ = dummy2;
+    }
+
+    template <class T>
+    inline void list<T>::merge_sort(list& m) {
+      list left, right;
+      node *n = null_node_->next_;
+      int i = 0;
+      while(n->data_) {
+        if (i < size() / 2) left.push_back(n);
+        else right.push_back(n);
+        n = n->next_;
+      }
+
+      left = merge_sort(left);
+      right = merge_sort(right);
+      
+    }
+
+    template <class T>
+    inline typename list<T>::node* list<T>::tail() {
+      return null_node_->prev_;
     }
 
     };  // namespace s21
