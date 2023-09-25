@@ -6,14 +6,17 @@ FetchContent_Declare(
 )
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-file(GLOB TEST_FILES ./*.cc)
-set(TEST_SOURCES ${TEST_FILES})
+file(GLOB TEST_FILES_CC ./*.cc)
+file(GLOB TEST_FILES_H ./test.h)
+set(TEST_SOURCES ${TEST_FILES_CC})
+set(TEST_HEADERS ${TEST_FILES_H})
 
 FetchContent_MakeAvailable(googletest)
 
 add_executable(
   all_containers_test
   ${TEST_SOURCES}
+  ${TEST_HEADERS}
 )
 
 target_compile_options(
@@ -31,6 +34,7 @@ target_include_directories(
 
 target_link_libraries(
   all_containers_test
+  PUBLIC
   GTest::gtest_main
   containers_lib
   containersplus_lib

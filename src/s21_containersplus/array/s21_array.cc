@@ -1,5 +1,5 @@
-#include "s21_array.h"
 #include <iostream>
+#include "s21_array.h"
 
 namespace s21 {
   template <typename T>
