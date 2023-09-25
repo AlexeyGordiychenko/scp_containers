@@ -34,6 +34,7 @@ namespace s21 {
         void init_many(size_type n);
         void merge_sort(list& m);
         node* tail();
+        void add(node* n);
         //  {
         //     node* null_node_a = new node;
         //     node* null_node_b = new node;
@@ -261,7 +262,7 @@ namespace s21 {
       node* next = ptr->next_;
       prev->next_ = next;
       next->prev_ = prev;
-      delete ptr->data_;
+      //delete ptr->data_;
       delete ptr;
       size_--;
       //iterator ivalid after erase
@@ -350,7 +351,28 @@ namespace s21 {
     }
 
     template <class T>
-    inline void list<T>::sort() {}
+    inline void list<T>::sort() {
+      if (size_ <= 1) return;
+      list<T>* left = new list;
+      list<T>* right = new list;
+      node* n = null_node_->next_;
+      int i = 0;
+      while(n->data_) {
+        node* next = n->next_;
+        if (i < size_ / 2) left->add(n);
+        else right->add(n);
+        ++i;
+        n = next;
+      }
+      left->sort();
+      right->sort();
+      left->merge(*right);
+      swap(*left);
+      right->init(right->null_node_);
+      left->init(left->null_node_);
+      delete right;
+      delete left;
+    }
 
     template <class T>
     inline void list<T>::merge(list& other) {
@@ -370,19 +392,22 @@ namespace s21 {
           n2 = n2->next_;
         }
 
-        tmp->tail()->set_next(insrt);
-        tmp->size_++;
+        //tmp->tail()->set_next(insrt);
+        //tmp->size_++;
+        tmp->add(insrt);
       }
 
       while(n1->data_) {
-        tmp->tail()->set_next(n1);
+        //tmp->tail()->set_next(n1);
+        tmp->add(n1);
         n1 = n1->next_;
-        tmp->size_++;
+        //tmp->size_++;
       }
       while(n2->data_) {
-        tmp->tail()->set_next(n2);
+        //tmp->tail()->set_next(n2);
+        tmp->add(n2);
         n2 = n2->next_;
-        tmp->size_++;
+        //tmp->size_++;
       }
 
       swap(*tmp);
@@ -423,6 +448,11 @@ namespace s21 {
       return null_node_->prev_;
     }
 
-    };  // namespace s21
+    template <class T>
+    inline void list<T>::add(node* n) {
+      null_node_->prev_->set_next(n);
+      size_++;
+    }
+  }  // namespace s21
 
 #endif 

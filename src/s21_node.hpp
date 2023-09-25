@@ -39,7 +39,7 @@ namespace s21 {
     template <class T>
     inline s21_node<T>::~s21_node()
     {
-      //if (data_) delete data_;
+      if (data_) delete data_;
     }
 }
 
