@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 3.14)
+project(ContainersTests LANGUAGES CXX)
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -22,14 +25,6 @@ add_executable(
 target_compile_options(
   all_containers_test PRIVATE
   -Wall -Werror -Wextra -pedantic -g
-)
-
-target_include_directories(
-  all_containers_test
-  PRIVATE
-  ${CMAKE_BINARY_DIR}/s21_containers
-  ${CMAKE_BINARY_DIR}/s21_containersplus
-  ${CMAKE_BINARY_DIR}/lib
 )
 
 target_link_libraries(

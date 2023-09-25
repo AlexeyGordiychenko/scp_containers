@@ -1,5 +1,8 @@
+cmake_minimum_required(VERSION 3.14)
+project(ContainersLib LANGUAGES CXX)
+
 file(GLOB FILE_SOURCES ./*/*.cc)
-file(GLOB FILE_HEADERS ./*.h)
+file(GLOB FILE_HEADERS ./*/*.h)
 set(SOURCES ${FILE_SOURCES})
 set(HEADERS ${FILE_HEADERS})
 set(CMAKE_CXX_STANDARD 17)
@@ -21,5 +24,5 @@ set_target_properties(
   LINKER_LANGUAGE CXX
   PREFIX "s21_"
   OUTPUT_NAME "containers"
-  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}" 
+  # ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}" 
 )
