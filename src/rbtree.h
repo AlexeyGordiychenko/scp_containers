@@ -32,6 +32,9 @@ class RbTree {
     pointer operator->() const { return node_->data_.get(); }
 
     RbTreeIterator &operator++() {
+      // we don't need here special conditions for a sentinel node, because
+      // while traversing the tree we will always end up on a sentinel node
+      // (parent of the root)
       if (node_->right_) {
         node_ = node_->right_;
         while (node_->left_) {
@@ -48,7 +51,11 @@ class RbTree {
     }
 
     RbTreeIterator &operator--() {
-      if (node_->left_) {
+      if (!node_->parent_.lock()) {
+        // if the parent is null it means that it's a sentinel node, so we can
+        // use its right child (the rightmost node of the tree)
+        node_ = node_->right_;
+      } else if (node_->left_) {
         node_ = node_->left_;
         while (node_->right_) {
           node_ = node_->right_;
@@ -114,28 +121,12 @@ class RbTree {
   virtual ~RbTree() = default;
 
   // iterator methods
-  iterator begin() const {
-    if (!root_) {
-      return end();
-    }
-    NodePtr node = root_;
-    while (node && node->left_) {
-      node = node->left_;
-    }
-    return iterator(node);
-  }
+  iterator begin() const { return iterator(sentinel_node_->left_); }
 
   iterator end() const { return iterator(sentinel_node_); }
 
   const_iterator cbegin() const {
-    if (!root_) {
-      return end();
-    }
-    NodePtr node = root_;
-    while (node && node->left_) {
-      node = node->left_;
-    }
-    return const_iterator(node);
+    return const_iterator(sentinel_node_->left_);
   }
 
   const_iterator cend() const { return const_iterator(sentinel_node_); }
@@ -179,11 +170,12 @@ class RbTree {
     auto new_node = std::make_shared<Node>(data);
 
     if (b == nullptr) {
-      sentinel_node_ = std::make_shared<Node>();
-      new_node->color_ = false;
-      new_node->parent_ = sentinel_node_;
       root_ = new_node;
+      sentinel_node_ = std::make_shared<Node>();
       sentinel_node_->left_ = root_;
+      sentinel_node_->right_ = root_;
+      root_->color_ = false;
+      root_->parent_ = sentinel_node_;
     } else {
       new_node->parent_ = b;
       if (is_left) {
@@ -192,6 +184,14 @@ class RbTree {
         b->right_ = new_node;
       }
     }
+
+    // Update sentinel node
+    if (is_left && b == sentinel_node_->left_) {
+      sentinel_node_->left_ = new_node;
+    } else if (!is_left && b == sentinel_node_->right_) {
+      sentinel_node_->right_ = new_node;
+    }
+
     insert_balance(new_node);
     nodes_count_++;
     return std::make_pair(iterator(new_node), true);
@@ -211,6 +211,16 @@ class RbTree {
       node_to_delete = it.node_;
     } else {
       node_to_delete = node;
+    }
+
+    // Update the sentinel node
+    if (node == sentinel_node_->left_) {
+      sentinel_node_->left_ =
+          (node->right_ ? minimum(node->right_) : node->parent_.lock());
+    }
+    if (node == sentinel_node_->right_) {
+      sentinel_node_->right_ =
+          (node->left_ ? maximum(node->left_) : node->parent_.lock());
     }
 
     // Set node_to_replace to the non-null child of node_to_delete, if any.
@@ -233,6 +243,12 @@ class RbTree {
 
     // Move the data of the node, if needed
     if (node_to_delete != node) {
+      // Update the sentinel node
+      if (sentinel_node_->left_ == node_to_delete) {
+        sentinel_node_->left_ = node;
+      } else if (sentinel_node_->right_ == node_to_delete) {
+        sentinel_node_->right_ = node;
+      }
       node->data_ = std::move(node_to_delete->data_);
     }
 
@@ -247,6 +263,7 @@ class RbTree {
   void clear() {
     clear_recursive(root_);
     root_ = nullptr;
+    sentinel_node_ = nullptr;
     nodes_count_ = 0;
   }
 
@@ -550,5 +567,19 @@ class RbTree {
     clear_recursive(node->left_);
     clear_recursive(node->right_);
     node.reset();
+  }
+
+  NodePtr minimum(NodePtr node) {
+    while (node->left_) {
+      node = node->left_;
+    }
+    return node;
+  }
+
+  NodePtr maximum(NodePtr node) {
+    while (node->right_) {
+      node = node->right_;
+    }
+    return node;
   }
 };
