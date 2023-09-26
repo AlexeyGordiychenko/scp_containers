@@ -225,10 +225,11 @@ TEST(s21_list_test, copy_constructor) {
     test_obj a;
     test_obj b;
     test_obj c;
-    list<test_obj> list_a{list<test_obj>{a,b,c}};
-    EXPECT_EQ(list_a.back().id, c.id);
-    EXPECT_EQ(list_a.front().id, a.id);
-    EXPECT_EQ(list_a.size(), 3);
+    list<test_obj> list_a{a,b,c};
+    list<test_obj> list_b = list_a;
+    EXPECT_EQ(list_b.back().id, c.id);
+    EXPECT_EQ(list_b.front().id, a.id);
+    EXPECT_EQ(list_b.size(), 3);
 }
 
 TEST(s21_list_test, moved_constructor) {

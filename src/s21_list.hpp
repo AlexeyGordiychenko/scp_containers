@@ -56,8 +56,8 @@ namespace s21 {
         const_reference front();
         const_reference back();
 
-        iterator begin();
-        iterator end();
+        iterator begin() const;
+        iterator end() const;
 
         bool empty();
         size_type size();
@@ -87,22 +87,22 @@ namespace s21 {
         null_node_->prev_ = null_node_;
     }
 
-    template <class T>
-    inline void list<T>::init_many(size_type n)
-    {
-        init(new node);
-        size_ = n;
-        node *old = null_node_;
-        for (int i = 0; i < n; i++) {
-            node* new_node = new node;
-            new_node->data_ = new T;
-            new_node->prev_ = old;
-            old->next_ = new_node;
-            old = new_node;
-        }
-        old->next_ = null_node_;
-        null_node_->prev_ = old;
-    }
+    // template <class T>
+    // inline void list<T>::init_many(size_type n)
+    // {
+    //     init(new node);
+    //     size_ = n;
+    //     node *old = null_node_;
+    //     for (int i = 0; i < n; i++) {
+    //         node* new_node = new node;
+    //         new_node->data_ = new T;
+    //         new_node->prev_ = old;
+    //         old->next_ = new_node;
+    //         old = new_node;
+    //     }
+    //     old->next_ = null_node_;
+    //     null_node_->prev_ = old;
+    // }
 
     template <class T>
     inline list<T>::list() { init(new node); }
@@ -110,18 +110,18 @@ namespace s21 {
     template <class T>
     inline list<T>::list(size_type n)
     {
-        init(new node);
-        init_many(n);
-        // node *old = front_null_;
-        // for (int i = 0; i < n; i++) {
-        //     node* new_node = new node;
-        //     new_node->data_ = new T;
-        //     new_node->prev_ = old;
-        //     old->next_ = new_node;
-        //     old = new_node;
-        // }
-        // old->next_ = back_null_;
-        // back_null_->prev_ = old;
+      init(new node);
+      size_ = n;
+      node *old = null_node_;
+      for (int i = 0; i < n; i++) {
+          node* new_node = new node;
+          new_node->data_ = new T;
+          new_node->prev_ = old;
+          old->next_ = new_node;
+          old = new_node;
+      }
+      old->next_ = null_node_;
+      null_node_->prev_ = old;
     }
 
     template <class T>
@@ -156,12 +156,12 @@ namespace s21 {
     inline list<T>::list(const list &l)
     {
         init(new node);
-        size_ = l.size();
+        size_ = l.size_;
         node *old = null_node_;
-        for (auto i = l.begin(); i != l.end(); ++l) {
+        for (auto i = l.begin(); i != l.end(); ++i) {
             node* new_node = new node;
             //new_node->data_ = i;
-            new_node->data_ = new value_type(i);
+            new_node->data_ = new value_type(*i);
             new_node->prev_ = old;
             old->next_ = new_node;
             old = new_node;
@@ -230,10 +230,10 @@ namespace s21 {
     inline bool list<T>::empty() { return size_ == 0; }
 
     template <class T>
-    inline typename list<T>::iterator list<T>::begin() { return iterator(null_node_->next_); }
+    inline typename list<T>::iterator list<T>::begin() const { return iterator(null_node_->next_); }
 
     template <class T>
-    inline typename list<T>::iterator list<T>::end() { return iterator(null_node_); }
+    inline typename list<T>::iterator list<T>::end() const { return iterator(null_node_); }
 
     template <class T>
     inline typename list<T>::size_type list<T>::size() { return size_; }
