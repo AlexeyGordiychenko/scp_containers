@@ -4,11 +4,33 @@
 #include <iostream>
 
 namespace s21 {
-// template <typename T>
+template <typename T>
 class vector {
  public:
+  using value_type = T;
+  using reference = T &;
+  using const_reference = const T &;
+  using size_type = size_t;
+
+  // using iterator = ...
+  // using const_iterator = ...
+  using iterator_simple = T *;
+  using const_iterator_simple = const T *;
+
   vector();
-  int a;
+  vector(size_type n);
+  vector(std::initializer_list<value_type> const &items);
+  vector(const vector &v);
+  vector(vector &&v);
+
+  vector& operator=(vector &&v);
+
+  ~vector();
+
+ private:
+  iterator_simple data_;
+  size_type size_;
+  size_type capacity_;
 };
 }  // namespace s21
 
