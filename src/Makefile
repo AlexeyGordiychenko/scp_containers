@@ -1,5 +1,7 @@
 MY_FILES 	= ./tests/*.cc ./tests/*.h ./s21_containers/*/*.cc ./s21_containers/*/*.h ./s21_containers/*.h ./s21_containersplus/*/*.cc ./s21_containersplus/*/*.h ./s21_containersplus/*.h
 GTEST_EXTRA_FLAGS = --gtest_brief=1
+BALD = '\033[1m\033[4m'
+NORMAL = '\033[0m'
 
 OS 			:= $(shell uname)
 
@@ -54,5 +56,22 @@ clang:
 clangI:
 	clang-format -i -style=google $(MY_FILES)
 
-.PHONY: all clean gcov_report cppcheck clang clangI leak
+help:
+	@echo "-=Main project targets:=-"
+	@echo $(BALD)"\tmake test (or make, or make all)"$(NORMAL)" - run all tests"
+	@echo $(BALD)"\tmake clean"$(NORMAL)" - clean unnecessary files and uninstall the app"
+
+	@echo "-=Extra project targets:=-"
+	@echo $(BALD)"\tmake SuiteNameTest"$(NORMAL)" - run all tests in 'SuiteName' test suite"
+	@echo $(BALD)"\tmake gcov_report"$(NORMAL)" - create test coverage HTML-report"
+	@echo $(BALD)"\tmake open"$(NORMAL)" - open test coverage HTML-report"
+	@echo $(BALD)"\tmake leak"$(NORMAL)" - check for memory leaks with Valgrind (Linux) or Leaks (MACOS)"
+	@echo $(BALD)"\tmake cppcheck"$(NORMAL)" - analyse code with static code analyser"
+	@echo $(BALD)"\tmake clang"$(NORMAL)" - analyse code for Google Style"
+	@echo $(BALD)"\tmake clangI"$(NORMAL)" - analyse code for Google Style and correct style mistakes"
+	@echo $(BALD)"\tmake help"$(NORMAL)" - show helpful information for the project"
+
+.PHONY: all clean gcov_report cppcheck clang clangI leak help
+
+.SILENT: help
 #======================================================
