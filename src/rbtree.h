@@ -111,9 +111,6 @@ class RbTree {
 
   using size_type = size_t;
 
-  // fields
-  NodePtr root_;
-
   // constructors and destructor
   RbTree() = default;
   RbTree &operator=(const RbTree &) = delete;
@@ -513,8 +510,10 @@ class RbTree {
     Node(const Node &) = delete;
     ~Node() = default;
   };
-  NodePtr sentinel_node_;
+
+  NodePtr root_, sentinel_node_;
   size_type nodes_count_ = 0;
+
   const std::string kCyanColor = "\033[0;36m";
   const std::string kMagentaColor = "\033[0;35m";
   const std::string kRedColorBold = "\033[1;31m";
