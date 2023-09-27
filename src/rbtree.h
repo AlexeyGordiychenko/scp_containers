@@ -45,7 +45,7 @@ class RbTree {
         while ((temp = node_->parent_.lock()) && node_ == temp->right_) {
           node_ = temp;
         }
-        node_ = temp;
+        if (temp) node_ = temp;
       }
       return *this;
     }
@@ -65,7 +65,7 @@ class RbTree {
         while ((temp = node_->parent_.lock()) && node_ == temp->left_) {
           node_ = temp;
         }
-        node_ = temp;
+        if (temp) node_ = temp;
       }
       return *this;
     }
@@ -121,13 +121,11 @@ class RbTree {
   virtual ~RbTree() = default;
 
   // iterator methods
-  iterator begin() const { return iterator(sentinel_node_->left_); }
+  iterator begin() const { return iterator(get_leftmost()); }
 
   iterator end() const { return iterator(sentinel_node_); }
 
-  const_iterator cbegin() const {
-    return const_iterator(sentinel_node_->left_);
-  }
+  const_iterator cbegin() const { return const_iterator(get_leftmost()); }
 
   const_iterator cend() const { return const_iterator(sentinel_node_); }
 
@@ -524,6 +522,12 @@ class RbTree {
   const std::string kResetColor = "\033[0m";
 
   auto get_key(const_reference data) const { return KeyOfValue()(data); }
+  NodePtr get_leftmost() const {
+    return (sentinel_node_) ? sentinel_node_->left_ : nullptr;
+  }
+  NodePtr get_rightmost() const {
+    return (sentinel_node_) ? sentinel_node_->right_ : nullptr;
+  }
 
   bool node_is_black(const NodePtr &node) const {
     return !node || !node->color_;

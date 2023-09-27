@@ -76,11 +76,9 @@ int main() {
     for (auto i = tree.begin(); i != tree.end(); ++i) {
       std::cout << (*i).second << " ";
     }
-    std::cout << std::endl;
     for (auto i = tree.rbegin(); i != tree.rend(); ++i) {
       std::cout << (*i).second << " ";
     }
-    std::cout << std::endl;
   }
 
   {

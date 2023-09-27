@@ -221,6 +221,44 @@ void Test10() {
   std::cout << std::endl;
 }
 
+void Test11() {
+  std::cout << "SET TEST11" << std::endl;
+  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  for (auto it = tree.begin(); it != tree.end(); it++) {
+    std::cout << *it << " ";
+  }
+  for (auto it = tree.rbegin(); it != tree.rend(); it++) {
+    std::cout << *it << " ";
+  }
+}
+
+void Test12() {
+  std::cout << "SET TEST12" << std::endl;
+  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  tree.insert(1);
+  for (auto it = tree.begin(); it != tree.end(); it++) {
+    std::cout << *it << " ";
+  }
+  for (auto it = tree.rbegin(); it != tree.rend(); it++) {
+    std::cout << *it << " ";
+  }
+  std::cout << std::endl;
+}
+
+void Test13() {
+  std::cout << "SET TEST13" << std::endl;
+  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  tree.insert(1);
+  tree.insert(2);
+  for (auto it = tree.begin(); it != tree.end(); it++) {
+    std::cout << *it << " ";
+  }
+  for (auto it = tree.rbegin(); it != tree.rend(); it++) {
+    std::cout << *it << " ";
+  }
+  std::cout << std::endl;
+}
+
 int main() {
   // Test1();
   // Test2();
@@ -231,7 +269,10 @@ int main() {
   // Test8();
   // Test9();
   // Test10();
-  for (int i = 0; i < 100; i++) Test3(1000, 1, 10000);
-  for (int i = 0; i < 100; i++) Test3(1000, 1, 10000, true);
+  // for (int i = 0; i < 100; i++) Test3(1000, 1, 10000);
+  // for (int i = 0; i < 100; i++) Test3(1000, 1, 10000, true);
   // Test3(20, 1, 100, true);
+  Test11();
+  Test12();
+  Test13();
 }
