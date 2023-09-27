@@ -7,6 +7,7 @@ template <class Key, class Value, class KeyOfValue,
           class Compare = std::less<Value>>
 class RbTree {
  private:
+  enum Color : bool { BLACK, RED };
   struct Node;  // forward declaration of node
 
  public:
@@ -169,7 +170,7 @@ class RbTree {
       sentinel_node_ = std::make_shared<Node>();
       sentinel_node_->left_ = root_;
       sentinel_node_->right_ = root_;
-      root_->color_ = false;
+      set_node_color(root_, BLACK);
       root_->parent_ = sentinel_node_;
     } else {
       new_node->parent_ = b;
@@ -248,7 +249,7 @@ class RbTree {
     }
 
     // If the node to delete is black, we need to balance the tree
-    if (!node_to_delete->color_) {
+    if (node_is_black(node_to_delete)) {
       delete_balance(node_to_replace, parent);
     }
 
@@ -312,7 +313,7 @@ class RbTree {
     }
 
     if (node != nullptr) {
-      if (node->color_) {
+      if (node_is_red(node)) {
         std::cout << red_node_color;
       } else {
         std::cout << black_node_color;
@@ -331,7 +332,7 @@ class RbTree {
   bool is_valid_tree() {
     int black_count = 0;
     // The root is always black
-    if (root_ && root_->color_) {
+    if (node_is_red(root_)) {
       return false;
     }
     return is_valid_node(root_, black_count);
@@ -342,8 +343,8 @@ class RbTree {
   void insert_balance(NodePtr node) {
     NodePtr parent_node = nullptr;
     NodePtr grand_parent_node = nullptr;
-    while (node && node != root_ && node->color_ &&
-           (parent_node = node->parent_.lock()) && parent_node->color_ &&
+    while (node_is_red(node) && node != root_ &&
+           (parent_node = node->parent_.lock()) && node_is_red(parent_node) &&
            (grand_parent_node = parent_node->parent_.lock()) &&
            grand_parent_node != sentinel_node_) {
       bool is_left_parent = (parent_node == grand_parent_node->left_);
@@ -352,10 +353,10 @@ class RbTree {
           is_left_parent ? grand_parent_node->right_ : grand_parent_node->left_;
 
       // Case 1: The uncle of node is also red, only recoloring required
-      if (!node_is_black(uncle_node)) {
-        grand_parent_node->color_ = true;
-        parent_node->color_ = false;
-        uncle_node->color_ = false;
+      if (node_is_red(uncle_node)) {
+        set_node_color(grand_parent_node, RED);
+        set_node_color(parent_node, BLACK);
+        set_node_color(uncle_node, BLACK);
         node = grand_parent_node;
       } else {
         // Case 2: The node is right child of its parent if parent is left child
@@ -388,7 +389,7 @@ class RbTree {
         }
       }
     }
-    root_->color_ = false;
+    set_node_color(root_, BLACK);
   }
 
   void delete_balance(NodePtr node, NodePtr parent) {
@@ -399,8 +400,8 @@ class RbTree {
 
       // Case 1: The sibling is red
       if (node_is_red(sibling)) {
-        set_node_color(sibling, false);
-        set_node_color(parent, true);
+        set_node_color(sibling, BLACK);
+        set_node_color(parent, RED);
         if (is_left) {
           rotate_left(parent);
           sibling = parent->right_;
@@ -412,7 +413,7 @@ class RbTree {
 
       // Case 2: The sibling is black, and both of its children are black
       if (node_is_black(sibling->left_) && node_is_black(sibling->right_)) {
-        set_node_color(sibling, true);
+        set_node_color(sibling, RED);
         node = parent;
         parent = parent->parent_.lock();
       } else {
@@ -423,8 +424,8 @@ class RbTree {
 
         // we need to check only one child, because of the first if
         if (node_is_black(far_child)) {
-          set_node_color(near_child, false);
-          set_node_color(sibling, true);
+          set_node_color(near_child, BLACK);
+          set_node_color(sibling, RED);
           if (is_left) {
             rotate_right(sibling);
             sibling = parent->right_;
@@ -437,8 +438,8 @@ class RbTree {
         }
         // Case 4: The sibling is black, and its far child is red
         set_node_color(sibling, parent->color_);
-        set_node_color(parent, false);
-        set_node_color(far_child, false);
+        set_node_color(parent, BLACK);
+        set_node_color(far_child, BLACK);
         if (is_left) {
           rotate_left(parent);
         } else {
@@ -448,7 +449,7 @@ class RbTree {
       }
     }
     // Ensure the node is always black
-    if (node != nullptr) node->color_ = false;
+    set_node_color(node, BLACK);
   }
 
   void rotate_left(NodePtr node) {
@@ -501,11 +502,10 @@ class RbTree {
     NodePtr left_;
     NodePtr right_;
     NodeParentPtr parent_;
-    bool color_ = true;  // true if red, false if black
+    Color color_ = RED;
 
     Node() = default;
-    Node(const_reference data)
-        : data_(std::make_unique<value_type>(data)), color_(true){};
+    Node(const_reference data) : data_(std::make_unique<value_type>(data)){};
     Node &operator=(const Node &) = delete;
     Node(const Node &) = delete;
     ~Node() = default;
@@ -529,11 +529,13 @@ class RbTree {
   }
 
   bool node_is_black(const NodePtr &node) const {
-    return !node || !node->color_;
+    return !node || node->color_ == BLACK;
   }
-  bool node_is_red(const NodePtr node) const { return node && node->color_; }
+  bool node_is_red(const NodePtr node) const {
+    return node && node->color_ == RED;
+  }
 
-  void set_node_color(NodePtr &node, bool color) {
+  void set_node_color(NodePtr &node, Color color) {
     if (node) node->color_ = color;
   }
 
@@ -548,15 +550,14 @@ class RbTree {
     }
 
     // Red nodes can't have red children
-    if (node->color_) {
-      if ((node->left_ && node->left_->color_) ||
-          (node->right_ && node->right_->color_)) {
+    if (node_is_red(node)) {
+      if (node_is_red(node->left_) || node_is_red(node->right_)) {
         return false;
       }
     }
 
     // Count black nodes along the path
-    if (!node->color_) {
+    if (node_is_black(node)) {
       path_black_count++;
     }
 
