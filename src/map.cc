@@ -83,4 +83,14 @@ int main() {
       std::cout << i->first << ": " << i->second << std::endl;
     }
   }
+  {
+    std::cout << "MAP MOVE" << std::endl;
+    s21::map<int, std::string> m1;
+    m1.insert({3, "three"});
+    m1.insert({1, "one"});
+    s21::map<int, std::string> m2 = std::move(m1);
+    for (auto i = m2.begin(); i != m2.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+  }
 }

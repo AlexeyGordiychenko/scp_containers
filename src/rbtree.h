@@ -114,6 +114,12 @@ class RbTree {
 
   // constructors and destructor
   RbTree() = default;
+  RbTree(RbTree &&other) noexcept
+      : root_(std::move(other.root_)),
+        sentinel_node_(std::move(other.sentinel_node_)),
+        nodes_count_(other.nodes_count_) {
+    other.nodes_count_ = 0;
+  }
   RbTree &operator=(const RbTree &) = delete;
   RbTree(const RbTree &other) {
     // nodes to keep track of the edges of the tree

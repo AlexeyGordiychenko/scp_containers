@@ -34,8 +34,8 @@ class map final {
     }
   }
   map(const map& m) : tree_(m.tree_) {}
-  map(map&& m) : tree_(std::move(m.tree_)) {}  // TODO
-  ~map() {}                                    // TODO
+  map(map&& m) : tree_(std::move(m.tree_)) {}
+  ~map() {}  // TODO
 
   // assignment operator oveload for moving an object
   map& operator=(map&& m) noexcept {
