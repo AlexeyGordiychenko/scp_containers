@@ -152,9 +152,7 @@ class RbTree {
   // move operator
   RbTree &operator=(RbTree &&other) noexcept {
     if (this != &other) {
-      std::swap(root_, other.root_);
-      std::swap(sentinel_node_, other.sentinel_node_);
-      std::swap(nodes_count_, other.nodes_count_);
+      swap(other);
     }
     return *this;
   }
@@ -335,6 +333,12 @@ class RbTree {
     // extra 2*pointer size (estimate) for each (3 total), so 3*2 = 6
     size_t node_size = sizeof(Node) + sizeof(Value) + 6 * sizeof(void *);
     return std::numeric_limits<size_t>::max() / node_size;
+  }
+
+  void swap(RbTree &other) noexcept {
+    std::swap(root_, other.root_);
+    std::swap(sentinel_node_, other.sentinel_node_);
+    std::swap(nodes_count_, other.nodes_count_);
   }
 
   void print(const std::string &prefix, const NodePtr &node, bool is_left,

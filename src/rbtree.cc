@@ -246,6 +246,25 @@ int main() {
     std::cout << std::endl;
   }
 
+  {
+    std::cout << "SWAP" << std::endl;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree1;
+    tree1.insert(std::make_pair(1, "one"));
+    tree1.insert(std::make_pair(2, "two"));
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree2;
+    tree2.insert(std::make_pair(3, "three"));
+    tree2.insert(std::make_pair(4, "four"));
+    tree1.swap(tree2);
+    for (auto i = tree1.begin(); i != tree1.end(); ++i) {
+      std::cout << i->second << " ";
+    }
+    std::cout << std::endl;
+    for (auto i = tree2.begin(); i != tree2.end(); ++i) {
+      std::cout << i->second << " ";
+    }
+    std::cout << std::endl;
+  }
+
   std::cout << "finish" << std::endl;
   return 0;
 }

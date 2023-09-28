@@ -98,8 +98,8 @@ class map final {
     }
   }
   void erase(iterator pos) { tree_.erase(pos); }
-  void swap(map& other) noexcept {}  // TODO
-  void merge(map& source) {}         // TODO
+  void swap(map& other) noexcept { tree_.swap(other.tree_); }
+  void merge(map& source) {}  // TODO
 
   // map lookup
   bool contains(const Key& key) const {
