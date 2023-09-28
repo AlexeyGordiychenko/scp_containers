@@ -32,6 +32,19 @@ class vector {
   size_type size_;
   size_type capacity_;
 };
+
+template <typename T>
+vector<T>::vector() : data_(nullptr), size_(0), capacity_(0)  {}
+
+template <typename T>
+vector<T>::~vector() {
+  delete[] data_;
+
+  size_ = 0;
+  capacity_ = 0;
+  data_ = nullptr;
+}
+
 }  // namespace s21
 
 #endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_
