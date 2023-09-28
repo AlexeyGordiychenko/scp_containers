@@ -23,7 +23,6 @@ class vector {
   vector(const vector &v);
   vector(vector &&v);
   ~vector();
-
   vector& operator=(vector &&v);
 
   reference at(size_type pos);
@@ -56,6 +55,7 @@ class vector {
   size_type capacity_;
 };
 
+///===VECTOR_MEMBER_FUNCTIONS==============================
 template <typename T>
 vector<T>::vector() : data_(nullptr), size_(0), capacity_(0)  {}
 
@@ -68,10 +68,14 @@ vector<T>::~vector() {
   data_ = nullptr;
 }
 
+///===VECTOR_ELEMENT_ACCESS================================
+///===VECTOR_ITERATORS=====================================
+///===VECTOR_CAPACITY======================================
 template <typename T>
 typename vector<T>::size_type vector<T>::max_size() const noexcept {
   return (std::numeric_limits<std::size_t>::max() / sizeof(value_type));
 }
+///===VECTOR_MODIFIERS=====================================
 
 }  // namespace s21
 
