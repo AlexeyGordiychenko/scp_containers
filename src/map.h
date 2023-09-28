@@ -83,12 +83,12 @@ class map final {
   }
   std::pair<iterator, bool> insert_or_assign(const key_type& key,
                                              mapped_type&& obj) {
-    iterator it = tree_.find(key);
+    auto it = tree_.find(key);
     if (it != tree_.end()) {
-      it->second = obj;
+      it->second = std::forward<mapped_type>(obj);
       return std::make_pair(it, false);
     } else {
-      return insert(key, obj);
+      return insert(key, std::forward<mapped_type>(obj));
     }
   }
   void erase(iterator pos) { tree_.erase(pos); }
