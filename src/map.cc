@@ -57,4 +57,30 @@ int main() {
       std::cout << i->first << ": " << i->second << std::endl;
     }
   }
+  {
+    std::cout << "MAP COPY" << std::endl;
+    s21::map<int, std::string> m1;
+    m1.insert({1, "one"});
+    m1.insert({3, "three"});
+    s21::map<int, std::string> m2(m1);
+    for (auto i = m1.begin(); i != m1.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+    for (auto i = m2.begin(); i != m2.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+  }
+  {
+    std::cout << "MAP COPY2" << std::endl;
+    s21::map<int, std::string> m1;
+    m1.insert({3, "three"});
+    m1.insert({1, "one"});
+    s21::map<int, std::string> m2(m1);
+    for (auto i = m1.begin(); i != m1.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+    for (auto i = m2.begin(); i != m2.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+  }
 }

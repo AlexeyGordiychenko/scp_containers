@@ -115,7 +115,22 @@ class RbTree {
   // constructors and destructor
   RbTree() = default;
   RbTree &operator=(const RbTree &) = delete;
-  RbTree(const RbTree &) = delete;
+  RbTree(const RbTree &other) {
+    // nodes to keep track of the edges of the tree
+    NodePtr leftmost = nullptr, rightmost = nullptr;
+    // copy the tree
+    root_ = copy_node_recursive(other.root_, leftmost, rightmost);
+    nodes_count_ = other.nodes_count_;
+    // if there is only one branch, set the leftmost/rightmost as root_
+    if (!root_->left_ && root_ != leftmost) leftmost = root_;
+    if (!root_->right_ && root_ != rightmost) rightmost = root_;
+    // set the sentinel node
+    sentinel_node_ = std::make_shared<Node>();
+    sentinel_node_->left_ = leftmost;
+    sentinel_node_->right_ = rightmost;
+    root_->parent_ = sentinel_node_;
+  }
+
   virtual ~RbTree() = default;
 
   // iterator methods
@@ -585,5 +600,34 @@ class RbTree {
       node = node->right_;
     }
     return node;
+  }
+
+  NodePtr copy_node_recursive(const NodePtr &node_to_copy, NodePtr &leftmost,
+                              NodePtr &rightmost) {
+    if (!node_to_copy) {
+      return nullptr;
+    }
+
+    NodePtr new_node = std::make_shared<Node>(*node_to_copy->data_);
+    new_node->left_ =
+        copy_node_recursive(node_to_copy->left_, leftmost, rightmost);
+    new_node->right_ =
+        copy_node_recursive(node_to_copy->right_, leftmost, rightmost);
+    if (new_node->left_) {
+      new_node->left_->parent_ = new_node;
+    }
+    if (new_node->right_) {
+      new_node->right_->parent_ = new_node;
+    }
+
+    // Update leftmost and rightmost nodes
+    if (!leftmost && !new_node->left_) {
+      leftmost = new_node;
+    }
+    if (!rightmost && !new_node->right_) {
+      rightmost = new_node;
+    }
+
+    return new_node;
   }
 };
