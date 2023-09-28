@@ -9,14 +9,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(
-  containersplus_lib STATIC
+  containersplus_lib INTERFACE
   ${SOURCES}
   ${HEADERS}
-)
-
-target_compile_options(
-  containersplus_lib PRIVATE
-  -Wall -Werror -Wextra -pedantic -g
 )
 
 set_target_properties(

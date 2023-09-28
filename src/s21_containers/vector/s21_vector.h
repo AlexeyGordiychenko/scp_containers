@@ -1,7 +1,7 @@
 #ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_
 #define CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_
 
-#include <iostream>
+#include <limits>
 
 namespace s21 {
 template <typename T>
@@ -10,7 +10,7 @@ class vector {
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
-  using size_type = size_t;
+  using size_type = std::size_t;
 
   // using iterator = ...
   // using const_iterator = ...
@@ -22,10 +22,33 @@ class vector {
   vector(std::initializer_list<value_type> const &items);
   vector(const vector &v);
   vector(vector &&v);
+  ~vector();
 
   vector& operator=(vector &&v);
 
-  ~vector();
+  reference at(size_type pos);
+  reference operator[](size_type pos);
+  const_reference operator[](size_type pos) const;
+  const_reference front() const;
+  const_reference back() const;
+  iterator_simple data();
+
+  // iterator begin();
+  // iterator end();
+
+  bool empty();
+  size_type size(); 
+  size_type max_size() const noexcept;
+  void reserve(size_type size);
+  size_type capacity();
+  void shrink_to_fit();
+
+  void clear();
+  // iterator insert(iterator pos, const_reference value);
+  // void erase(iterator pos);
+  void push_back(const_reference value);
+  void pop_back();
+  void swap(vector& other);
 
  private:
   iterator_simple data_;
@@ -43,6 +66,11 @@ vector<T>::~vector() {
   size_ = 0;
   capacity_ = 0;
   data_ = nullptr;
+}
+
+template <typename T>
+typename vector<T>::size_type vector<T>::max_size() const noexcept {
+  return (std::numeric_limits<std::size_t>::max() / sizeof(value_type));
 }
 
 }  // namespace s21
