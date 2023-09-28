@@ -114,13 +114,8 @@ class RbTree {
 
   // constructors and destructor
   RbTree() = default;
-  RbTree(RbTree &&other) noexcept
-      : root_(std::move(other.root_)),
-        sentinel_node_(std::move(other.sentinel_node_)),
-        nodes_count_(other.nodes_count_) {
-    other.nodes_count_ = 0;
-  }
-  RbTree &operator=(const RbTree &) = delete;
+
+  // copy constructor
   RbTree(const RbTree &other) {
     // nodes to keep track of the edges of the tree
     NodePtr leftmost = nullptr, rightmost = nullptr;
@@ -135,6 +130,33 @@ class RbTree {
     sentinel_node_->left_ = leftmost;
     sentinel_node_->right_ = rightmost;
     root_->parent_ = sentinel_node_;
+  }
+
+  // move constructor
+  RbTree(RbTree &&other) noexcept
+      : root_(std::move(other.root_)),
+        sentinel_node_(std::move(other.sentinel_node_)),
+        nodes_count_(other.nodes_count_) {
+    other.nodes_count_ = 0;
+  }
+
+  // copy operator
+  RbTree &operator=(const RbTree &other) {
+    if (this != &other) {
+      // create a copy and move it
+      *this = std::move(RbTree(other));
+    }
+    return *this;
+  }
+
+  // move operator
+  RbTree &operator=(RbTree &&other) noexcept {
+    if (this != &other) {
+      std::swap(root_, other.root_);
+      std::swap(sentinel_node_, other.sentinel_node_);
+      std::swap(nodes_count_, other.nodes_count_);
+    }
+    return *this;
   }
 
   virtual ~RbTree() = default;

@@ -220,6 +220,32 @@ int main() {
     std::cout << std::endl;
   }
 
+  {
+    std::cout << "COPY OPERATOR" << std::endl;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree1;
+    tree1.insert(std::make_pair(1, "one"));
+    tree1.insert(std::make_pair(2, "two"));
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree2;
+    tree2 = tree1;
+    for (auto i = tree2.begin(); i != tree2.end(); ++i) {
+      std::cout << i->second << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  {
+    std::cout << "MOVE OPERATOR" << std::endl;
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree1;
+    tree1.insert(std::make_pair(1, "one"));
+    tree1.insert(std::make_pair(2, "two"));
+    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree2;
+    tree2 = std::move(tree1);
+    for (auto i = tree2.begin(); i != tree2.end(); ++i) {
+      std::cout << i->second << " ";
+    }
+    std::cout << std::endl;
+  }
+
   std::cout << "finish" << std::endl;
   return 0;
 }
