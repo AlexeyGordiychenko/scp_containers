@@ -543,6 +543,151 @@ class RbTree {
     node->parent_ = left_child;
   }
 
+  void merge(RbTree &tree2, bool duplicates = false) {
+    NodePtr first1 = nullptr, last1 = nullptr, first2 = nullptr,
+            last2 = nullptr;
+
+    // Convert both trees to sorted doubly-linked lists
+    tree_to_list(root_, first1, last1);
+    tree_to_list(tree2.root_, first2, last2);
+
+    root_ = nullptr;
+    tree2.root_ = nullptr;
+
+    // Merge the two sorted lists into one
+    merge_lists(first1, first2, duplicates);
+    int max_depth1 = 0, max_depth2 = 0;
+
+    // Convert the merged list back to a balanced Red-Black Tree
+    nodes_count_ = 0;
+    tree2.nodes_count_ = 0;
+    root_ = list_to_tree(first1, nullptr, nodes_count_, max_depth1);
+    root_->parent_ = sentinel_node_;
+    sentinel_node_->left_ = first1;
+    sentinel_node_->right_ = *last1->data_ < *last2->data_ ? last2 : last1;
+    if (first2) {
+      tree2.root_ =
+          list_to_tree(first2, nullptr, tree2.nodes_count_, max_depth2);
+      tree2.root_->parent_ = tree2.sentinel_node_;
+      tree2.sentinel_node_->left_ = first2;
+      tree2.sentinel_node_->right_ =
+          *last1->data_ < *last2->data_ ? last2 : last1;
+    }
+
+    // Adjust the colors of the nodes
+    adjust_tree(root_, max_depth1);
+    root_->color_ = BLACK;
+    if (tree2.root_) {
+      adjust_tree(tree2.root_, max_depth2);
+      tree2.root_->color_ = BLACK;
+    }
+  }
+
+  void tree_to_list(NodePtr node, NodePtr &first, NodePtr &last) {
+    if (node == nullptr) {
+      return;
+    }
+    tree_to_list(node->left_, first, last);
+    if (last) {
+      last->right_ = node;
+      node->left_ = last;
+    } else {
+      first = node;
+    }
+    last = node;
+    tree_to_list(node->right_, first, last);
+  }
+
+  void merge_lists(NodePtr &first1, NodePtr &first2, bool duplicates) {
+    NodePtr start1 = first1;  // To traverse first list
+    NodePtr start2 = first2;  // To traverse second list
+    NodePtr prev1 = nullptr;  // To keep track of previous node in first list
+    // Continue as long as there are nodes left in both lists
+    while (start1 && start2) {
+      if (*start1->data_ < *start2->data_) {
+        prev1 = start1;
+        start1 = start1->right_;
+      } else if (!duplicates && *start1->data_ == *start2->data_) {
+        start2 = start2->right_;
+      } else {
+        // Detach current node from second list
+        NodePtr next2 = start2->right_;
+        if (next2) next2->left_ = start2->left_;
+        if (start2->left_) start2->left_->right_ = next2;
+
+        // Insert current node from second list into first list
+        if (prev1) {
+          prev1->right_ = start2;
+          start2->left_ = prev1;
+        } else {
+          first1 = start2;
+        }
+
+        // Update links between newly inserted node and next node in first list
+        start2->right_ = start1;
+        start1->left_ = start2;
+
+        // Move to next node in second list
+        prev1 = start2;
+        start2 = next2;
+
+        // Update first2 to always point to start of second list
+        if (start2 && !start2->left_) first2 = start2;
+        if (!start2 && first2 == prev1) first2 = nullptr;
+      }
+    }
+
+    // If there are still nodes left in second list, append them to the end of
+    // the first list
+    if (!start1 && start2) {
+      NodePtr prev2 = start2->left_;
+      prev1->right_ = start2;
+      start2->left_ = prev1;
+      if (prev2) {
+        prev2->right_ = nullptr;
+      } else {
+        first2 = nullptr;
+      }
+    }
+  }
+
+  NodePtr list_to_tree(NodePtr &first, NodePtr last, size_type &nodes_count,
+                       int &max_depth, int current_depth = 0) {
+    if (!first || first == last) {
+      return nullptr;
+    }
+    NodePtr slow = first;
+    NodePtr fast = first;
+    while (fast != last && fast->right_ != last) {
+      slow = slow->right_;
+      fast = fast->right_->right_;
+    }
+    NodePtr root = slow;
+    root->left_ =
+        list_to_tree(first, slow, nodes_count, max_depth, current_depth + 1);
+    root->right_ = list_to_tree(slow->right_, last, nodes_count, max_depth,
+                                current_depth + 1);
+    if (root->left_) root->left_->parent_ = root;
+    if (root->right_) root->right_->parent_ = root;
+    max_depth = std::max(max_depth, current_depth);
+    nodes_count++;
+    return root;
+  }
+
+  void adjust_tree(NodePtr node, int max_depth, int current_depth = 0) {
+    if (node == nullptr) return;
+
+    if ((max_depth - current_depth) % 2 == 0) {
+      set_node_color(node, RED);
+    } else {
+      set_node_color(node, BLACK);
+    }
+
+    // Recurse for the left and right children
+    adjust_tree(node->left_, max_depth, current_depth + 1);
+    adjust_tree(node->right_, max_depth, current_depth + 1);
+  }
+
  private:
   struct Node {
     DataPtr data_;
