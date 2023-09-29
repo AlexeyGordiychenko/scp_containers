@@ -18,25 +18,25 @@ namespace s21 {
         protected:
             node* ptr_;
         public:
-            ListIterator(node* ptr);
-            ListIterator(const ListIterator<T>& it);
+            ListIterator(node* ptr) noexcept;
+            ListIterator(const ListIterator<T>& it) noexcept;
             ~ListIterator();
 
-            ListIterator<T>& operator++();
-            ListIterator<T>& operator--();
-            bool operator==(const ListIterator<T>& other) const;
-            bool operator!=(const ListIterator<T>& other) const;
-            T& operator*() const;
-            T* operator->() const;
+            ListIterator<T>& operator++() noexcept;
+            ListIterator<T>& operator--() noexcept;
+            bool operator==(const ListIterator<T>& other) const noexcept;
+            bool operator!=(const ListIterator<T>& other) const noexcept;
+            T& operator*() const noexcept;
+            T* operator->() const noexcept;
 
         friend class list<T>;
     };
 
     template <class T>
-    inline ListIterator<T>::ListIterator(node* ptr) : ptr_(ptr) {}
+    inline ListIterator<T>::ListIterator(node* ptr) noexcept : ptr_(ptr) {}
 
     template <class T>
-    inline ListIterator<T>::ListIterator(const ListIterator<T>& it) : ptr_(it.ptr_) {};
+    inline ListIterator<T>::ListIterator(const ListIterator<T>& it) noexcept : ptr_(it.ptr_) {};
 
     template <class T>
     inline ListIterator<T>::~ListIterator()
@@ -44,39 +44,39 @@ namespace s21 {
     }
 
     template <class T>
-    inline ListIterator<T>& ListIterator<T>::operator++()
+    inline ListIterator<T>& ListIterator<T>::operator++() noexcept
     {
         ptr_= ptr_->next_;
         return *this;
     }
 
     template <class T>
-    inline ListIterator<T> &ListIterator<T>::operator--()
+    inline ListIterator<T> &ListIterator<T>::operator--() noexcept
     {
         ptr_= ptr_->prev_;
         return *this;
     }
 
     template <class T>
-    inline bool ListIterator<T>::operator==(const ListIterator<T>& other) const
+    inline bool ListIterator<T>::operator==(const ListIterator<T>& other) const noexcept
     {
         return ptr_ == other.ptr_;
     }
 
     template <class T>
-    inline bool ListIterator<T>::operator!=(const ListIterator<T>& other) const
+    inline bool ListIterator<T>::operator!=(const ListIterator<T>& other) const noexcept
     {
         return ptr_ != other.ptr_;
     }
 
     template <class T>
-    inline T &ListIterator<T>::operator*() const
+    inline T &ListIterator<T>::operator*() const noexcept 
     {
         return *ptr_->data_;
     }
 
     template <class T>
-    inline T *ListIterator<T>::operator->() const
+    inline T *ListIterator<T>::operator->() const noexcept
     {
         return ptr_->data_;
     }

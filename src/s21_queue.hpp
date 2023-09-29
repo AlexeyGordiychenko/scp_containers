@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include "s21_list.hpp"
 #include <utility>
+#include <iostream>
 
 namespace s21 {
     template <class T, class C = list<T>>
@@ -37,23 +38,30 @@ namespace s21 {
     };
 
     template <class T, class C>
-    inline queue<T, C>::queue() {}
+    inline queue<T, C>::queue() {
+      //std::cout << "\nconst call";
+    }
 
     template <class T, class C>
     inline queue<T, C>::queue(
     std::initializer_list<value_type> const& items) { list_ = list(items); }
 
     template <class T, class C>
-    inline queue<T, C>::queue(const queue& q) { list_ = list(q.list_); }
+    inline queue<T, C>::queue(const queue& q) { 
+      //std::cout << "\ncopy const call";
+      list_ = list(q.list_); }
 
     template <class T, class C>
-    inline queue<T, C>::queue(queue&& q) { list_ = std::move(q.list_); }
+    inline queue<T, C>::queue(queue&& q) { 
+      //std::cout << "\nmoved const call";
+      list_ = std::move(q.list_); }
 
     template <class T, class C>
     inline queue<T, C>::~queue() {}
 
     template <class T, class C>
     inline queue<T, C>& queue<T, C>::operator=(queue&& q) noexcept {
+      //std::cout << "\nassign call";
       list_ = std::move(q.list_);
       return *this;
     }

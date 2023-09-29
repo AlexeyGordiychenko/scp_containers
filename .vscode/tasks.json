@@ -14,6 +14,7 @@
                 "-lgtest",
                 "-lgtest_main",
                 "-lpthread",
+                "-coverage",
                 
             ],
             "options": {

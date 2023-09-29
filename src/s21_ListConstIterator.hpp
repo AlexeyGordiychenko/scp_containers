@@ -7,48 +7,45 @@ namespace s21 {
     template<class T>
     class ListConstIterator : public ListIterator<T>
     {
-      private:
-          /* data */
-          //const s21_node<T>* ptr_;
       public:
-          ListConstIterator(s21_node<T>* ptr);// : ptr_(ptr) {};
-          ListConstIterator(ListIterator<T> it);// : ListIterator<T>(it) {};// : ptr_(ptr) 
+          ListConstIterator(s21_node<T>* ptr) noexcept;
+          ListConstIterator(ListIterator<T> it) noexcept;
           ~ListConstIterator();
 
-          bool operator==(const ListConstIterator<T>& other) const;
-          bool operator!=(const ListConstIterator<T>& other) const;
-          const T& operator*() const;
-          const T* operator->() const;
+          bool operator==(const ListConstIterator<T>& other) const noexcept;
+          bool operator!=(const ListConstIterator<T>& other) const noexcept;
+          const T& operator*() const noexcept;
+          const T* operator->() const noexcept;
     };
 
     template <class T>
-    inline ListConstIterator<T>::ListConstIterator(s21_node<T>* ptr) : ListIterator<T>(ptr) {}
+    inline ListConstIterator<T>::ListConstIterator(s21_node<T>* ptr) noexcept : ListIterator<T>(ptr) {}
 
     template <class T>
-    inline ListConstIterator<T>::ListConstIterator(ListIterator<T> it) : ListIterator<T>(it) {};
+    inline ListConstIterator<T>::ListConstIterator(ListIterator<T> it) noexcept : ListIterator<T>(it) {};
 
     template <class T>
     inline ListConstIterator<T>::~ListConstIterator(){};
 
     template <class T>
     inline bool ListConstIterator<T>::operator==(
-        const ListConstIterator<T>& other) const {
+        const ListConstIterator<T>& other) const noexcept {
       return this->ptr_ == other.ptr_;
     }
 
     template <class T>
     inline bool ListConstIterator<T>::operator!=(
-        const ListConstIterator<T>& other) const {
+        const ListConstIterator<T>& other) const noexcept {
       return this->ptr_ != other.ptr_;
     }
 
     template <class T>
-    inline const T& ListConstIterator<T>::operator*() const {
+    inline const T& ListConstIterator<T>::operator*() const noexcept {
         return *this->ptr_->data_;
     }
 
     template <class T>
-    inline const T* ListConstIterator<T>::operator->() const {
+    inline const T* ListConstIterator<T>::operator->() const noexcept {
       return this->ptr_->data_;
     };
 

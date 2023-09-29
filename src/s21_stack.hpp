@@ -19,61 +19,66 @@ namespace s21 {
     private:
       C list_;
     public:
-        stack();
-        stack(std::initializer_list<value_type> const& items);
-        stack(const stack& q);
-        stack(stack &&q);
+        stack() noexcept;
+        stack(std::initializer_list<value_type> const& items) noexcept;
+        stack(const stack& q) noexcept;
+        stack(stack &&q) noexcept;
         ~stack();
         stack<T, C>& operator=(stack&& q) noexcept;
 
-        const_reference top();
+        const_reference top() const noexcept;
 
-        bool empty();
-        size_type size();
-        void push(const_reference value);
-        void pop();
-        void swap(stack& other);
+        bool empty() const noexcept;
+        size_type size() const noexcept;
+        void push(const_reference value) noexcept;
+        void pop() noexcept;
+        void swap(stack& other) noexcept;
     };
 
     template <class T, class C>
-    inline stack<T, C>::stack() {}
+    inline stack<T, C>::stack() noexcept {}
 
     template <class T, class C>
     inline stack<T, C>::stack(
-    std::initializer_list<value_type> const& items) { list_ = list(items); }
+    std::initializer_list<value_type> const& items) noexcept { list_ = list(items); }
 
     template <class T, class C>
-    inline stack<T, C>::stack(const stack& q) { list_ = list(q.list_); }
+    inline stack<T, C>::stack(const stack& q) noexcept { 
+      //std::cout << "moved const call\n";
+      list_ = list(q.list_); }
 
     template <class T, class C>
-    inline stack<T, C>::stack(stack&& q) { list_ = std::move(q.list_); }
+    inline stack<T, C>::stack(stack&& q) noexcept { 
+      //std::cout << "moved const call\n";
+      list_ = std::move(q.list_); }
 
     template <class T, class C>
     inline stack<T, C>::~stack() {}
 
     template <class T, class C>
     inline stack<T, C>& stack<T, C>::operator=(stack&& q) noexcept {
+      //std::cout << "assign const call\n";
       list_ = std::move(q.list_);
       return *this;
     }
 
     template <class T, class C>
-    inline typename stack<T, C>::const_reference stack<T, C>::top() { return list_.back(); }
+    inline typename stack<T, C>::const_reference stack<T, C>::top() const noexcept { return list_.back(); }
 
     template <class T, class C>
-    inline bool stack<T, C>::empty() { return list_.empty(); }
+    inline bool stack<T, C>::empty() const noexcept { return list_.empty(); }
 
     template <class T, class C>
-    inline typename stack<T, C>::size_type stack<T, C>::size() { return list_.size(); }
+    inline typename stack<T, C>::size_type stack<T, C>::size() const noexcept { return list_.size(); }
 
     template <class T, class C>
-    inline void stack<T, C>::push(const_reference value) { list_.push_back(value); }
+    inline void stack<T, C>::push(const_reference value) noexcept { list_.push_back(value); }
 
     template <class T, class C>
-    inline void stack<T, C>::pop() { list_.pop_back(); }
+    inline void stack<T, C>::pop() noexcept { list_.pop_back(); }
 
     template <class T, class C>
-    inline void stack<T, C>::swap(stack& other) { list_.swap(other.list_); }
+    inline void stack<T, C>::swap(stack& other) noexcept { list_.swap(other.list_); }
 
   }  // namespace s21
 

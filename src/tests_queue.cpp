@@ -1,37 +1,15 @@
 #include "s21_queue.hpp"
 #include "s21_test_obj.hpp"
-//#include "s21_node.hpp"
 #include <gtest/gtest.h>
 #include <iostream> 
-//std::cout<<&r<<"\n";
-
+#include <utility>
 
 using namespace s21;
 
 int main(int argc, char **argv) {
-
-  //   test_obj a;
-  //   test_obj b;
-  //   test_obj c;
-  //   auto g = {a,b,c};
-
-  //   std::cout<<&a<<"\n";
-  //   std::cout<<&b<<"\n";
-  //   std::cout<<&c<<"\n";
-
-  //   // test_obj& r = a;
-  //   // std::cout<<&r<<"\n";
-
-  // for (auto i : g) {
-  //           std::cout<<&i<<"\n";
-  //          //test_obj& r = a;
-  //       }
-
-
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-
 
 TEST(s21_queue_test, constr) {
     test_obj arr[3];
@@ -47,12 +25,12 @@ TEST(s21_queue_test, constr) {
     EXPECT_EQ(queue_c.back().id, arr[2].id);
     EXPECT_EQ(queue_c.front().id, arr[0].id);
     EXPECT_EQ(queue_c.size(), 3);
-    queue<test_obj, list<test_obj>> queue_d{queue<test_obj, list<test_obj>>{arr[0], arr[1], arr[2]}};
+    queue<test_obj, list<test_obj>> queue_d{std::move(queue<test_obj, list<test_obj>>{arr[0], arr[1], arr[2]})};
     EXPECT_EQ(queue_d.back().id, arr[2].id);
     EXPECT_EQ(queue_d.front().id, arr[0].id);
     EXPECT_EQ(queue_d.size(), 3);
-    queue<test_obj, list<test_obj>> queue_e{arr[0], arr[1], arr[2]};
-    queue<test_obj, list<test_obj>> queue_f = queue_e;
+    queue<test_obj, list<test_obj>> queue_f{arr[0], arr[1], arr[2]};
+    queue_f = queue<test_obj, list<test_obj>>{arr[0], arr[1], arr[2]};
     EXPECT_EQ(queue_f.back().id, arr[2].id);
     EXPECT_EQ(queue_f.front().id, arr[0].id);
     EXPECT_EQ(queue_f.size(), 3);
