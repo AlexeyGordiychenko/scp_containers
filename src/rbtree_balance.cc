@@ -2,6 +2,7 @@
 #include <array>
 #include <iostream>
 #include <random>
+#include <set>
 
 #include "rbtree.h"
 
@@ -102,15 +103,16 @@ void Test2() {
   }
 }
 
-void Test3(int n, int from, int to, bool duplicates = false,
-           bool colored = true) {
+void GenerateTree(int n, int from, int to, size_t& size, int& min, int& max,
+                  RbTree<int, int, GetKeySet, std::less<int>>& tree,
+                  bool duplicates = false) {
   // Create a random device
   std::random_device rd;
   // Initialize Mersenne Twister pseudo-random number generator
   std::mt19937 gen(rd());
 
-  std::cout << "SET TEST3" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  // std::cout << "SET TEST3" << std::endl;
+  // RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert;
   std::vector<int> values_to_delete;
   for (int i = 0; i < n; ++i) {
@@ -138,8 +140,55 @@ void Test3(int n, int from, int to, bool duplicates = false,
 
   auto min_max_pair =
       std::minmax_element(values_to_insert.begin(), values_to_insert.end());
-  OutputTree(tree, values_to_insert.size(), *min_max_pair.first,
-             *min_max_pair.second, colored);
+
+  size = values_to_insert.size();
+  min = *min_max_pair.first;
+  max = *min_max_pair.second;
+}
+void Test3(int n, int from, int to, bool duplicates = false,
+           bool colored = true) {
+  // // Create a random device
+  // std::random_device rd;
+  // // Initialize Mersenne Twister pseudo-random number generator
+  // std::mt19937 gen(rd());
+
+  // std::cout << "SET TEST3" << std::endl;
+  // RbTree<int, int, GetKeySet, std::less<int>> tree;
+  // std::vector<int> values_to_insert;
+  // std::vector<int> values_to_delete;
+  // for (int i = 0; i < n; ++i) {
+  //   int value = GenerateRandomNumber(gen, from, to);
+  //   if (GenerateRandomNumber(gen, 0, 3) == 0) {
+  //     values_to_delete.push_back(value);
+  //   }
+  //   values_to_insert.push_back(value);
+  // }
+
+  // FillTree(values_to_insert, values_to_delete, tree, duplicates);
+
+  // if (!duplicates) {
+  //   std::sort(values_to_insert.begin(), values_to_insert.end());
+  //   auto last = std::unique(values_to_insert.begin(),
+  //   values_to_insert.end()); values_to_insert.erase(last,
+  //   values_to_insert.end());
+  // }
+  // for (int element : values_to_delete) {
+  //   auto it =
+  //       std::find(values_to_insert.begin(), values_to_insert.end(), element);
+  //   if (it != values_to_insert.end()) {
+  //     values_to_insert.erase(it);
+  //   }
+  // }
+
+  // auto min_max_pair =
+  //     std::minmax_element(values_to_insert.begin(), values_to_insert.end());
+  std::cout << "SET TEST3" << std::endl;
+  size_t size;
+  int min, max;
+  RbTree<int, int, GetKeySet, std::less<int>> tree;
+
+  GenerateTree(n, from, to, size, min, max, tree, duplicates);
+  OutputTree(tree, size, min, max, colored);
 }
 
 void Test4() {
@@ -259,6 +308,120 @@ void Test13() {
   std::cout << std::endl;
 }
 
+void TestMerge(int n, int from, int to, bool duplicates = false,
+               bool colored = true) {
+  // std::cout << "MERGE" << std::endl;
+  size_t size1, size2;
+  int min1, max1, min2, max2;
+  RbTree<int, int, GetKeySet, std::less<int>> tree1;
+  GenerateTree(n, from, to, size1, min1, max1, tree1, duplicates);
+  // OutputTree(tree1, size1, min1, max1, colored);
+  RbTree<int, int, GetKeySet, std::less<int>> tree2;
+  GenerateTree(n, from, to, size2, min2, max2, tree2, duplicates);
+  // OutputTree(tree2, size2, min2, max2, colored);
+  tree1.merge(tree2, duplicates);
+  // std::cout << "merged tree" << std::endl;
+  // tree1.print(colored);
+  // std::cout << "other tree" << std::endl;
+  // tree2.print(colored);
+  bool correct_size = (tree1.size() + tree2.size()) == (size1 + size2);
+  auto it1 = tree1.begin();
+  auto it2 = tree1.rbegin();
+  bool correct_min = *it1 == std::min(min1, min2);
+  bool correct_max = *it2 == std::max(max1, max2);
+
+  bool correct_merge = tree1.is_valid_tree() && tree2.is_valid_tree() &&
+                       correct_size && correct_min && correct_max;
+  std::string color_valid =
+      (colored) ? (correct_merge ? "\033[0;32m" : "\033[0;31m") : "";
+  std::string color_off = (colored) ? "\033[0m" : "";
+  std::cout << "Merge is " << color_valid << (correct_merge ? "" : "not ")
+            << "correct" << color_off << std::endl;
+  // std::string color_valid1 =
+  //     (colored) ? (is_valid1 ? "\033[0;32m" : "\033[0;31m") : "";
+  // std::string color_valid2 =
+  //     (colored) ? (is_valid2 ? "\033[0;32m" : "\033[0;31m") : "";
+  // std::string color_off = (colored) ? "\033[0m" : "";
+  // std::cout << "Tree1 is " << color_valid1 << (is_valid1 ? "" : "not ")
+  //           << "correct" << color_off << "; Tree2 is " << color_valid2
+  //           << (is_valid2 ? "" : "not ") << "correct" << color_off <<
+  //           std::endl;
+}
+
+void TestMergeSet(int n, int m, int from, int to, bool colored = true) {
+  std::random_device rd;
+  // Initialize Mersenne Twister pseudo-random number generator
+  std::mt19937 gen(rd());
+
+  RbTree<int, int, GetKeySet, std::less<int>> tree1, tree2;
+  std::set<int> std_set1, std_set2;
+  for (int i = 0; i < n; ++i) {
+    int value = GenerateRandomNumber(gen, from, to);
+    tree1.insert(value);
+    std_set1.insert(value);
+  }
+  for (int i = 0; i < m; ++i) {
+    int value = GenerateRandomNumber(gen, from, to);
+    tree2.insert(value);
+    std_set2.insert(value);
+  }
+
+  tree1.merge(tree2, false);
+  std_set1.merge(std_set2);
+
+  auto tree_begin = tree1.begin();
+  auto tree_end = tree1.rbegin();
+  auto set_begin = std_set1.begin();
+  auto set_end = std_set1.rbegin();
+
+  bool correct_merge = tree1.is_valid_tree() && tree2.is_valid_tree() &&
+                       tree1.size() == std_set1.size() &&
+                       tree2.size() == std_set2.size() &&
+                       *tree_begin == *set_begin && *tree_end == *set_end;
+  std::string color_valid =
+      (colored) ? (correct_merge ? "\033[0;32m" : "\033[0;31m") : "";
+  std::string color_off = (colored) ? "\033[0m" : "";
+  std::cout << "Merge is " << color_valid << (correct_merge ? "" : "not ")
+            << "correct" << color_off << std::endl;
+}
+
+void TestMergeMultiSet(int n, int m, int from, int to, bool colored = true) {
+  std::random_device rd;
+  // Initialize Mersenne Twister pseudo-random number generator
+  std::mt19937 gen(rd());
+
+  RbTree<int, int, GetKeySet, std::less<int>> tree1, tree2;
+  std::multiset<int> std_set1, std_set2;
+  for (int i = 0; i < n; ++i) {
+    int value = GenerateRandomNumber(gen, from, to);
+    tree1.insert(value, true);
+    std_set1.insert(value);
+  }
+  for (int i = 0; i < m; ++i) {
+    int value = GenerateRandomNumber(gen, from, to);
+    tree2.insert(value, true);
+    std_set2.insert(value);
+  }
+
+  tree1.merge(tree2, true);
+  std_set1.merge(std_set2);
+
+  auto tree_begin = tree1.begin();
+  auto tree_end = tree1.rbegin();
+  auto set_begin = std_set1.begin();
+  auto set_end = std_set1.rbegin();
+
+  bool correct_merge = tree1.is_valid_tree() && tree2.is_valid_tree() &&
+                       tree1.size() == std_set1.size() &&
+                       tree2.size() == std_set2.size() &&
+                       *tree_begin == *set_begin && *tree_end == *set_end;
+  std::string color_valid =
+      (colored) ? (correct_merge ? "\033[0;32m" : "\033[0;31m") : "";
+  std::string color_off = (colored) ? "\033[0m" : "";
+  std::cout << "Merge is " << color_valid << (correct_merge ? "" : "not ")
+            << "correct" << color_off << std::endl;
+}
+
 int main() {
   // Test1();
   // Test2();
@@ -272,7 +435,18 @@ int main() {
   // for (int i = 0; i < 100; i++) Test3(1000, 1, 10000);
   // for (int i = 0; i < 100; i++) Test3(1000, 1, 10000, true);
   // Test3(20, 1, 100, true);
-  Test11();
-  Test12();
-  Test13();
+  // Test11();
+  // Test12();
+  // Test13();
+  // for (int i = 0; i < 100; i++) TestMerge(1000, 1, 10000, true);
+  // for (int i = 0; i < 100; i++) TestMerge(1000, 1, 10000, false);
+  std::random_device rd;
+  std::mt19937 gen(rd());
+
+  for (int i = 0; i < 100; i++)
+    TestMergeSet(GenerateRandomNumber(gen, 1000, 2000),
+                 GenerateRandomNumber(gen, 1000, 2000), 1, 10000);
+  for (int i = 0; i < 100; i++)
+    TestMergeMultiSet(GenerateRandomNumber(gen, 1000, 2000),
+                      GenerateRandomNumber(gen, 1000, 2000), 1, 10000);
 }
