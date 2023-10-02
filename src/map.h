@@ -103,6 +103,18 @@ class map final {
   void swap(map& other) noexcept { tree_.swap(other.tree_); }
   void merge(map& other) { tree_.merge(other.tree_); }
 
+  template <typename... Args>
+  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
+    std::vector<std::pair<iterator, bool>> inserted;
+    inserted.reserve(sizeof...(args));
+
+    for (auto&& arg : {args...}) {
+      inserted.push_back(insert(arg));
+    }
+
+    return inserted;
+  }
+
   // map lookup
   bool contains(const Key& key) const {
     return tree_.find(key) != tree_.cend();

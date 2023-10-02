@@ -138,4 +138,19 @@ int main() {
       std::cout << i->first << ": " << i->second << std::endl;
     }
   }
+
+  {
+    std::cout << "MAP INSERT MANY" << std::endl;
+    s21::map<int, std::string> m;
+    m.insert({1, "one"});
+    m.insert({2, "two"});
+    auto vec =
+        m.insert_many(std::make_pair(3, "three"), std::make_pair(4, "four"));
+    for (auto i = vec.begin(); i != vec.end(); i++) {
+      std::cout << i->first->first << ": " << i->first->second << std::endl;
+    }
+    for (auto i = m.begin(); i != m.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+  }
 }
