@@ -25,6 +25,7 @@ namespace s21 {
         stack(stack &&q) noexcept;
         ~stack();
         stack<T, C>& operator=(stack&& q) noexcept;
+        stack<T, C>& operator=(const stack& q) noexcept;
 
         const_reference top() const noexcept;
 
@@ -59,6 +60,12 @@ namespace s21 {
     inline stack<T, C>& stack<T, C>::operator=(stack&& q) noexcept {
       //std::cout << "assign const call\n";
       list_ = std::move(q.list_);
+      return *this;
+    }
+
+    template <class T, class C>
+    inline stack<T, C>& stack<T, C>::operator=(const stack& q) noexcept {
+      list_ = q.list_;
       return *this;
     }
 

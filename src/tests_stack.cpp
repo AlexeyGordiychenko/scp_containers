@@ -22,7 +22,7 @@ TEST(s21_stack_test, constr) {
     EXPECT_EQ(stack_b.top().id, arr[2].id);
     EXPECT_EQ(stack_b.size(), 3);
     EXPECT_EQ(stack_b.empty(), false);
-    stack<test_obj, list<test_obj>> stack_c = stack<test_obj, list<test_obj>>{arr[0], arr[1], arr[2]};
+    stack<test_obj, list<test_obj>> stack_c(stack<test_obj, list<test_obj>>{arr[0], arr[1], arr[2]});
     EXPECT_EQ(stack_c.top().id, arr[2].id);
     EXPECT_EQ(stack_c.size(), 3);
     EXPECT_EQ(stack_c.empty(), false);
@@ -32,6 +32,10 @@ TEST(s21_stack_test, constr) {
     EXPECT_EQ(stack_d.empty(), false);
     stack<test_obj, list<test_obj>> stack_e{arr[3], arr[4], arr[5]};
     stack<test_obj, list<test_obj>> stack_f{arr[0], arr[1], arr[2]};
+    stack_f = std::move(stack<test_obj, list<test_obj>>{arr[3], arr[4], arr[5]});
+    EXPECT_EQ(stack_e.top().id, arr[5].id);
+    EXPECT_EQ(stack_e.size(), 3);
+    EXPECT_EQ(stack_e.empty(), false);
     stack_f = stack<test_obj, list<test_obj>>{arr[3], arr[4], arr[5]};
     EXPECT_EQ(stack_e.top().id, arr[5].id);
     EXPECT_EQ(stack_e.size(), 3);

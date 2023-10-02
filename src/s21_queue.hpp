@@ -26,6 +26,7 @@ namespace s21 {
         queue(queue &&q);
         ~queue();
         queue<T, C>& operator=(queue&& q) noexcept;
+        queue<T, C>& operator=(const queue& q) noexcept;
 
         const_reference front();
         const_reference back();
@@ -48,7 +49,7 @@ namespace s21 {
 
     template <class T, class C>
     inline queue<T, C>::queue(const queue& q) { 
-      //std::cout << "\ncopy const call";
+      //std::cout << "\ncopy const call queue";
       list_ = list(q.list_); }
 
     template <class T, class C>
@@ -61,8 +62,15 @@ namespace s21 {
 
     template <class T, class C>
     inline queue<T, C>& queue<T, C>::operator=(queue&& q) noexcept {
-      //std::cout << "\nassign call";
+      //std::cout << "\nmove assign call";
       list_ = std::move(q.list_);
+      return *this;
+    }
+
+    template <class T, class C>
+    inline queue<T, C>& queue<T, C>::operator=(const queue& q) noexcept {
+      //std::cout << "copy assign call queue\n";
+      list_ = q.list_;
       return *this;
     }
 

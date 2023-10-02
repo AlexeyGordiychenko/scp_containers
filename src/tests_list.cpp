@@ -23,7 +23,7 @@ TEST(s21_list_test, copy_constructor) {
     test_obj b;
     test_obj c;
     list<test_obj> list_a{a,b,c};
-    list<test_obj> list_b = list_a;
+    list<test_obj> list_b(list_a);
     EXPECT_EQ(list_b.back().id, c.id);
     EXPECT_EQ(list_b.front().id, a.id);
     EXPECT_EQ(list_b.size(), 3);
@@ -47,6 +47,38 @@ TEST(s21_list_test, construct_initializer_list) {
     EXPECT_EQ(l.back().id, c.id);
     EXPECT_EQ(l.front().id, a.id);
     EXPECT_EQ(l.size(), 3);
+}
+
+TEST(s21_list_test, operator_move_assign) {
+    test_obj a;
+    test_obj b;
+    test_obj c;
+    list<test_obj> list_a{a,b,c};
+    EXPECT_EQ(list_a.size(), 3);
+    EXPECT_EQ(list_a.back().id, c.id);
+    EXPECT_EQ(list_a.front().id, a.id);
+    test_obj d;
+    test_obj e;
+    test_obj f;
+    list_a = list<test_obj>{d, e, f};
+     EXPECT_EQ(list_a.size(), 3);
+    EXPECT_EQ(list_a.back().id, f.id);
+    EXPECT_EQ(list_a.front().id, d.id);
+}
+
+TEST(s21_list_test, operator_copy_assign) {
+    test_obj a;
+    test_obj b;
+    test_obj c;
+    list<test_obj> list_a{a,b,c};
+    test_obj d;
+    test_obj e;
+    test_obj f;
+    list<test_obj> list_b{d,e,f};
+    list_b = list_a;
+    EXPECT_EQ(list_b.back().id, c.id);
+    EXPECT_EQ(list_b.front().id, a.id);
+    EXPECT_EQ(list_b.size(), 3);
 }
 
 TEST(s21_list_test, sort) {
@@ -250,21 +282,4 @@ TEST(s21_list_test, list_clear) {
     for (auto i : list_a) 
         j++;
     EXPECT_EQ(j, 0);
-}
-
-TEST(s21_list_test, operator_assign) {
-    test_obj a;
-    test_obj b;
-    test_obj c;
-    list<test_obj> list_a{a,b,c};
-    EXPECT_EQ(list_a.size(), 3);
-    EXPECT_EQ(list_a.back().id, c.id);
-    EXPECT_EQ(list_a.front().id, a.id);
-    test_obj d;
-    test_obj e;
-    test_obj f;
-    list_a = list<test_obj>{d, e, f};
-     EXPECT_EQ(list_a.size(), 3);
-    EXPECT_EQ(list_a.back().id, f.id);
-    EXPECT_EQ(list_a.front().id, d.id);
 }

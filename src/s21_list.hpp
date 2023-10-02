@@ -26,6 +26,7 @@ namespace s21 {
 
         void init(node *node) noexcept;
         void add(node* n) noexcept;
+        void copy(const list &list) noexcept;
 
     public:
         list() noexcept;
@@ -35,6 +36,7 @@ namespace s21 {
         list(list &&l) noexcept;
         ~list();
         list<T>& operator=(list&& l) noexcept;
+        list<T>& operator=(const list& l) noexcept;
 
         const_reference front() const noexcept;
         const_reference back() const noexcept;
@@ -59,6 +61,8 @@ namespace s21 {
         void reverse() noexcept;
         void unique() noexcept;
         void sort() noexcept;
+
+        //iterator insert_many(const_iterator pos, value_type&&... args);
     };
 
     template <class T>
@@ -108,9 +112,7 @@ namespace s21 {
     }
 
     template <class T>
-    inline list<T>::list(const list &l) noexcept
-    {
-        //std::cout << "copy constr call";
+    inline void list<T>::copy(const list& l) noexcept {
         init(new node);
         size_ = l.size_;
         node *old = null_node_;
@@ -126,6 +128,11 @@ namespace s21 {
     }
 
     template <class T>
+    inline list<T>::list(const list &l) noexcept { 
+       std::cout << "copy constr call list";
+      copy(l); }
+
+    template <class T>
     inline list<T>::list(list &&l) noexcept
     {
         //std::cout << "moved constr call";
@@ -134,6 +141,27 @@ namespace s21 {
 
         l.init(new node);
         l.size_ = 0;
+    }
+
+    template <class T>
+    inline list<T> &list<T>::operator=(list &&l) noexcept
+    {
+        //std::cout << "moved assign call";
+        clear();
+        delete null_node_;
+        null_node_ = l.null_node_;
+        size_ = l.size();
+        l.init(new node);
+        return *this;
+    }
+
+    template <class T>
+    inline list<T>& list<T>::operator=(const list& l) noexcept {
+      std::cout << "copy assign call list\n";
+      clear();
+      delete null_node_;
+      copy(l);
+      return *this;
     }
 
     template <class T>
@@ -157,18 +185,7 @@ namespace s21 {
         init(null_node_);
     }
 
-    template <class T>
-    inline list<T> &list<T>::operator=(list &&l) noexcept
-    {
-        //std::cout << "assign call";
-        clear();
-        delete null_node_;
-        null_node_ = l.null_node_;
-        size_ = l.size();
-        l.init(new node);
-        return *this;
-    }
-    
+
     template <class T>
     inline typename list<T>::const_reference list<T>::front() const noexcept { return *null_node_->next_->data_; }
 
@@ -306,6 +323,14 @@ namespace s21 {
       delete left;
     }
 
+    // template <class T>
+    // inline typename list<T>::iterator list<T>::insert_many(const_iterator pos, T&&... args) {
+    //   //insert(pos, args);
+    //   (insert(pos, args),);
+      
+    //   //return iterator();
+    // }
+
     template <class T>
     inline void list<T>::merge(list& other) noexcept {
       list* tmp = new list;
@@ -345,6 +370,7 @@ namespace s21 {
       null_node_->prev_->set_next(n);
       size_++;
     }
-  }  // namespace s21
+
+}  // namespace s21
 
 #endif 

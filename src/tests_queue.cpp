@@ -21,7 +21,7 @@ TEST(s21_queue_test, constr) {
     EXPECT_EQ(queue_b.front().id, arr[0].id);
     EXPECT_EQ(queue_b.size(), 3);
     EXPECT_EQ(queue_b.empty(), false);
-    queue<test_obj, list<test_obj>> queue_c = queue<test_obj, list<test_obj>>{arr[0], arr[1], arr[2]};
+    queue<test_obj, list<test_obj>> queue_c(queue_b);
     EXPECT_EQ(queue_c.back().id, arr[2].id);
     EXPECT_EQ(queue_c.front().id, arr[0].id);
     EXPECT_EQ(queue_c.size(), 3);
@@ -30,7 +30,11 @@ TEST(s21_queue_test, constr) {
     EXPECT_EQ(queue_d.front().id, arr[0].id);
     EXPECT_EQ(queue_d.size(), 3);
     queue<test_obj, list<test_obj>> queue_f{arr[0], arr[1], arr[2]};
-    queue_f = queue<test_obj, list<test_obj>>{arr[0], arr[1], arr[2]};
+    queue_f = queue_d;
+    EXPECT_EQ(queue_f.back().id, arr[2].id);
+    EXPECT_EQ(queue_f.front().id, arr[0].id);
+    EXPECT_EQ(queue_f.size(), 3);
+    queue_f = std::move(queue<test_obj, list<test_obj>>{arr[0], arr[1], arr[2]});
     EXPECT_EQ(queue_f.back().id, arr[2].id);
     EXPECT_EQ(queue_f.front().id, arr[0].id);
     EXPECT_EQ(queue_f.size(), 3);
