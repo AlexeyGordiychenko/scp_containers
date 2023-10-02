@@ -1,6 +1,8 @@
 #ifndef S21_MAP_H_
 #define S21_MAP_H_
 
+#include <vector>
+
 #include "rbtree.h"
 
 namespace s21 {
@@ -99,7 +101,7 @@ class map final {
   }
   void erase(iterator pos) { tree_.erase(pos); }
   void swap(map& other) noexcept { tree_.swap(other.tree_); }
-  void merge(map& source) {}  // TODO
+  void merge(map& other) { tree_.merge(other.tree_); }
 
   // map lookup
   bool contains(const Key& key) const {
