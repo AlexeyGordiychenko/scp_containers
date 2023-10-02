@@ -283,3 +283,36 @@ TEST(s21_list_test, list_clear) {
         j++;
     EXPECT_EQ(j, 0);
 }
+
+TEST(s21_list_test, insert_many) {
+    test_obj arr[7];
+    list<test_obj> list_a{arr[0],arr[5],arr[6]};
+    EXPECT_EQ(list_a.back().id, arr[6].id);
+    EXPECT_EQ(list_a.front().id, arr[0].id);
+    EXPECT_EQ(list_a.size(), 3);
+    auto it = ++list_a.begin();
+    auto res_it = list_a.insert_many(it, arr[1], arr[2], arr[3], arr[4]);
+    EXPECT_EQ(list_a.front().id, arr[0].id);
+    EXPECT_EQ(list_a.back().id, arr[6].id);
+    EXPECT_EQ(list_a.size(), 7);
+    int c = arr[0].id;
+    for(auto i : list_a)
+        EXPECT_EQ(i.id, c++);
+    EXPECT_EQ(arr[4].id, res_it->id);
+}
+
+TEST(s21_list_test, push_back_many) {
+     list<test_obj> l;
+    test_obj arr[6];
+    l.insert_many_back(arr[0], arr[1], arr[2]);
+    EXPECT_EQ(l.front(), arr[0]);
+    EXPECT_EQ(l.back(), arr[2]);
+    EXPECT_EQ(l.size(), 3);
+    l.insert_many_back(arr[3], arr[4], arr[5]);
+    EXPECT_EQ(l.front(), arr[0]);
+    EXPECT_EQ(l.back(), arr[5]);
+    EXPECT_EQ(l.size(), 6);
+     int c = arr[0].id;
+    for(auto i : l)
+        EXPECT_EQ(i.id, c++);
+}

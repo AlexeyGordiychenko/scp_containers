@@ -6,6 +6,7 @@ namespace s21 {
         static int ID;
     public:
         int id;
+        bool operator==(test_obj other) const { return id == other.id ;}
         test_obj(/* args */);
         ~test_obj();
     };

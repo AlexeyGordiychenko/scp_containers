@@ -62,7 +62,13 @@ namespace s21 {
         void unique() noexcept;
         void sort() noexcept;
 
-        //iterator insert_many(const_iterator pos, value_type&&... args);
+        template<class... Args>
+        iterator insert_many(const_iterator pos, Args&&... args) noexcept { return (this->insert(pos, args), ...); }
+
+        template<class... Args>
+        void insert_many_back(Args&&... args) noexcept {
+          (this->push_back(args), ...);
+        }
     };
 
     template <class T>
