@@ -612,8 +612,10 @@ class RbTree {
 
         // Update other_head to always point to start of second list
         if (other_it && !other_it->left_) other_head = other_it;
-        if (!other_it && other_head == prev) other_head = nullptr;
-        if (other_it) other_tail = other_it;
+        if (!other_it && other_head == prev) {
+          other_head = nullptr;
+          other_tail = nullptr;
+        }
       }
     }
 

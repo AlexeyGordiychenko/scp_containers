@@ -355,29 +355,33 @@ void TestMergeSet(int n, int m, int from, int to, bool colored = true) {
 
   RbTree<int, int, GetKeySet, std::less<int>> tree1, tree2;
   std::set<int> std_set1, std_set2;
+  if (DEBUG) std::cout << "Inserted values: " << std::endl;
   for (int i = 0; i < n; ++i) {
     int value = GenerateRandomNumber(gen, from, to);
     tree1.insert(value);
     std_set1.insert(value);
+    if (DEBUG) std::cout << value << ",";
   }
+  if (DEBUG) std::cout << std::endl;
+
   for (int i = 0; i < m; ++i) {
     int value = GenerateRandomNumber(gen, from, to);
     tree2.insert(value);
     std_set2.insert(value);
+    if (DEBUG) std::cout << value << ",";
   }
+  if (DEBUG) std::cout << std::endl;
 
   tree1.merge(tree2, false);
   std_set1.merge(std_set2);
 
-  auto tree_begin = tree1.begin();
-  auto tree_end = tree1.rbegin();
-  auto set_begin = std_set1.begin();
-  auto set_end = std_set1.rbegin();
-
   bool correct_merge = tree1.is_valid_tree() && tree2.is_valid_tree() &&
                        tree1.size() == std_set1.size() &&
                        tree2.size() == std_set2.size() &&
-                       *tree_begin == *set_begin && *tree_end == *set_end;
+                       *tree1.begin() == *std_set1.begin() &&
+                       *tree1.rbegin() == *std_set1.rbegin() &&
+                       *tree2.begin() == *std_set2.begin() &&
+                       *tree2.rbegin() == *std_set2.rbegin();
   std::string color_valid =
       (colored) ? (correct_merge ? "\033[0;32m" : "\033[0;31m") : "";
   std::string color_off = (colored) ? "\033[0m" : "";
@@ -438,8 +442,6 @@ int main() {
   // Test11();
   // Test12();
   // Test13();
-  // for (int i = 0; i < 100; i++) TestMerge(1000, 1, 10000, true);
-  // for (int i = 0; i < 100; i++) TestMerge(1000, 1, 10000, false);
   std::random_device rd;
   std::mt19937 gen(rd());
 
@@ -449,4 +451,5 @@ int main() {
   for (int i = 0; i < 100; i++)
     TestMergeMultiSet(GenerateRandomNumber(gen, 1000, 2000),
                       GenerateRandomNumber(gen, 1000, 2000), 1, 10000);
+  // TestMergeSet(20, 15, 1, 100);
 }
