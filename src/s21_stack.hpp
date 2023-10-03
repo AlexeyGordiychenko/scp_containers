@@ -34,6 +34,9 @@ namespace s21 {
         void push(const_reference value) noexcept;
         void pop() noexcept;
         void swap(stack& other) noexcept;
+
+        template<class... Args>
+        void insert_many_front(Args&&... args) noexcept { (this->push(args), ...); }
     };
 
     template <class T, class C>

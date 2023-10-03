@@ -302,13 +302,29 @@ TEST(s21_list_test, insert_many) {
 }
 
 TEST(s21_list_test, push_back_many) {
-     list<test_obj> l;
+    list<test_obj> l;
     test_obj arr[6];
     l.insert_many_back(arr[0], arr[1], arr[2]);
     EXPECT_EQ(l.front(), arr[0]);
     EXPECT_EQ(l.back(), arr[2]);
     EXPECT_EQ(l.size(), 3);
     l.insert_many_back(arr[3], arr[4], arr[5]);
+    EXPECT_EQ(l.front(), arr[0]);
+    EXPECT_EQ(l.back(), arr[5]);
+    EXPECT_EQ(l.size(), 6);
+     int c = arr[0].id;
+    for(auto i : l)
+        EXPECT_EQ(i.id, c++);
+}
+
+TEST(s21_list_test, push_front_many) {
+    list<test_obj> l;
+    test_obj arr[6];
+    l.insert_many_back(arr[3], arr[4], arr[5]);
+    EXPECT_EQ(l.front(), arr[3]);
+    EXPECT_EQ(l.back(), arr[5]);
+    EXPECT_EQ(l.size(), 3);
+    l.insert_many_front(arr[2], arr[1], arr[0]);
     EXPECT_EQ(l.front(), arr[0]);
     EXPECT_EQ(l.back(), arr[5]);
     EXPECT_EQ(l.size(), 6);

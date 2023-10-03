@@ -81,3 +81,20 @@ TEST(s21_stack_test, swap) {
     EXPECT_EQ(stack_b.size(), 3);
 }
 
+TEST(s21_stack_test, insert_many_front) {
+    stack<test_obj, list<test_obj>> s;
+    test_obj arr[6];
+    s.insert_many_front(arr[0], arr[1], arr[2]);
+    EXPECT_EQ(s.top(), arr[2]);
+    EXPECT_EQ(s.size(), 3);
+    s.insert_many_front(arr[3], arr[4], arr[5]);
+    EXPECT_EQ(s.top(), arr[5]);
+    EXPECT_EQ(s.size(), 6);
+    int size = s.size();
+    for (int i = 5; i >= 0; --i) {
+       EXPECT_EQ(s.top(), arr[i]);
+       s.pop();
+    }
+    EXPECT_EQ(s.size(), 0);
+}
+

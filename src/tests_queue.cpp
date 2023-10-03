@@ -88,3 +88,22 @@ TEST(s21_queue_test, swap) {
     EXPECT_EQ(queue_b.size(), 3);
 }
 
+TEST(s21_queue_test, insert_many_back) {
+    queue<test_obj, list<test_obj>> q;
+    test_obj arr[6];
+    q.insert_many_back(arr[0], arr[1], arr[2]);
+    EXPECT_EQ(q.front(), arr[0]);
+    EXPECT_EQ(q.back(), arr[2]);
+    EXPECT_EQ(q.size(), 3);
+    q.insert_many_back(arr[3], arr[4], arr[5]);
+    EXPECT_EQ(q.front(), arr[0]);
+    EXPECT_EQ(q.back(), arr[5]);
+    EXPECT_EQ(q.size(), 6);
+    int size = q.size();
+    for (int i = 0; i < size; ++i) {
+       EXPECT_EQ(q.front(), arr[i]);
+       q.pop();
+    }
+    EXPECT_EQ(q.size(), 0);
+}
+

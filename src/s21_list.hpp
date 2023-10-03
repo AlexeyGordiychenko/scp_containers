@@ -66,9 +66,12 @@ namespace s21 {
         iterator insert_many(const_iterator pos, Args&&... args) noexcept { return (this->insert(pos, args), ...); }
 
         template<class... Args>
-        void insert_many_back(Args&&... args) noexcept {
-          (this->push_back(args), ...);
-        }
+        void insert_many_back(Args&&... args) noexcept { (this->push_back(args), ...); }
+
+        template<class... Args>
+        void insert_many_front(Args&&... args) noexcept { (this->push_front(args), ...); }
+
+
     };
 
     template <class T>
@@ -328,14 +331,6 @@ namespace s21 {
       delete right;
       delete left;
     }
-
-    // template <class T>
-    // inline typename list<T>::iterator list<T>::insert_many(const_iterator pos, T&&... args) {
-    //   //insert(pos, args);
-    //   (insert(pos, args),);
-      
-    //   //return iterator();
-    // }
 
     template <class T>
     inline void list<T>::merge(list& other) noexcept {
