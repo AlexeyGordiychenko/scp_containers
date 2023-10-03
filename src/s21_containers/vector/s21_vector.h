@@ -1,25 +1,26 @@
 #ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_
 #define CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_
 
+#include <initializer_list>
 #include <limits>
 
-#include "s21_vector_iterator.h"
 #include "s21_vector_const_iterator.h"
+#include "s21_vector_iterator.h"
 
 namespace s21 {
 template <typename T>
 class vector {
  public:
-  class VectorIterator;
-  class VectorConstIterator;
+  class VectorIterator<T>;
+  class VectorConstIterator<T>;
 
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
   using size_type = std::size_t;
 
-  using iterator = vector<T>::VectorIterator;
-  using const_iterator = vector<T>::VectorConstIterator;
+  using iterator = VectorIterator<T>;
+  using const_iterator = VectorConstIterator<T>;
   // using iterator_simple = T *;
   // using const_iterator_simple = const T *;
 
@@ -88,12 +89,14 @@ vector<T>::vector(size_type n)
 
 template <typename T>
 vector<T>::vector(std::initializer_list<value_type> const &items)
-    : data_(n > 0 ? new value_type[items.size()] : nullptr), size_(items.size()), capacity_(items.size()) {
+    : data_(items.size() > 0 ? new value_type[items.size()] : nullptr),
+      size_(items.size()),
+      capacity_(items.size()) {
   if (data_ == nullptr && items.size() > 0) {
     throw std::bad_alloc();
   }
 
-  std::copy();
+  // std::copy();
 }
 
 ///===VECTOR_ELEMENT_ACCESS================================

@@ -4,18 +4,24 @@
 #include "s21_vector.h"
 
 namespace s21 {
-  template <typename T>
-  class vector<T>::VectorIterator {
-   public:
-    vector<T>::VectorIterator::VectorIterator() = delete;
-    vector<T>::VectorIterator::VectorIterator(T* ptr) noexcept;
-    vector<T>::VectorIterator::~VectorIterator() noexcept;
+template <typename T>
+class VectorIterator {
+ public:
+  VectorIterator() = delete;
+  VectorIterator(T* ptr) noexcept;
+  ~VectorIterator();
 
+ private:
+  T* pointer_;
+};
 
+template <typename T>
+VectorIterator<T>::VectorIterator(T* ptr) noexcept : pointer_(ptr) {}
 
-   private:
-    T * pointer_;
-  };
-} //  namespace s21
+template <typename T>
+VectorIterator<T>::~VectorIterator() {
+  pointer_ = nullptr;
+}
+}  //  namespace s21
 
 #endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_ITERATOR_H_
