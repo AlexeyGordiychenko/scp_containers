@@ -1,6 +1,11 @@
+#ifndef S21_RBTREE_H_
+#define S21_RBTREE_H_
+
 #include <iostream>
 #include <limits>
 #include <memory>
+
+namespace s21 {
 
 // RbTree class declaration
 template <class Key, class Value, class KeyOfValue,
@@ -813,3 +818,5 @@ class RbTree {
     return new_node;
   }
 };
+}  // namespace s21
+#endif  // S21_RBTREE_H_

@@ -17,7 +17,7 @@ struct GetKeyMap {
 int main() {
   std::cout << "SET TEST" << std::endl;
   {
-    RbTree<int, int, GetKeySet, std::less<int>> tree;
+    s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
     int a = 9;
     tree.insert(a);
     tree.insert(7);
@@ -45,7 +45,8 @@ int main() {
 
   {
     std::cout << "MAP TEST" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree;
     tree.insert(std::make_pair(9, "nine"));
     tree.insert(std::make_pair(7, "seven"));
     tree.insert(std::make_pair(15, "fifteen"));
@@ -72,7 +73,8 @@ int main() {
 
   {
     std::cout << "MAP EMPTY TEST" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree;
     for (auto i = tree.begin(); i != tree.end(); ++i) {
       std::cout << (*i).second << " ";
     }
@@ -83,7 +85,8 @@ int main() {
 
   {
     std::cout << "MAP SINGLE ELEMENT TEST" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree;
     tree.insert(std::make_pair(2, "two"));
     std::cout << "MAP SINGLE ELEMENT FORWARD ITERATOR" << std::endl;
     for (auto i = tree.begin(); i != tree.end(); ++i) {
@@ -99,7 +102,7 @@ int main() {
 
   {
     std::cout << "SET TEST2" << std::endl;
-    RbTree<int, int, GetKeySet, std::less<int>> tree;
+    s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
     tree.insert(30);
     tree.insert(20);
     tree.insert(10);
@@ -119,7 +122,7 @@ int main() {
 
   {
     std::cout << "SET CHANGE NON-CONST ITERATOR" << std::endl;
-    RbTree<int, int, GetKeySet, std::less<int>> tree;
+    s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
     tree.insert(5);
     tree.insert(3);
     tree.insert(8);
@@ -137,7 +140,8 @@ int main() {
 
   {
     std::cout << "MAP CHANGE NON-CONST ITERATOR" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree;
     tree.insert(std::make_pair(5, "five"));
     tree.insert(std::make_pair(3, "three"));
     tree.insert(std::make_pair(8, "eight"));
@@ -155,7 +159,8 @@ int main() {
 
   {
     std::cout << "MAP FIND TEST" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree;
     tree.insert(std::make_pair(9, "nine"));
     tree.insert(std::make_pair(7, "seven"));
     tree.insert(std::make_pair(15, "fifteen"));
@@ -186,17 +191,19 @@ int main() {
 
   {
     std::cout << "MAX SIZE" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree;
     std::cout << tree.max_size() << std::endl;
   }
 
   {
     std::cout << "COPY CONSTRUCTOR" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree1;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree1;
     tree1.insert(std::make_pair(1, "one"));
     tree1.insert(std::make_pair(2, "two"));
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree2(
-        tree1);
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree2(tree1);
     for (auto i = tree1.begin(); i != tree1.end(); ++i) {
       std::cout << i->second << " ";
     }
@@ -209,11 +216,12 @@ int main() {
 
   {
     std::cout << "MOVE CONSTRUCTOR" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree1;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree1;
     tree1.insert(std::make_pair(1, "one"));
     tree1.insert(std::make_pair(2, "two"));
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree2 =
-        std::move(tree1);
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree2 = std::move(tree1);
     for (auto i = tree2.begin(); i != tree2.end(); ++i) {
       std::cout << i->second << " ";
     }
@@ -222,10 +230,12 @@ int main() {
 
   {
     std::cout << "COPY OPERATOR" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree1;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree1;
     tree1.insert(std::make_pair(1, "one"));
     tree1.insert(std::make_pair(2, "two"));
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree2;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree2;
     tree2 = tree1;
     for (auto i = tree2.begin(); i != tree2.end(); ++i) {
       std::cout << i->second << " ";
@@ -235,10 +245,12 @@ int main() {
 
   {
     std::cout << "MOVE OPERATOR" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree1;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree1;
     tree1.insert(std::make_pair(1, "one"));
     tree1.insert(std::make_pair(2, "two"));
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree2;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree2;
     tree2 = std::move(tree1);
     for (auto i = tree2.begin(); i != tree2.end(); ++i) {
       std::cout << i->second << " ";
@@ -248,10 +260,12 @@ int main() {
 
   {
     std::cout << "SWAP" << std::endl;
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree1;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree1;
     tree1.insert(std::make_pair(1, "one"));
     tree1.insert(std::make_pair(2, "two"));
-    RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>> tree2;
+    s21::RbTree<int, std::pair<int, std::string>, GetKeyMap, std::less<int>>
+        tree2;
     tree2.insert(std::make_pair(3, "three"));
     tree2.insert(std::make_pair(4, "four"));
     tree1.swap(tree2);

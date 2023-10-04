@@ -30,7 +30,7 @@ int GenerateRandomNumber(std::mt19937& gen, int a, int b) {
 
 void FillTree(std::vector<int>& values_to_insert,
               std::vector<int>& values_to_delete,
-              RbTree<int, int, GetKeySet, std::less<int>>& tree,
+              s21::RbTree<int, int, GetKeySet, std::less<int>>& tree,
               bool duplicates = false) {
   if (DEBUG) std::cout << "Inserted values: " << std::endl;
   for (auto value : values_to_insert) {
@@ -45,7 +45,7 @@ void FillTree(std::vector<int>& values_to_insert,
   if (DEBUG) std::cout << std::endl;
 }
 
-void OutputTree(RbTree<int, int, GetKeySet, std::less<int>>& tree,
+void OutputTree(s21::RbTree<int, int, GetKeySet, std::less<int>>& tree,
                 int expected_size, int expected_min, int expected_max,
                 bool colored = true) {
   // tree.print(colored);
@@ -83,7 +83,7 @@ void OutputTree(RbTree<int, int, GetKeySet, std::less<int>>& tree,
 
 void Test1() {
   std::cout << "SET TEST1" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert = {9,  7, 15, 6,  5,  2,  22, 18,
                                        25, 8, 16, 17, 19, 20, 23, 24};
   std::vector<int> values_to_delete = {18, 9};
@@ -92,7 +92,7 @@ void Test1() {
 }
 void Test2() {
   std::cout << "SET TEST2" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   auto it9 = tree.insert(9);
   auto it8 = tree.insert(8);
   tree.erase(it8.first);
@@ -104,7 +104,7 @@ void Test2() {
 }
 
 void GenerateTree(int n, int from, int to, size_t& size, int& min, int& max,
-                  RbTree<int, int, GetKeySet, std::less<int>>& tree,
+                  s21::RbTree<int, int, GetKeySet, std::less<int>>& tree,
                   bool duplicates = false) {
   // Create a random device
   std::random_device rd;
@@ -112,7 +112,7 @@ void GenerateTree(int n, int from, int to, size_t& size, int& min, int& max,
   std::mt19937 gen(rd());
 
   // std::cout << "SET TEST3" << std::endl;
-  // RbTree<int, int, GetKeySet, std::less<int>> tree;
+  // s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert;
   std::vector<int> values_to_delete;
   for (int i = 0; i < n; ++i) {
@@ -153,7 +153,7 @@ void Test3(int n, int from, int to, bool duplicates = false,
   // std::mt19937 gen(rd());
 
   // std::cout << "SET TEST3" << std::endl;
-  // RbTree<int, int, GetKeySet, std::less<int>> tree;
+  // s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   // std::vector<int> values_to_insert;
   // std::vector<int> values_to_delete;
   // for (int i = 0; i < n; ++i) {
@@ -185,7 +185,7 @@ void Test3(int n, int from, int to, bool duplicates = false,
   std::cout << "SET TEST3" << std::endl;
   size_t size;
   int min, max;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
 
   GenerateTree(n, from, to, size, min, max, tree, duplicates);
   OutputTree(tree, size, min, max, colored);
@@ -193,7 +193,7 @@ void Test3(int n, int from, int to, bool duplicates = false,
 
 void Test4() {
   std::cout << "SET TEST4" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert = {789, 188, 12,  454, 82,  474, 203,
                                        418, 330, 279, 282, 996, 676, 252,
                                        43,  131, 851, 971, 270, 266};
@@ -204,7 +204,7 @@ void Test4() {
 
 void Test5() {
   std::cout << "SET TEST5" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert = {789, 188, 12,  454, 82,  474, 203,
                                        418, 330, 279, 282, 996, 676, 252,
                                        43,  131, 851, 971, 270, 266};
@@ -217,7 +217,7 @@ void Test5() {
 
 void Test6() {
   std::cout << "SET TEST6" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert = {54, 85, 47, 15, 64, 53, 56, 32, 87, 14,
                                        49, 64, 17, 43, 48, 3,  66, 80, 21, 100};
   std::vector<int> values_to_delete = {85, 56, 87, 3, 21};
@@ -226,7 +226,7 @@ void Test6() {
 }
 void Test7() {
   std::cout << "SET TEST7" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert = {18, 73, 53, 71, 61, 2, 8, 11, 87, 65};
   std::vector<int> values_to_delete = {8, 11};
   FillTree(values_to_insert, values_to_delete, tree);
@@ -235,7 +235,7 @@ void Test7() {
 
 void Test8() {
   std::cout << "SET TEST8" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert = {31, 42, 85, 84, 39, 72, 11, 89, 71, 13};
   std::vector<int> values_to_delete = {85, 89};
   FillTree(values_to_insert, values_to_delete, tree);
@@ -244,7 +244,7 @@ void Test8() {
 
 void Test9() {
   std::cout << "SET TEST9" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert = {29, 35, 87, 62, 91, 32, 66, 98, 38, 5,
                                        23, 9,  85, 91, 39, 48, 70, 87, 79, 76};
   std::vector<int> values_to_delete = {62, 91, 66, 23, 9, 48, 87, 79};
@@ -254,7 +254,7 @@ void Test9() {
 
 void Test10() {
   std::cout << "SET TEST10" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   std::vector<int> values_to_insert = {29, 35, 87, 62, 91, 32, 66, 98, 38, 5,
                                        23, 9,  85, 91, 39, 48, 70, 87, 79, 76};
   std::vector<int> values_to_delete = {62, 91, 66, 23, 9, 48, 87, 79};
@@ -272,7 +272,7 @@ void Test10() {
 
 void Test11() {
   std::cout << "SET TEST11" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   for (auto it = tree.begin(); it != tree.end(); it++) {
     std::cout << *it << " ";
   }
@@ -283,7 +283,7 @@ void Test11() {
 
 void Test12() {
   std::cout << "SET TEST12" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   tree.insert(1);
   for (auto it = tree.begin(); it != tree.end(); it++) {
     std::cout << *it << " ";
@@ -296,7 +296,7 @@ void Test12() {
 
 void Test13() {
   std::cout << "SET TEST13" << std::endl;
-  RbTree<int, int, GetKeySet, std::less<int>> tree;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree;
   tree.insert(1);
   tree.insert(2);
   for (auto it = tree.begin(); it != tree.end(); it++) {
@@ -313,10 +313,10 @@ void TestMerge(int n, int from, int to, bool duplicates = false,
   // std::cout << "MERGE" << std::endl;
   size_t size1, size2;
   int min1, max1, min2, max2;
-  RbTree<int, int, GetKeySet, std::less<int>> tree1;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree1;
   GenerateTree(n, from, to, size1, min1, max1, tree1, duplicates);
   // OutputTree(tree1, size1, min1, max1, colored);
-  RbTree<int, int, GetKeySet, std::less<int>> tree2;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree2;
   GenerateTree(n, from, to, size2, min2, max2, tree2, duplicates);
   // OutputTree(tree2, size2, min2, max2, colored);
   tree1.merge(tree2, duplicates);
@@ -353,7 +353,7 @@ void TestMergeSet(int n, int m, int from, int to, bool colored = true) {
   // Initialize Mersenne Twister pseudo-random number generator
   std::mt19937 gen(rd());
 
-  RbTree<int, int, GetKeySet, std::less<int>> tree1, tree2;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree1, tree2;
   std::set<int> std_set1, std_set2;
   if (DEBUG) std::cout << "Inserted values: " << std::endl;
   for (int i = 0; i < n; ++i) {
@@ -394,7 +394,7 @@ void TestMergeMultiSet(int n, int m, int from, int to, bool colored = true) {
   // Initialize Mersenne Twister pseudo-random number generator
   std::mt19937 gen(rd());
 
-  RbTree<int, int, GetKeySet, std::less<int>> tree1, tree2;
+  s21::RbTree<int, int, GetKeySet, std::less<int>> tree1, tree2;
   std::multiset<int> std_set1, std_set2;
   for (int i = 0; i < n; ++i) {
     int value = GenerateRandomNumber(gen, from, to);
