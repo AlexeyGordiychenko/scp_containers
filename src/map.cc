@@ -140,6 +140,43 @@ int main() {
   }
 
   {
+    std::cout << "MAP MERGE" << std::endl;
+    s21::map<int, std::string> m1;
+    m1.insert({1, "one"});
+    m1.insert({2, "two"});
+    s21::map<int, std::string> m2;
+    m2.insert({3, "three"});
+    m2.insert({4, "four"});
+    m1.merge(m2);
+    for (auto i = m1.begin(); i != m1.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+    for (auto i = m2.begin(); i != m2.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+  }
+
+  {
+    std::cout << "MAP MERGE2" << std::endl;
+    s21::map<int, std::string> m1;
+    m1.insert({1, "one"});
+    m1.insert({2, "two"});
+    s21::map<int, std::string> m2;
+    m2.insert({1, "one"});
+    m2.insert({3, "three"});
+    m2.insert({4, "four"});
+    m1.merge(m2);
+    std::cout << "m1: " << std::endl;
+    for (auto i = m1.begin(); i != m1.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+    std::cout << "m2: " << std::endl;
+    for (auto i = m2.begin(); i != m2.end(); i++) {
+      std::cout << i->first << ": " << i->second << std::endl;
+    }
+  }
+
+  {
     std::cout << "MAP INSERT MANY" << std::endl;
     s21::map<int, std::string> m;
     m.insert({1, "one"});
