@@ -640,11 +640,15 @@ class RbTree {
     tree.nodes_count_ = 0;
     tree.root_ =
         list_to_tree_recursive(head, nullptr, tree.nodes_count_, max_depth);
-    if (tree.root_) tree.root_->parent_ = tree.sentinel_node_;
-    tree.sentinel_node_->left_ = head;
-    tree.sentinel_node_->right_ = tail;
-    adjust_tree(tree.root_, max_depth);
-    if (tree.root_) tree.root_->color_ = BLACK;
+    if (tree.root_) {
+      tree.root_->parent_ = tree.sentinel_node_;
+      tree.sentinel_node_->left_ = head;
+      tree.sentinel_node_->right_ = tail;
+      adjust_tree(tree.root_, max_depth);
+      set_node_color(tree.root_, BLACK);
+    } else {
+      tree.sentinel_node_ = nullptr;
+    }
   }
 
   NodePtr list_to_tree_recursive(NodePtr head, NodePtr tail,
