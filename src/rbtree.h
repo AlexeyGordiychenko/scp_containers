@@ -555,7 +555,9 @@ class RbTree {
     // Convert both trees to sorted doubly-linked lists
     tree_to_list(root_, head, tail);
     tree_to_list(other.root_, other_head, other_tail);
-    tail = (*tail->data_ < *other_tail->data_) ? other_tail : tail;
+    tail = key_compare()(get_key(*tail->data_), get_key(*other_tail->data_))
+               ? other_tail
+               : tail;
 
     // Merge the two sorted lists into one
     merge_lists(head, other_head, other_tail, duplicates);
@@ -588,7 +590,7 @@ class RbTree {
     NodePtr prev = nullptr;  // To keep track of previous node in first list
     // Continue as long as there are nodes left in both lists
     while (it && other_it) {
-      if (*it->data_ < *other_it->data_) {
+      if (key_compare()(get_key(*it->data_), get_key(*other_it->data_))) {
         // Move to next node in first list
         prev = it;
         it = it->right_;
