@@ -29,7 +29,7 @@ gcov_report:
 	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=PROFILE
 	cmake --build build
 	cd build && ./tests/all_containers_test $(GTEST_FLAGS)
-	lcov -t "test" -o test.info -c -d ./build/s21_containers/CMakeFiles/containers_lib.dir -d ./build/s21_containersplus/CMakeFiles/containersplus_lib.dir
+	lcov -t "test" -o test.info -c -d ./build/tests/CMakeFiles/all_containers_test* --ignore-errors mismatch
 	genhtml -o report test.info
 
 open:
