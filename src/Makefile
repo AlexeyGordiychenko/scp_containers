@@ -21,7 +21,7 @@ test:
 %Test:
 	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++
 	cmake --build build
-	cd build && ./tests/all_containers_test $(GTEST_FLAGS) --gtest_filter=$@.*
+	cd build && ./tests/all_containers_test --gtest_filter=$@.*
 
 #======================================================
 #===EXTRA==============================================

@@ -1,5 +1,5 @@
-#ifndef TEST_H
-#define TEST_H
+#ifndef CPP2_S21_CONTAINERS_TESTS_TEST_H_
+#define CPP2_S21_CONTAINERS_TESTS_TEST_H_
 
 #include <iostream>
 
@@ -7,4 +7,12 @@
 #include "../s21_containersplus/s21_containersplus.h"
 #include "gtest/gtest.h"
 
-#endif  // TEST_H
+class ClassWithPrintableDestructor {
+ public:
+  ClassWithPrintableDestructor();
+  ~ClassWithPrintableDestructor();
+ private:
+  int* a;
+};
+
+#endif  // CPP2_S21_CONTAINERS_TESTS_TEST_H_

@@ -21,8 +21,6 @@ class vector {
 
   using iterator = VectorIterator<T>;
   using const_iterator = VectorConstIterator<T>;
-  // using iterator_simple = T *;
-  // using const_iterator_simple = const T *;
 
   vector();
   vector(size_type n);
@@ -33,35 +31,38 @@ class vector {
   vector<T>& operator=(vector<T> &&v) noexcept;
 
   reference at(size_type pos);
+  const_reference at(size_type pos) const;
   reference operator[](size_type pos);
   const_reference operator[](size_type pos) const;
+  reference front();
   const_reference front() const;
+  reference back();
   const_reference back() const;
   T *data() const noexcept;
 
-  iterator begin();
-  iterator end();
-  const_iterator cbegin();
-  const_iterator cend();
+  iterator begin() const noexcept;
+  iterator end() const noexcept;
+  const_iterator cbegin() const noexcept;
+  const_iterator cend() const noexcept;
 
-  bool empty();
+  bool empty() const noexcept;
   size_type size() const noexcept;
   size_type max_size() const noexcept;
   void reserve(size_type size);
   size_type capacity() const noexcept;
-  void shrink_to_fit();
+  // void shrink_to_fit();
 
-  void clear();
+  void clear() noexcept;
   // iterator insert(iterator pos, const_reference value);
   // void erase(iterator pos);
-  void push_back(const_reference value);
-  void pop_back();
+  // void push_back(const_reference value);
+  // void pop_back();
   void swap(vector &other) noexcept;
 
  private:
   size_type size_;
   size_type capacity_;
-  T *data_;
+  T* data_;
 };
 
 ///===VECTOR_MEMBER_FUNCTIONS==============================
@@ -70,7 +71,7 @@ vector<T>::vector() : size_(0U), capacity_(0U), data_(nullptr) {}
 
 template <typename T>
 vector<T>::~vector() noexcept {
-  delete[] data_;
+  if (data_) delete[] data_;
 
   size_ = 0;
   capacity_ = 0;
@@ -83,8 +84,6 @@ vector<T>::vector(size_type n)
   if (data_ == nullptr && n > 0) {
     throw std::bad_alloc();
   }
-
-  std::fill_n(data_, n, value_type());
 }
 
 template <typename T>
@@ -122,13 +121,85 @@ vector<T>& vector<T>::operator=(vector<T> &&v) noexcept {
 
 ///===VECTOR_ELEMENT_ACCESS================================
 template <typename T>
+typename vector<T>::reference vector<T>::at(size_type pos) {
+  if (pos >= size_) {
+    throw std::out_of_range("at: Position is out of range");
+  }
+
+  return data_[pos];
+}
+
+template <typename T>
+typename vector<T>::const_reference vector<T>::at(size_type pos) const {
+  if (pos >= size_) {
+    throw std::out_of_range("at(const): Position is out of range");
+  }
+
+  return data_[pos];
+}
+
+template <typename T>
+typename vector<T>::reference vector<T>::operator[](size_type pos) {
+  return data_[pos];
+}
+
+template <typename T>
+typename vector<T>::const_reference vector<T>::operator[](size_type pos) const {
+  return data_[pos];
+}
+
+template <typename T>
+typename vector<T>::reference vector<T>::front() {
+  return data_[0];
+}
+
+template <typename T>
+typename vector<T>::const_reference vector<T>::front() const {
+  return data_[0];
+}
+
+template <typename T>
+typename vector<T>::reference vector<T>::back() {
+  return data_[size_ - 1];
+}
+
+template <typename T>
+typename vector<T>::const_reference vector<T>::back() const {
+  return data_[size_ - 1];
+}
+
+template <typename T>
 T *vector<T>::data() const noexcept {
   return data_;
 }
 
 ///===VECTOR_ITERATORS=====================================
+template <typename T>
+typename vector<T>::iterator vector<T>::begin() const noexcept {
+  return iterator(data_);
+}
+
+template <typename T>
+typename vector<T>::iterator vector<T>::end() const noexcept {
+  return iterator(data_ + size_);
+}
+
+template <typename T>
+typename vector<T>::const_iterator vector<T>::cbegin() const noexcept {
+  return const_iterator(data_);
+}
+
+template <typename T>
+typename vector<T>::const_iterator vector<T>::cend() const noexcept {
+  return const_iterator(data_ + size_);
+}
 
 ///===VECTOR_CAPACITY======================================
+template <typename T>
+bool vector<T>::empty() const noexcept {
+  return begin() == end();
+}
+
 template <typename T>
 typename vector<T>::size_type vector<T>::size() const noexcept {
   return size_;
@@ -140,11 +211,39 @@ typename vector<T>::size_type vector<T>::max_size() const noexcept {
 }
 
 template <typename T>
+void vector<T>::reserve(size_type new_cap) {
+  if (new_cap > max_size())
+    throw std::length_error();
+
+  if (new_cap > capacity_) {
+    value_type* new_data = (value_type*)::operator new(sizeof(value_type));
+    std::copy(data_, data_ + size_, new_data);
+    delete[] data_;
+    data_ = new_data;
+    capacity_ = new_cap;
+  }
+}
+
+template <typename T>
 typename vector<T>::size_type vector<T>::capacity() const noexcept {
   return capacity_;
 }
 
 ///===VECTOR_MODIFIERS=====================================
+template <typename T>
+void vector<T>::clear() noexcept {
+  for (VectorIterator<T> iter = begin(); iter != end(); ++iter) {
+    (*iter).~T();
+  }
+
+  size_ = 0;
+}
+
+
+
+
+
+
 template <typename T>
 void vector<T>::swap(vector<T> &other) noexcept { 
   std::swap(size_, other.size_);
