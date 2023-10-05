@@ -1,4 +1,4 @@
-#include "map.h"
+#include "s21_map.h"
 
 int main() {
   {

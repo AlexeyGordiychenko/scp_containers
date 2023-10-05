@@ -1,7 +1,7 @@
-#include "rbtree.h"
-
 #include <array>
 #include <iostream>
+
+#include "s21_rb_tree.h"
 
 struct GetKeySet {
   int operator()(const int& value) const { return value; }
