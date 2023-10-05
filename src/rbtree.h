@@ -598,7 +598,8 @@ class RbTree {
         // Move to next node in first list
         prev = it;
         it = it->right_;
-      } else if (!duplicates && *it->data_ == *other_it->data_) {
+      } else if (!duplicates &&
+                 get_key(*it->data_) == get_key(*other_it->data_)) {
         // Move to next node in second list
         other_tail = other_it;
         other_it = other_it->right_;
