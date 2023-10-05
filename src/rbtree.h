@@ -329,7 +329,7 @@ class RbTree {
 
   size_type size() const { return nodes_count_; }
   bool empty() const { return nodes_count_ == 0; }
-  size_type max_size() {
+  size_type max_size() const {
     // this is a rough estimate
     // 3 * sizeof(void *) - because size of node doesn't include some extra
     // overhead of smart pointers (shared, weak) so we compensate it with an
@@ -379,7 +379,7 @@ class RbTree {
   };
   void print(bool colored = true) const { print("", root_, false, colored); };
 
-  bool is_valid_tree() {
+  bool is_valid_tree() const {
     int black_count = 0;
     // The root is always black
     if (node_is_red(root_)) {
@@ -741,7 +741,8 @@ class RbTree {
     if (node) node->color_ = color;
   }
 
-  bool is_valid_node(NodePtr node, int &black_count, int path_black_count = 0) {
+  bool is_valid_node(NodePtr node, int &black_count,
+                     int path_black_count = 0) const {
     // Base case: we've reached a leaf node (null node)
     if (!node) {
       // All paths from root to leaf have the same number of black nodes
