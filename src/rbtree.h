@@ -127,14 +127,12 @@ class RbTree {
     // copy the tree
     root_ = copy_node_recursive(other.root_, leftmost, rightmost);
     nodes_count_ = other.nodes_count_;
-    // if there is only one branch, set the leftmost/rightmost as root_
-    if (!root_->left_ && root_ != leftmost) leftmost = root_;
-    if (!root_->right_ && root_ != rightmost) rightmost = root_;
-    // set the sentinel node
-    sentinel_node_ = std::make_shared<Node>();
-    sentinel_node_->left_ = leftmost;
-    sentinel_node_->right_ = rightmost;
-    root_->parent_ = sentinel_node_;
+    if (root_) {
+      sentinel_node_ = std::make_shared<Node>();
+      sentinel_node_->left_ = leftmost;
+      sentinel_node_->right_ = rightmost;
+      root_->parent_ = sentinel_node_;
+    }
   }
 
   // move constructor
