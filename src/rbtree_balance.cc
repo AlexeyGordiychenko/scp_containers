@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <map>
 #include <random>
 #include <set>
 
@@ -426,6 +427,83 @@ void TestMergeMultiSet(int n, int m, int from, int to, bool colored = true) {
             << "correct" << color_off << std::endl;
 }
 
+void TestMergeMap(int n, int m, int from, int to, bool colored = true) {
+  std::random_device rd;
+  // Initialize Mersenne Twister pseudo-random number generator
+  std::mt19937 gen(rd());
+
+  s21::RbTree<int, std::pair<const int, std::string>, GetKeyMap, std::less<int>>
+      tree1, tree2;
+  std::map<int, std::string> std_map1, std_map2;
+  if (DEBUG) std::cout << "Inserted values: " << std::endl;
+  for (int i = 0; i < n; ++i) {
+    // int value = GenerateRandomNumber(gen, from, to);
+    int value = rand() % from;
+
+    auto key_value = std::make_pair(value, std::to_string(value));
+    tree1.insert(key_value);
+    std_map1.insert(key_value);
+    if (DEBUG) std::cout << value << ",";
+  }
+  if (DEBUG) std::cout << std::endl;
+
+  for (int i = 0; i < m; ++i) {
+    // int value = GenerateRandomNumber(gen, from, to);
+    int value = rand() % to;
+    auto key_value = std::make_pair(value, std::to_string(value));
+    tree2.insert(key_value);
+    std_map2.insert(key_value);
+    if (DEBUG) std::cout << value << ",";
+  }
+  if (DEBUG) std::cout << std::endl;
+
+  int initial_size_tree1 = tree1.size();
+  int initial_size_tree2 = tree2.size();
+  int initial_size_std_map1 = std_map1.size();
+  int initial_size_std_map2 = std_map2.size();
+
+  tree1.merge(tree2, false);
+  std_map1.merge(std_map2);
+
+  bool correct_merge = tree1.is_valid_tree() && tree2.is_valid_tree() &&
+                       tree1.size() == std_map1.size() &&
+                       tree2.size() == std_map2.size() &&
+                       *tree1.begin() == *std_map1.begin() &&
+                       *tree1.rbegin() == *std_map1.rbegin() &&
+                       ((tree2.empty() && std_map2.empty()) ||
+                        (*tree2.begin() == *std_map2.begin() &&
+                         *tree2.rbegin() == *std_map2.rbegin()));
+  std::string color_valid =
+      (colored) ? (correct_merge ? "\033[0;32m" : "\033[0;31m") : "";
+  std::string color_off = (colored) ? "\033[0m" : "";
+  std::cout << "Merge is " << color_valid << (correct_merge ? "" : "not ")
+            << "correct" << color_off << "(" << initial_size_tree1 << "+"
+            << initial_size_tree2 << "):"
+            << "(" << initial_size_std_map1 << "+" << initial_size_std_map2
+            << ") " << tree1.size() << ":" << std_map1.size() << " "
+            << tree2.size() << ":" << std_map2.size() << " ("
+            << (tree1.begin()->first) << "-" << (tree1.rbegin()->first) << "):("
+            << (std_map1.begin()->first) << "-" << (std_map1.rbegin()->first)
+            << ") ";
+  if (tree2.empty() && std_map2.empty()) {
+    std::cout << "0:0";
+  } else {
+    if (tree2.empty()) {
+      std::cout << "0:";
+    } else {
+      std::cout << "(" << (tree2.begin()->first) << "-"
+                << (tree2.rbegin()->first) << "):";
+    }
+    if (std_map2.empty()) {
+      std::cout << "0";
+    } else {
+      std::cout << "(" << (std_map2.begin()->first) << "-"
+                << (std_map2.rbegin()->first) << ")";
+    }
+  }
+  std::cout << std::endl;
+}
+
 int main() {
   // Test1();
   // Test2();
@@ -445,11 +523,14 @@ int main() {
   std::random_device rd;
   std::mt19937 gen(rd());
 
-  for (int i = 0; i < 100; i++)
-    TestMergeSet(GenerateRandomNumber(gen, 1000, 2000),
-                 GenerateRandomNumber(gen, 1000, 2000), 1, 10000);
-  for (int i = 0; i < 100; i++)
-    TestMergeMultiSet(GenerateRandomNumber(gen, 1000, 2000),
-                      GenerateRandomNumber(gen, 1000, 2000), 1, 10000);
-  // TestMergeSet(20, 15, 1, 100);
+  // for (int i = 0; i < 100; i++)
+  //   TestMergeSet(GenerateRandomNumber(gen, 1000, 2000),
+  //                GenerateRandomNumber(gen, 1000, 2000), 1, 10000);
+  // for (int i = 0; i < 100; i++)
+  //   TestMergeMultiSet(GenerateRandomNumber(gen, 1000, 2000),
+  //                     GenerateRandomNumber(gen, 1000, 2000), 1, 10000);
+  for (int i = 0; i < 100; i++) TestMergeMap(1000, 1000, 1000000, 1000000);
+  // // TestMergeSet(20, 15, 1, 100);
+  // std::map<int, int> m1 = {{1, 1}, {2, 2}, {3, 3}};
+  // m1.find(3);
 }
