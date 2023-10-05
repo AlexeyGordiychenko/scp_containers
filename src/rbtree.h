@@ -715,6 +715,8 @@ class RbTree {
 
     Node() = default;
     Node(const_reference data) : data_(std::make_unique<value_type>(data)){};
+    Node(const_reference data, Color color)
+        : data_(std::make_unique<value_type>(data)), color_(color){};
     Node &operator=(const Node &) = delete;
     Node(const Node &) = delete;
     ~Node() = default;
@@ -803,7 +805,8 @@ class RbTree {
       return nullptr;
     }
 
-    NodePtr new_node = std::make_shared<Node>(*node_to_copy->data_);
+    NodePtr new_node =
+        std::make_shared<Node>(*node_to_copy->data_, node_to_copy->color_);
     new_node->left_ =
         copy_node_recursive(node_to_copy->left_, leftmost, rightmost);
     new_node->right_ =
