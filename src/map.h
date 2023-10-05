@@ -132,6 +132,8 @@ class map final {
   }
 
   // map lookup
+  iterator find(const Key& key) { return tree_.find(key); }
+  const_iterator find(const Key& key) const { return tree_.find(key); }
   bool contains(const Key& key) const {
     return tree_.find(key) != tree_.cend();
   }
