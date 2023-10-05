@@ -80,8 +80,16 @@ class map final {
   // iterators
   iterator begin() noexcept { return tree_.begin(); }
   const_iterator cbegin() const noexcept { return tree_.cbegin(); }
+  std::reverse_iterator<iterator> rbegin() noexcept { return tree_.rbegin(); }
+  std::reverse_iterator<const_iterator> crbegin() const noexcept {
+    return tree_.crbegin();
+  }
   iterator end() noexcept { return tree_.end(); }
   const_iterator cend() const noexcept { return tree_.cend(); }
+  std::reverse_iterator<iterator> rend() noexcept { return tree_.rend(); }
+  std::reverse_iterator<const_iterator> crend() const noexcept {
+    return tree_.crend();
+  }
 
   // capacity
   bool empty() const noexcept { return tree_.empty(); }
