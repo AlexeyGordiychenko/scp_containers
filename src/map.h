@@ -53,15 +53,23 @@ class map final {
 
   // access elements
   mapped_type& at(const key_type& key) {
-    iterator it = tree_.find(key);
+    auto it = tree_.find(key);
     if (it == tree_.end()) {
       throw std::out_of_range("Invalid key");
     }
     return it->second;
   }
 
+  const mapped_type& at(const key_type& key) const {
+    auto it = tree_.find(key);
+    if (it == tree_.cend()) {
+      throw std::out_of_range("Invalid key");
+    }
+    return it->second;
+  }
+
   mapped_type& operator[](const key_type& key) {
-    iterator it = tree_.find(key);
+    auto it = tree_.find(key);
     if (it == tree_.end()) {
       auto result = tree_.insert(std::make_pair(key, mapped_type()));
       it = result.first;
