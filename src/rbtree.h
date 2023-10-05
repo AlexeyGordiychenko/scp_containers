@@ -819,12 +819,8 @@ class RbTree {
     }
 
     // Update leftmost and rightmost nodes
-    if (!leftmost && !new_node->left_) {
-      leftmost = new_node;
-    }
-    if (!rightmost && !new_node->right_) {
-      rightmost = new_node;
-    }
+    if (!leftmost && !new_node->left_) leftmost = new_node;
+    if (!new_node->right_) rightmost = new_node;
 
     return new_node;
   }
