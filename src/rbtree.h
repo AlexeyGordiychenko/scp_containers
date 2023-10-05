@@ -547,6 +547,12 @@ class RbTree {
   }
 
   void merge(RbTree &other, bool duplicates = false) {
+    if (this == &other || other.empty()) return;
+    if (this->empty()) {
+      *this = std::move(other);
+      return;
+    }
+
     NodePtr head = nullptr, tail = nullptr, other_head = nullptr,
             other_tail = nullptr;
 
