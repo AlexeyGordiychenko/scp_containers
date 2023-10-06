@@ -8,19 +8,20 @@ GCOV_DIR=gcov
 TEST_DIR=tests
 SRC_DIR=.
 OBJ_DIR=obj
-OBJ_DIR_GCOV=obj/$(GCOV_DIR)
-OBJ_DIR_TEST=obj/$(TEST_DIR)
+OBJ_DIR_GCOV=$(OBJ_DIR)/$(GCOV_DIR)
+OBJ_DIR_TEST=$(OBJ_DIR)/$(TEST_DIR)
 
-SRCS=$(wildcard $(SRC_DIR)/s21_*.cc)
+SRCS=$(wildcard $(SRC_DIR)/s21_*.h)
 SRCS_TEST=$(wildcard $(TEST_DIR)/s21_*.cc)
-OBJS=$(patsubst $(SRC_DIR)/%.cc,$(OBJ_DIR)/%.o,$(SRCS))
 OBJS_TEST=$(patsubst $(TEST_DIR)/%.cc,$(OBJ_DIR_TEST)/%.o,$(SRCS_TEST))
-OBJS_GCOV=$(patsubst $(SRC_DIR)/%.cc,$(OBJ_DIR_GCOV)/%.o,$(SRCS))
+OBJS_GCOV=$(patsubst $(TEST_DIR)/%.cc,$(OBJ_DIR_GCOV)/%.o,$(SRCS_TEST))
 
 TEST=test
-TEST_BUILD=test_build
+TEST_GCOV=$(TEST)_gcov
+TEST_BUILD=$(TEST)_build
+TEST_BUILD_GCOV=$(TEST_BUILD)_gcov
 
-.PHONY: force all $(TEST) $(TEST_BUILD) gcov_report clean clean_gcda rebuild clang_n clang_i valgrind valgrind_mac
+.PHONY: force all $(TEST) $(TEST_BUILD) $(TEST_GCOV) $(TEST_BUILD_GCOV) gcov_report clean clean_gcda rebuild clang_n clang_i valgrind valgrind_mac
 
 all: $(TEST)
 
@@ -29,43 +30,45 @@ all: test
 
 %: %.cc force
 	rm -f $@ || true
-	$(CC) $(CFLAGS) $< -o $@
-
-$(TEST_BUILD): $(OBJS_GCOV) $(OBJS_TEST)
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(GCOVFLAGS) -o $(TEST)
+	$(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
 
 $(TEST): $(TEST_BUILD)
-	$(MAKE) clean_gcda
 	./$@ || true
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(TEST_BUILD): $(OBJS_TEST)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $(TEST)
 
 $(OBJ_DIR_TEST)/%.o: $(TEST_DIR)/%.cc
 	@mkdir -p $(OBJ_DIR_TEST)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR_GCOV)/%.o: $(SRC_DIR)/%.cc
+$(TEST_GCOV): $(TEST_BUILD_GCOV)
+	$(MAKE) clean_gcda
+	./$@ || true
+
+$(TEST_BUILD_GCOV): $(OBJS_GCOV)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(GCOVFLAGS) -o $(TEST_GCOV)
+
+$(OBJ_DIR_GCOV)/%.o: $(TEST_DIR)/%.cc
 	@mkdir -p $(OBJ_DIR_GCOV)
 	$(CC) $(CFLAGS) $(GCOVFLAGS) -c $< -o $@
 
-gcov_report: $(TEST)
+gcov_report: $(TEST_GCOV)
 	mkdir -p $(GCOV_DIR)
-	gcovr --html-details -o $(GCOV_DIR)/index.html --filter "$(CURDIR)/*"
+	gcovr --html-details  -o $(GCOV_DIR)/index.html --filter s21_\.\*.h
 	open $(GCOV_DIR)/index.html
 
-lcov_report: $(TEST)
+lcov_report: $(TEST_GCOV)
 	mkdir -p $(GCOV_DIR)
 	lcov --capture --directory $(SRC_DIR) --output-file $(GCOV_DIR)/coverage.info --no-external
 	genhtml -o $(GCOV_DIR) $(GCOV_DIR)/coverage.info 
 	open $(GCOV_DIR)/index.html
 
 clean:
-	rm -rf $(OBJ_DIR) $(GCOV_DIR) $(TEST)
+	rm -rf $(OBJ_DIR) $(GCOV_DIR) $(TEST) $(TEST_GCOV)
 
 clean_gcda:
-	rm -rf $(OBJ_DIR_GCOV)/*.gcda
+	rm -rf $(OBJ_DIR)/*.gcda
 
 rebuild: clean all
 
