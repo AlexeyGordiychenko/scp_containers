@@ -28,7 +28,6 @@ class map final {
   using const_iterator = class BalancedTree::const_iterator;
   using size_type = size_t;
 
- public:
   // constructors and destructor
   map() : tree_() {}
   map(const std::initializer_list<value_type>& items) : tree_() {
