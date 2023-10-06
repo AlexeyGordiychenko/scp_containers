@@ -15,7 +15,8 @@ class map final {
       return value.first;
     }
   };
-  using BinaryTree = RbTree<Key, std::pair<const Key, Value>, GetKey, Compare>;
+  using BalancedTree =
+      RbTree<Key, std::pair<const Key, Value>, GetKey, Compare>;
 
  public:
   using key_type = Key;
@@ -23,8 +24,8 @@ class map final {
   using value_type = std::pair<const key_type, mapped_type>;
   using reference = value_type&;
   using const_reference = const value_type&;
-  using iterator = class BinaryTree::iterator;
-  using const_iterator = class BinaryTree::const_iterator;
+  using iterator = class BalancedTree::iterator;
+  using const_iterator = class BalancedTree::const_iterator;
   using size_type = size_t;
 
  public:
@@ -139,7 +140,7 @@ class map final {
   }
 
  private:
-  BinaryTree tree_;
+  BalancedTree tree_;
 };
 
 }  // namespace s21
