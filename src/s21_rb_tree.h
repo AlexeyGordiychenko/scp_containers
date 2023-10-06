@@ -282,10 +282,9 @@ class RbTree {
 
     // Move the data of the node, if needed
     if (node_to_delete != node) {
-      // Update the sentinel node
-      if (sentinel_node_->left_ == node_to_delete) {
-        sentinel_node_->left_ = node;
-      } else if (sentinel_node_->right_ == node_to_delete) {
+      // Update the sentinel node (we only check the right child, because
+      // node_to_delete can be only the inorder successor, not predecessor)
+      if (sentinel_node_->right_ == node_to_delete) {
         sentinel_node_->right_ = node;
       }
       node->data_ = std::move(node_to_delete->data_);
