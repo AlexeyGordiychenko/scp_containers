@@ -779,20 +779,23 @@ class RbTree {
 
     NodePtr new_node =
         std::make_shared<Node>(*node_to_copy->data_, node_to_copy->color_);
+
+    // copy the left subtree and update the leftmost
     new_node->left_ =
         copy_node_recursive(node_to_copy->left_, leftmost, rightmost);
+    if (!leftmost && !new_node->left_) leftmost = new_node;
+
+    // copy the right subtree and update the rightmost
     new_node->right_ =
         copy_node_recursive(node_to_copy->right_, leftmost, rightmost);
+    if (!new_node->right_) rightmost = new_node;
+
     if (new_node->left_) {
       new_node->left_->parent_ = new_node;
     }
     if (new_node->right_) {
       new_node->right_->parent_ = new_node;
     }
-
-    // Update leftmost and rightmost nodes
-    if (!leftmost && !new_node->left_) leftmost = new_node;
-    if (!new_node->right_) rightmost = new_node;
 
     return new_node;
   }
