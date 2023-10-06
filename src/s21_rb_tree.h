@@ -731,9 +731,6 @@ class RbTree {
   NodePtr get_leftmost() const {
     return (sentinel_node_) ? sentinel_node_->left_ : nullptr;
   }
-  NodePtr get_rightmost() const {
-    return (sentinel_node_) ? sentinel_node_->right_ : nullptr;
-  }
 
   bool node_is_black(const NodePtr &node) const {
     return !node || node->color_ == BLACK;
