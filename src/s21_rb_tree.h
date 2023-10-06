@@ -256,11 +256,10 @@ class RbTree {
     // Update the sentinel node
     if (node == sentinel_node_->left_) {
       sentinel_node_->left_ =
-          (node->right_ ? minimum(node->right_) : node->parent_.lock());
+          node->right_ ? node->right_ : node->parent_.lock();
     }
     if (node == sentinel_node_->right_) {
-      sentinel_node_->right_ =
-          (node->left_ ? maximum(node->left_) : node->parent_.lock());
+      sentinel_node_->right_ = node->left_ ? node->left_ : node->parent_.lock();
     }
 
     // Set node_to_replace to the non-null child of node_to_delete, if any.
@@ -783,20 +782,6 @@ class RbTree {
     clear_recursive(node->left_);
     clear_recursive(node->right_);
     node.reset();
-  }
-
-  NodePtr minimum(NodePtr node) {
-    while (node->left_) {
-      node = node->left_;
-    }
-    return node;
-  }
-
-  NodePtr maximum(NodePtr node) {
-    while (node->right_) {
-      node = node->right_;
-    }
-    return node;
   }
 
   NodePtr copy_node_recursive(const NodePtr &node_to_copy, NodePtr &leftmost,
