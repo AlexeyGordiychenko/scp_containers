@@ -380,9 +380,7 @@ class RbTree {
   bool is_valid_tree() const {
     int black_count = 0;
     // The root is always black
-    if (node_is_red(root_)) {
-      return false;
-    }
+    if (node_is_red(root_)) return false;
     return is_valid_node(root_, black_count);
   }
 
@@ -750,25 +748,18 @@ class RbTree {
 
   bool is_valid_node(NodePtr node, int &black_count,
                      int path_black_count = 0) const {
-    // Base case: we've reached a leaf node (null node)
     if (!node) {
-      // All paths from root to leaf have the same number of black nodes
+      // All paths from the root to a leaf have the same number of black nodes
       if (black_count == 0) {
         black_count = path_black_count;
       }
       return path_black_count == black_count;
-    }
-
-    // Red nodes can't have red children
-    if (node_is_red(node)) {
-      if (node_is_red(node->left_) || node_is_red(node->right_)) {
-        return false;
-      }
-    }
-
-    // Count black nodes along the path
-    if (node_is_black(node)) {
+    } else if (node_is_black(node)) {
+      // Count black nodes along the path
       path_black_count++;
+    } else {
+      // Red nodes can't have red children
+      if (node_is_red(node->left_) || node_is_red(node->right_)) return false;
     }
 
     // Check left and right subtrees
