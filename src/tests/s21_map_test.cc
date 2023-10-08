@@ -493,6 +493,35 @@ TEST_F(MapTest, Iterator) {
     auto std_it = std_m_rnd.crend();
     MoveBackwardForward(s21_it, std_it);
   }
+  {
+    s21::map<int, std::string> s21_m;
+    std::map<int, std::string> std_m;
+
+    for (auto i = 2; i < 100000; ++i) {
+      auto key_value = std::make_pair(i, std::to_string(i));
+      auto s21_it = s21_m.insert(key_value);
+      auto std_it = std_m.insert(key_value);
+
+      EXPECT_EQ(*s21_it.first, *std_it.first);
+      EXPECT_EQ(s21_it.second, std_it.second);
+    }
+
+    for (auto i = 2; i < 1000; i++) {
+      auto it_s21 = s21_m.begin();
+      auto it_std = std_m.begin();
+      while (it_s21 != s21_m.end()) {
+        if (it_s21->first % i == 0) {
+          s21_m.erase(it_s21++);
+          std_m.erase(it_std++);
+        } else {
+          ++it_s21;
+          ++it_std;
+        }
+      }
+    }
+
+    EXPECT_TRUE(MapsAreEqual(s21_m, std_m));
+  }
 }
 
 TEST_F(MapTest, Capacity) {

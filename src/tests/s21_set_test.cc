@@ -434,6 +434,34 @@ TEST_F(SetTest, Iterator) {
     auto std_it = std_s_rnd.crend();
     MoveBackwardForward(s21_it, std_it);
   }
+  {
+    s21::set<int> s21_s;
+    std::set<int> std_s;
+
+    for (auto i = 2; i < 100000; ++i) {
+      auto s21_it = s21_s.insert(i);
+      auto std_it = std_s.insert(i);
+
+      EXPECT_EQ(*s21_it.first, *std_it.first);
+      EXPECT_EQ(s21_it.second, std_it.second);
+    }
+
+    for (auto i = 2; i < 1000; i++) {
+      auto it_s21 = s21_s.begin();
+      auto it_std = std_s.begin();
+      while (it_s21 != s21_s.end()) {
+        if (*it_s21 % i == 0) {
+          s21_s.erase(it_s21++);
+          std_s.erase(it_std++);
+        } else {
+          ++it_s21;
+          ++it_std;
+        }
+      }
+    }
+
+    EXPECT_TRUE(SetsAreEqual(s21_s, std_s));
+  }
 }
 
 TEST_F(SetTest, Capacity) {

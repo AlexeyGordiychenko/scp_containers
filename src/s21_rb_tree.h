@@ -240,7 +240,7 @@ class RbTree {
   void erase(iterator pos) {
     if (pos == end()) return;
 
-    NodePtr node_to_replace, node_to_delete, node = pos.node_;
+    NodePtr node = pos.node_;
 
     // If the node has both children, then node_to_delete is set
     // to the inorder successor of the node. Otherwise, node_to_delete is set to
@@ -248,25 +248,16 @@ class RbTree {
     if (node->left_ && node->right_) {
       iterator it(node);
       ++it;
-      node_to_delete = it.node_;
-    } else {
-      node_to_delete = node;
+      swap_nodes_on_erase(it.node_, node);
     }
 
     // Update the sentinel node
-    if (node == sentinel_node_->left_) {
-      sentinel_node_->left_ =
-          node->right_ ? node->right_ : node->parent_.lock();
-    }
-    if (node == sentinel_node_->right_) {
-      sentinel_node_->right_ = node->left_ ? node->left_ : node->parent_.lock();
-    }
+    update_edges_on_erase(node);
 
-    // Set node_to_replace to the non-null child of node_to_delete, if any.
-    node_to_replace = (node_to_delete->left_ ? node_to_delete->left_
-                                             : node_to_delete->right_);
+    // Set node_to_replace to the non-null child of node, if any.
+    NodePtr node_to_replace = (node->left_ ? node->left_ : node->right_);
     // Save the parent of the node to delete
-    NodePtr parent = node_to_delete->parent_.lock();
+    NodePtr parent = node->parent_.lock();
 
     // Update the parents
     if (node_to_replace) {
@@ -274,24 +265,14 @@ class RbTree {
     }
     if (parent == sentinel_node_) {
       root_ = node_to_replace;
-    } else if (node_to_delete == parent->left_) {
+    } else if (node == parent->left_) {
       parent->left_ = node_to_replace;
     } else {
       parent->right_ = node_to_replace;
     }
 
-    // Move the data of the node, if needed
-    if (node_to_delete != node) {
-      // Update the sentinel node (we only check the right child, because
-      // node_to_delete can be only the inorder successor, not predecessor)
-      if (sentinel_node_->right_ == node_to_delete) {
-        sentinel_node_->right_ = node;
-      }
-      node->data_ = std::move(node_to_delete->data_);
-    }
-
-    // If the node to delete is black, we need to balance the tree
-    if (node_is_black(node_to_delete)) {
+    if (node_is_black(node)) {
+      // If the node to delete is black, we need to balance the tree
       delete_balance(node_to_replace, parent);
     }
 
@@ -729,7 +710,11 @@ class RbTree {
 
   auto get_key(const_reference data) const { return KeyOfValue()(data); }
   NodePtr get_leftmost() const {
-    return (sentinel_node_) ? sentinel_node_->left_ : nullptr;
+    if (sentinel_node_) {
+      return (sentinel_node_->left_) ? sentinel_node_->left_ : sentinel_node_;
+    } else {
+      return nullptr;
+    }
   }
 
   bool node_is_black(const NodePtr &node) const {
@@ -798,6 +783,57 @@ class RbTree {
     }
 
     return new_node;
+  }
+  void swap_nodes_on_erase(NodePtr &node_to_delete, NodePtr &node) {
+    if (node_to_delete->parent_.lock()->left_ == node_to_delete) {
+      node_to_delete->parent_.lock()->left_ = node;
+    } else {
+      node_to_delete->parent_.lock()->right_ = node;
+    }
+
+    if (node != root_) {
+      if (node->parent_.lock()->left_ == node) {
+        node->parent_.lock()->left_ = node_to_delete;
+      } else {
+        node->parent_.lock()->right_ = node_to_delete;
+      }
+    }
+
+    if (sentinel_node_->right_ == node) {
+      sentinel_node_->right_ = node_to_delete;
+    }
+
+    std::swap(node->parent_, node_to_delete->parent_);
+    std::swap(node->left_, node_to_delete->left_);
+    std::swap(node->right_, node_to_delete->right_);
+    std::swap(node->color_, node_to_delete->color_);
+
+    if (node == root_) {
+      root_ = node_to_delete;
+    }
+
+    if (node->left_) node->left_->parent_ = node;
+    if (node->right_) node->right_->parent_ = node;
+    if (node_to_delete->left_) node_to_delete->left_->parent_ = node_to_delete;
+    if (node_to_delete->right_)
+      node_to_delete->right_->parent_ = node_to_delete;
+  }
+
+  void update_edges_on_erase(NodePtr node) {
+    if (node == root_ && node == sentinel_node_->left_ &&
+        node == sentinel_node_->right_) {
+      sentinel_node_->left_ = nullptr;
+      sentinel_node_->right_ = nullptr;
+    } else {
+      if (node == sentinel_node_->left_) {
+        sentinel_node_->left_ =
+            node->right_ ? node->right_ : node->parent_.lock();
+      }
+      if (node == sentinel_node_->right_) {
+        sentinel_node_->right_ =
+            node->left_ ? node->left_ : node->parent_.lock();
+      }
+    }
   }
 };
 }  // namespace s21
