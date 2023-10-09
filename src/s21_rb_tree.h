@@ -799,10 +799,6 @@ class RbTree {
       }
     }
 
-    if (sentinel_node_->right_ == node) {
-      sentinel_node_->right_ = node_to_delete;
-    }
-
     std::swap(node->parent_, node_to_delete->parent_);
     std::swap(node->left_, node_to_delete->left_);
     std::swap(node->right_, node_to_delete->right_);
