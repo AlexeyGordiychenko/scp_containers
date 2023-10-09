@@ -1,6 +1,7 @@
 #ifndef S21_RBTREE_H_
 #define S21_RBTREE_H_
 
+#include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -116,6 +117,13 @@ class RbTree {
   using const_iterator = RbTreeIterator<true>;
 
   using size_type = size_t;
+
+  // Define the opposite comparison function
+  struct key_compare_reverse {
+    bool operator()(const key_type &a, const key_type &b) const {
+      return !key_compare()(b, a);
+    }
+  };
 
   // constructors and destructor
   RbTree() = default;
@@ -304,6 +312,18 @@ class RbTree {
       }
     }
     return sentinel_node_;
+  };
+  iterator lower_bound(const key_type &key) {
+    return iterator(bound(key, key_compare()));
+  };
+  const_iterator lower_bound(const key_type &key) const {
+    return const_iterator(bound(key, key_compare()));
+  };
+  iterator upper_bound(const key_type &key) {
+    return iterator(bound(key, key_compare_reverse()));
+  };
+  const_iterator upper_bound(const key_type &key) const {
+    return const_iterator(bound(key, key_compare_reverse()));
   };
 
   size_type size() const { return nodes_count_; }
@@ -702,6 +722,9 @@ class RbTree {
   NodePtr root_, sentinel_node_;
   size_type nodes_count_ = 0;
 
+  using key_compare_func =
+      std::function<bool(const key_type &, const key_type &)>;
+
   const std::string kCyanColor = "\033[0;36m";
   const std::string kMagentaColor = "\033[0;35m";
   const std::string kRedColorBold = "\033[1;31m";
@@ -830,6 +853,22 @@ class RbTree {
             node->left_ ? node->left_ : node->parent_.lock();
       }
     }
+  }
+
+  NodePtr bound(const key_type &key, key_compare_func comp) const {
+    NodePtr current = root_;
+    NodePtr result = sentinel_node_;
+
+    while (current) {
+      if (comp(get_key(*current->data_), key)) {
+        current = current->right_;
+      } else {
+        result = current;
+        current = current->left_;
+      }
+    }
+
+    return result;
   }
 };
 }  // namespace s21
