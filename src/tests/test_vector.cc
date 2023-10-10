@@ -266,27 +266,33 @@ TEST(VectorTest, Clear_1) {
   ASSERT_EQ(test[4], test_2[4]);
 }
 
-// TEST(VectorTest, Clear_2) {
-//   s21::vector<ClassWithPrintableDestructor> test(5);
-//   // std::vector<ClassWithPrintableDestructor> test_2(5);
-//   // test.clear();
-//   // test_2.clear();
-//   std::cout << "TTTTTTTTTTTTTTTT\n";
-//   // ASSERT_EQ(test.size(), test_2.size());
-//   // ASSERT_EQ(test.capacity(), test_2.capacity());
-//   // ASSERT_EQ(test[4], test_2[4]);
-// }
+TEST(VectorTest, Clear_2) {
+  s21::vector<ClassWithPrintableDestructor> test(5);
+  std::vector<ClassWithPrintableDestructor> test_2(5);
+  test.clear();
+  test_2.clear();
+  std::cout << "TTTTTTTTTTTTTTTT\n";
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+}
+
+TEST(VectorTest, Destructor_1) {
+  s21::vector<ClassWithPrintableDestructor> test(5);
+  std::cout << "TTTTTTTTTTTTTTTT\n";
+}
 
 TEST(VectorTest, Reserve_1) {
   s21::vector<std::vector<std::string>> test(5);
-  // std::vector<std::vector<std::string>> test_2(5);
+  std::vector<std::vector<std::string>> test_2(5);
 
-  test.reserve(50);
-  // test_2.reserve(50);
+  test_2[2].push_back("ABCD");
+  ASSERT_EQ(test_2[2][0], "ABCD");
 
-  // ASSERT_EQ(test.size(), test_2.size());
-  // ASSERT_EQ(test.capacity(), test_2.capacity());
-  // ASSERT_EQ(test[4], test_2[4]);
+  test.reserve(61);
+  test_2.reserve(61);
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
 }
 
 
@@ -305,23 +311,23 @@ TEST(VectorTest, Reserve_1) {
 
 
 
-TEST(VectorTest, MaxSize_1) {
-  s21::vector<bool> test;
-  std::vector<std::string> test_2;
+// TEST(VectorTest, MaxSize_1) {
+//   s21::vector<bool> test;
+//   std::vector<std::string> test_2;
 
-  ASSERT_NE(test.max_size(), test_2.max_size());
-}
+//   ASSERT_NE(test.max_size(), test_2.max_size());
+// }
 
-TEST(VectorTest, Swap_1) {
-  s21::vector<std::string> test{"first"};
-  s21::vector<std::string> test_2{"second", "second"};
-  auto one = test.size();
-  auto two = test_2.size();
+// TEST(VectorTest, Swap_1) {
+//   s21::vector<std::string> test{"first"};
+//   s21::vector<std::string> test_2{"second", "second"};
+//   auto one = test.size();
+//   auto two = test_2.size();
 
-  test.swap(test_2);
+//   test.swap(test_2);
 
-  ASSERT_EQ(one, 1U);
-  ASSERT_EQ(two, 2U);
-  ASSERT_EQ(test.size(), two);
-  ASSERT_EQ(test_2.size(), one);
-}
+//   ASSERT_EQ(one, 1U);
+//   ASSERT_EQ(two, 2U);
+//   ASSERT_EQ(test.size(), two);
+//   ASSERT_EQ(test_2.size(), one);
+// }

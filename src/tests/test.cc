@@ -1,11 +1,11 @@
 #include "test.h"
 
-ClassWithPrintableDestructor::ClassWithPrintableDestructor() : a(55) {
+ClassWithPrintableDestructor::ClassWithPrintableDestructor() : a(new int[33]) {
   std::cout << "_Constructor called" << std::endl;
 }
 
 ClassWithPrintableDestructor::~ClassWithPrintableDestructor() {
-  a = 0;
+  delete[] a;
   std::cout << "___Destructor called" << std::endl;
 }
 

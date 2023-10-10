@@ -71,7 +71,11 @@ vector<T>::vector() : size_(0U), capacity_(0U), data_(nullptr) {}
 
 template <typename T>
 vector<T>::~vector() noexcept {
-  if (data_) delete[] data_;
+  for (size_type i = 0; i < size_; ++i)
+    data_[i].~T();
+  if (data_) {
+    ::operator delete (data_);
+  }
 
   size_ = 0;
   capacity_ = 0;
@@ -80,10 +84,13 @@ vector<T>::~vector() noexcept {
 
 template <typename T>
 vector<T>::vector(size_type n)
-    : size_(n), capacity_(n), data_(n > 0 ? new value_type[n] : nullptr) {
+    : size_(n), capacity_(n), data_(n > 0 ? (value_type*)::operator new(sizeof(value_type) * n) : nullptr) {
   if (data_ == nullptr && n > 0) {
     throw std::bad_alloc();
   }
+
+  for (size_type i = 0; i < n; ++i)
+    new (data_ + i) value_type();
 }
 
 template <typename T>
@@ -216,9 +223,15 @@ void vector<T>::reserve(size_type new_cap) {
     throw std::length_error("reserve(): Can't reserve larger than max size");
 
   if (new_cap > capacity_) {
-    value_type* new_data = (value_type*)::operator new(sizeof(value_type));
+    value_type* new_data = (value_type*)::operator new(sizeof(value_type) * new_cap);
+    for (size_type i = 0; i < new_cap; ++i)
+      new (new_data + i) value_type();
+    
     std::copy(data_, data_ + size_, new_data);
-    delete[] data_;
+
+    for (size_type i = 0; i < size_; ++i) /// --------?????
+      data_[i].~T();
+    ::operator delete (data_);
     data_ = new_data;
     capacity_ = new_cap;
   }
@@ -238,11 +251,6 @@ void vector<T>::clear() noexcept {
 
   size_ = 0;
 }
-
-
-
-
-
 
 template <typename T>
 void vector<T>::swap(vector<T> &other) noexcept { 

@@ -12,7 +12,7 @@ class ClassWithPrintableDestructor {
   ClassWithPrintableDestructor();
   ~ClassWithPrintableDestructor();
  private:
-  int a;
+  int* a;
 };
 
 class ClassNoDefaultConstructor {
