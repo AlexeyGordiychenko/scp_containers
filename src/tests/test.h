@@ -12,7 +12,16 @@ class ClassWithPrintableDestructor {
   ClassWithPrintableDestructor();
   ~ClassWithPrintableDestructor();
  private:
-  int* a;
+  int a;
+};
+
+class ClassNoDefaultConstructor {
+ public:
+  ClassNoDefaultConstructor() = delete;
+  ClassNoDefaultConstructor(int n);
+  ~ClassNoDefaultConstructor();
+ private:
+  int a;
 };
 
 #endif  // CPP2_S21_CONTAINERS_TESTS_TEST_H_

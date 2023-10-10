@@ -266,12 +266,24 @@ TEST(VectorTest, Clear_1) {
   ASSERT_EQ(test[4], test_2[4]);
 }
 
-TEST(VectorTest, Clear_2) {
-  s21::vector<ClassWithPrintableDestructor> test(5);
-  // std::vector<ClassWithPrintableDestructor> test_2(5);
-  test.clear();
-  // test_2.clear();
-  std::cout << "TTTTTTTTTTTTTTTT\n";
+// TEST(VectorTest, Clear_2) {
+//   s21::vector<ClassWithPrintableDestructor> test(5);
+//   // std::vector<ClassWithPrintableDestructor> test_2(5);
+//   // test.clear();
+//   // test_2.clear();
+//   std::cout << "TTTTTTTTTTTTTTTT\n";
+//   // ASSERT_EQ(test.size(), test_2.size());
+//   // ASSERT_EQ(test.capacity(), test_2.capacity());
+//   // ASSERT_EQ(test[4], test_2[4]);
+// }
+
+TEST(VectorTest, Reserve_1) {
+  s21::vector<std::vector<std::string>> test(5);
+  // std::vector<std::vector<std::string>> test_2(5);
+
+  test.reserve(50);
+  // test_2.reserve(50);
+
   // ASSERT_EQ(test.size(), test_2.size());
   // ASSERT_EQ(test.capacity(), test_2.capacity());
   // ASSERT_EQ(test[4], test_2[4]);

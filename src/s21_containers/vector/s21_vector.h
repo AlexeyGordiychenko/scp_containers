@@ -213,7 +213,7 @@ typename vector<T>::size_type vector<T>::max_size() const noexcept {
 template <typename T>
 void vector<T>::reserve(size_type new_cap) {
   if (new_cap > max_size())
-    throw std::length_error();
+    throw std::length_error("reserve(): Can't reserve larger than max size");
 
   if (new_cap > capacity_) {
     value_type* new_data = (value_type*)::operator new(sizeof(value_type));
@@ -233,7 +233,7 @@ typename vector<T>::size_type vector<T>::capacity() const noexcept {
 template <typename T>
 void vector<T>::clear() noexcept {
   for (VectorIterator<T> iter = begin(); iter != end(); ++iter) {
-    (*iter).~T();
+    std::destroy_at(&(*iter));
   }
 
   size_ = 0;

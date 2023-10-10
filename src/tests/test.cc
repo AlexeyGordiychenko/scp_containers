@@ -1,12 +1,18 @@
 #include "test.h"
 
-ClassWithPrintableDestructor::ClassWithPrintableDestructor() : a(new int(3)) {
+ClassWithPrintableDestructor::ClassWithPrintableDestructor() : a(55) {
   std::cout << "_Constructor called" << std::endl;
 }
 
 ClassWithPrintableDestructor::~ClassWithPrintableDestructor() {
-  delete[] a;
+  a = 0;
   std::cout << "___Destructor called" << std::endl;
+}
+
+ClassNoDefaultConstructor::ClassNoDefaultConstructor(int n) : a(n) {}
+
+ClassNoDefaultConstructor::~ClassNoDefaultConstructor() {
+  a = 0;
 }
 
 int main(int argc, char** argv) {
