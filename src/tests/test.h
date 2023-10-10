@@ -11,6 +11,7 @@ class ClassWithPrintableDestructor {
  public:
   ClassWithPrintableDestructor();
   ~ClassWithPrintableDestructor();
+
  private:
   int* a;
 };
@@ -20,6 +21,7 @@ class ClassNoDefaultConstructor {
   ClassNoDefaultConstructor() = delete;
   ClassNoDefaultConstructor(int n);
   ~ClassNoDefaultConstructor();
+
  private:
   int a;
 };

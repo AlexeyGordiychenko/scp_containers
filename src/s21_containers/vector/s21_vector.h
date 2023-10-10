@@ -28,7 +28,7 @@ class vector {
   vector(const vector &v);
   vector(vector &&v);
   ~vector() noexcept;
-  vector<T>& operator=(vector<T> &&v) noexcept;
+  vector<T> &operator=(vector<T> &&v) noexcept;
 
   reference at(size_type pos);
   const_reference at(size_type pos) const;
@@ -50,7 +50,7 @@ class vector {
   size_type max_size() const noexcept;
   void reserve(size_type size);
   size_type capacity() const noexcept;
-  // void shrink_to_fit();
+  void shrink_to_fit();
 
   void clear() noexcept;
   // iterator insert(iterator pos, const_reference value);
@@ -62,7 +62,7 @@ class vector {
  private:
   size_type size_;
   size_type capacity_;
-  T* data_;
+  T *data_;
 };
 
 ///===VECTOR_MEMBER_FUNCTIONS==============================
@@ -71,11 +71,8 @@ vector<T>::vector() : size_(0U), capacity_(0U), data_(nullptr) {}
 
 template <typename T>
 vector<T>::~vector() noexcept {
-  for (size_type i = 0; i < size_; ++i)
-    data_[i].~T();
-  if (data_) {
-    ::operator delete (data_);
-  }
+  for (size_type i = 0; i < size_; ++i) data_[i].~T();
+  if (data_) ::operator delete(data_);
 
   size_ = 0;
   capacity_ = 0;
@@ -84,17 +81,20 @@ vector<T>::~vector() noexcept {
 
 template <typename T>
 vector<T>::vector(size_type n)
-    : size_(n), capacity_(n), data_(n > 0 ? (value_type*)::operator new(sizeof(value_type) * n) : nullptr) {
+    : size_(n),
+      capacity_(n),
+      data_(n > 0 ? (value_type *)::operator new(sizeof(value_type) * n)
+                  : nullptr) {
   if (data_ == nullptr && n > 0) {
     throw std::bad_alloc();
   }
 
-  for (size_type i = 0; i < n; ++i)
-    new (data_ + i) value_type();
+  for (size_type i = 0; i < n; ++i) new (data_ + i) value_type();
 }
 
 template <typename T>
-vector<T>::vector(std::initializer_list<value_type> const &items) : vector(items.size()) {
+vector<T>::vector(std::initializer_list<value_type> const &items)
+    : vector(items.size()) {
   size_type i = 0;
   for (auto it = items.begin(); it != items.end(); ++it, ++i) {
     data_[i] = *it;
@@ -110,27 +110,28 @@ vector<T>::vector(const vector &v) : vector(v.size_) {
 }
 
 template <typename T>
-vector<T>::vector(vector &&v) : size_(v.size_), capacity_(v.capacity_), data_(v.data_) { 
+vector<T>::vector(vector &&v)
+    : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
   v.size_ = 0;
   v.capacity_ = 0;
   v.data_ = nullptr;
 }
 
 template <typename T>
-vector<T>& vector<T>::operator=(vector<T> &&v) noexcept { 
+vector<T> &vector<T>::operator=(vector<T> &&v) noexcept {
   if (this != &v) {
     this->swap(v);
     v.~vector();
   }
 
   return *this;
-} 
+}
 
 ///===VECTOR_ELEMENT_ACCESS================================
 template <typename T>
 typename vector<T>::reference vector<T>::at(size_type pos) {
   if (pos >= size_) {
-    throw std::out_of_range("at: Position is out of range");
+    throw std::out_of_range("at(): Position is out of range");
   }
 
   return data_[pos];
@@ -223,15 +224,15 @@ void vector<T>::reserve(size_type new_cap) {
     throw std::length_error("reserve(): Can't reserve larger than max size");
 
   if (new_cap > capacity_) {
-    value_type* new_data = (value_type*)::operator new(sizeof(value_type) * new_cap);
-    for (size_type i = 0; i < new_cap; ++i)
-      new (new_data + i) value_type();
-    
+    value_type *new_data =
+        (value_type *)::operator new(sizeof(value_type) * new_cap);
+    for (size_type i = 0; i < new_cap; ++i) new (new_data + i) value_type();
+
     std::copy(data_, data_ + size_, new_data);
 
-    for (size_type i = 0; i < size_; ++i) /// --------?????
+    for (size_type i = 0; i < size_; ++i)  /// --------?????
       data_[i].~T();
-    ::operator delete (data_);
+    ::operator delete(data_);
     data_ = new_data;
     capacity_ = new_cap;
   }
@@ -241,6 +242,9 @@ template <typename T>
 typename vector<T>::size_type vector<T>::capacity() const noexcept {
   return capacity_;
 }
+
+template <typename T>
+void vector<T>::shrink_to_fit() {}
 
 ///===VECTOR_MODIFIERS=====================================
 template <typename T>
@@ -253,11 +257,11 @@ void vector<T>::clear() noexcept {
 }
 
 template <typename T>
-void vector<T>::swap(vector<T> &other) noexcept { 
+void vector<T>::swap(vector<T> &other) noexcept {
   std::swap(size_, other.size_);
   std::swap(capacity_, other.capacity_);
   std::swap(data_, other.data_);
-} 
+}
 }  // namespace s21
 
 #endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_

@@ -11,9 +11,7 @@ ClassWithPrintableDestructor::~ClassWithPrintableDestructor() {
 
 ClassNoDefaultConstructor::ClassNoDefaultConstructor(int n) : a(n) {}
 
-ClassNoDefaultConstructor::~ClassNoDefaultConstructor() {
-  a = 0;
-}
+ClassNoDefaultConstructor::~ClassNoDefaultConstructor() { a = 0; }
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

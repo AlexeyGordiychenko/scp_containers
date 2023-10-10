@@ -7,7 +7,7 @@ namespace s21 {
 template <typename T>
 class VectorConstIterator {
  public:
-  using reference = T &;
+  using reference = T&;
 
   VectorConstIterator() = delete;
   VectorConstIterator(T* ptr) noexcept;
@@ -34,12 +34,12 @@ VectorConstIterator<T>::~VectorConstIterator() {
 }
 
 template <typename T>
-typename VectorConstIterator<T>::reference VectorConstIterator<T>::operator*() { 
+typename VectorConstIterator<T>::reference VectorConstIterator<T>::operator*() {
   return *pointer_;
 }
 
 template <typename T>
-VectorConstIterator<T> VectorConstIterator<T>::operator++(int) { 
+VectorConstIterator<T> VectorConstIterator<T>::operator++(int) {
   VectorConstIterator tmp(*this);
   ++pointer_;
 
@@ -47,14 +47,14 @@ VectorConstIterator<T> VectorConstIterator<T>::operator++(int) {
 }
 
 template <typename T>
-VectorConstIterator<T>& VectorConstIterator<T>::operator++() { 
+VectorConstIterator<T>& VectorConstIterator<T>::operator++() {
   ++pointer_;
 
   return *this;
 }
 
 template <typename T>
-VectorConstIterator<T> VectorConstIterator<T>::operator--(int) { 
+VectorConstIterator<T> VectorConstIterator<T>::operator--(int) {
   VectorConstIterator tmp(*this);
   --pointer_;
 
@@ -62,19 +62,21 @@ VectorConstIterator<T> VectorConstIterator<T>::operator--(int) {
 }
 
 template <typename T>
-VectorConstIterator<T>& VectorConstIterator<T>::operator--() { 
+VectorConstIterator<T>& VectorConstIterator<T>::operator--() {
   --pointer_;
 
   return *this;
 }
 
 template <typename T>
-bool VectorConstIterator<T>::operator==(const VectorConstIterator<T>& other) const noexcept {
+bool VectorConstIterator<T>::operator==(
+    const VectorConstIterator<T>& other) const noexcept {
   return pointer_ == other.pointer_;
 }
 
 template <typename T>
-bool VectorConstIterator<T>::operator!=(const VectorConstIterator<T>& other) const noexcept {
+bool VectorConstIterator<T>::operator!=(
+    const VectorConstIterator<T>& other) const noexcept {
   return pointer_ != other.pointer_;
 }
 

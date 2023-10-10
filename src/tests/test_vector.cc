@@ -158,8 +158,7 @@ TEST(VectorTest, EXCEPT_At_3) {
     test.at(130);
     FAIL() << "Expected std::out_of_range";
   } catch (std::out_of_range const& err) {
-    EXPECT_EQ(err.what(),
-              std::string("at: Position is out of range"));
+    EXPECT_EQ(err.what(), std::string("at: Position is out of range"));
   }
 
   EXPECT_THROW(test_2.at(130), std::out_of_range);
@@ -180,8 +179,7 @@ TEST(VectorTest, EXCEPT_ConstAt_2) {
     test.at(130);
     FAIL() << "Expected std::out_of_range";
   } catch (std::out_of_range const& err) {
-    EXPECT_EQ(err.what(),
-              std::string("at(const): Position is out of range"));
+    EXPECT_EQ(err.what(), std::string("at(const): Position is out of range"));
   }
 
   EXPECT_THROW(test_2.at(130), std::out_of_range);
@@ -294,22 +292,6 @@ TEST(VectorTest, Reserve_1) {
   ASSERT_EQ(test.size(), test_2.size());
   ASSERT_EQ(test.capacity(), test_2.capacity());
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // TEST(VectorTest, MaxSize_1) {
 //   s21::vector<bool> test;
