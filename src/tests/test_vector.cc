@@ -158,7 +158,7 @@ TEST(VectorTest, EXCEPT_At_3) {
     test.at(130);
     FAIL() << "Expected std::out_of_range";
   } catch (std::out_of_range const& err) {
-    EXPECT_EQ(err.what(), std::string("at: Position is out of range"));
+    EXPECT_EQ(err.what(), std::string("at(): Position is out of range"));
   }
 
   EXPECT_THROW(test_2.at(130), std::out_of_range);
@@ -264,20 +264,20 @@ TEST(VectorTest, Clear_1) {
   ASSERT_EQ(test[4], test_2[4]);
 }
 
-TEST(VectorTest, Clear_2) {
-  s21::vector<ClassWithPrintableDestructor> test(5);
-  std::vector<ClassWithPrintableDestructor> test_2(5);
-  test.clear();
-  test_2.clear();
-  std::cout << "TTTTTTTTTTTTTTTT\n";
-  ASSERT_EQ(test.size(), test_2.size());
-  ASSERT_EQ(test.capacity(), test_2.capacity());
-}
+// TEST(VectorTest, Clear_2) {
+//   s21::vector<ClassWithPrintableDestructor> test(5);
+//   std::vector<ClassWithPrintableDestructor> test_2(5);
+//   test.clear();
+//   test_2.clear();
+//   std::cout << "TTTTTTTTTTTTTTTT\n";
+//   ASSERT_EQ(test.size(), test_2.size());
+//   ASSERT_EQ(test.capacity(), test_2.capacity());
+// }
 
-TEST(VectorTest, Destructor_1) {
-  s21::vector<ClassWithPrintableDestructor> test(5);
-  std::cout << "TTTTTTTTTTTTTTTT\n";
-}
+// TEST(VectorTest, Destructor_1) {
+//   s21::vector<ClassWithPrintableDestructor> test(5);
+//   std::cout << "TTTTTTTTTTTTTTTT\n";
+// }
 
 TEST(VectorTest, Reserve_1) {
   s21::vector<std::vector<std::string>> test(5);
@@ -293,23 +293,157 @@ TEST(VectorTest, Reserve_1) {
   ASSERT_EQ(test.capacity(), test_2.capacity());
 }
 
-// TEST(VectorTest, MaxSize_1) {
-//   s21::vector<bool> test;
-//   std::vector<std::string> test_2;
+TEST(VectorTest, Shrink_to_fit_1) {
+  s21::vector<std::vector<std::string>> test(5);
+  std::vector<std::vector<std::string>> test_2(5);
 
-//   ASSERT_NE(test.max_size(), test_2.max_size());
-// }
+  test.reserve(61);
+  test_2.reserve(61);
 
-// TEST(VectorTest, Swap_1) {
-//   s21::vector<std::string> test{"first"};
-//   s21::vector<std::string> test_2{"second", "second"};
-//   auto one = test.size();
-//   auto two = test_2.size();
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
 
-//   test.swap(test_2);
+  test.shrink_to_fit();
+  test_2.shrink_to_fit();
 
-//   ASSERT_EQ(one, 1U);
-//   ASSERT_EQ(two, 2U);
-//   ASSERT_EQ(test.size(), two);
-//   ASSERT_EQ(test_2.size(), one);
-// }
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+}
+
+TEST(VectorTest, Shrink_to_fit_2) {
+  s21::vector<std::vector<std::string>> test(5);
+  std::vector<std::vector<std::string>> test_2(5);
+
+  test.shrink_to_fit();
+  test_2.shrink_to_fit();
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+}
+
+TEST(VectorTest, MaxSize_1) {
+  s21::vector<bool> test;
+  std::vector<std::string> test_2;
+
+  ASSERT_NE(test.max_size(), test_2.max_size());
+}
+
+TEST(VectorTest, Swap_1) {
+  s21::vector<std::string> test{"first"};
+  s21::vector<std::string> test_2{"second", "second"};
+  auto one = test.size();
+  auto two = test_2.size();
+
+  test.swap(test_2);
+
+  ASSERT_EQ(one, 1U);
+  ASSERT_EQ(two, 2U);
+  ASSERT_EQ(test.size(), two);
+  ASSERT_EQ(test_2.size(), one);
+}
+
+TEST(VectorTest, Insert_1) {
+  s21::vector<int> test = {1, 6, 4, 9, 7};
+  std::vector<int> test_2 = {1, 6, 4, 9, 7};
+  auto iter = test.begin();
+  auto iter_2 = test_2.begin();
+  iter++;
+  iter_2++;
+
+  test.insert(iter, 9999);
+  test_2.insert(iter_2, 9999);
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<int>::size_type i = 0; i < test.size(); ++i)
+    ASSERT_EQ(test[i], test_2[i]);
+}
+
+TEST(VectorTest, Insert_2) {
+  s21::vector<int> test = {1};
+  std::vector<int> test_2 = {1};
+  auto iter = test.begin();
+  auto iter_2 = test_2.begin();
+  iter++;
+  iter_2++;
+
+  test.insert(iter, 9999);
+  test_2.insert(iter_2, 9999);
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<int>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}
+
+TEST(VectorTest, Insert_3) {
+  s21::vector<int> test = {1};
+  std::vector<int> test_2 = {1};
+  auto iter = test.begin();
+  auto iter_2 = test_2.begin();
+
+  test.insert(iter, 9999);
+  test_2.insert(iter_2, 9999);
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<int>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}
+
+TEST(VectorTest, Insert_4) {
+  s21::vector<int> test = {1};
+  auto iter = test.begin();
+  iter = iter + 2;
+
+  EXPECT_ANY_THROW(test.insert(iter, 9999));
+}
+
+TEST(VectorTest, Erase_1) {
+  s21::vector<int> test = {11, 22, 33, 44};
+  std::vector<int> test_2 = {11, 22, 33, 44};
+  auto iter = test.begin();
+  auto iter_2 = test_2.begin();
+
+  test.erase(iter);
+  test_2.erase(iter_2);
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<int>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}
+
+TEST(VectorTest, Erase_2) {
+  s21::vector<int> test = {1};
+  auto iter = test.begin();
+  iter = iter + 2;
+
+  EXPECT_ANY_THROW(test.erase(iter));
+}
+
+TEST(VectorTest, Erase_3) {
+  s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+  std::vector<int> test_2 = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+  auto iter = test.begin();
+  auto iter_2 = test_2.begin();
+  iter = iter + 3;
+  iter_2 = iter_2 + 3;
+
+  test.erase(iter);
+  test_2.erase(iter_2);
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<int>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}

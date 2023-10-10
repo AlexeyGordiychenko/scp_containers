@@ -53,10 +53,10 @@ class vector {
   void shrink_to_fit();
 
   void clear() noexcept;
-  // iterator insert(iterator pos, const_reference value);
-  // void erase(iterator pos);
-  // void push_back(const_reference value);
-  // void pop_back();
+  iterator insert(iterator pos, const_reference value);
+  void erase(iterator pos);
+  void push_back(const_reference value);
+  void pop_back();
   void swap(vector &other) noexcept;
 
  private:
@@ -71,7 +71,7 @@ vector<T>::vector() : size_(0U), capacity_(0U), data_(nullptr) {}
 
 template <typename T>
 vector<T>::~vector() noexcept {
-  for (size_type i = 0; i < size_; ++i) data_[i].~T();
+  for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
   if (data_) ::operator delete(data_);
 
   size_ = 0;
@@ -121,7 +121,7 @@ template <typename T>
 vector<T> &vector<T>::operator=(vector<T> &&v) noexcept {
   if (this != &v) {
     this->swap(v);
-    v.~vector();
+    std::destroy_at(&v);
   }
 
   return *this;
@@ -226,12 +226,11 @@ void vector<T>::reserve(size_type new_cap) {
   if (new_cap > capacity_) {
     value_type *new_data =
         (value_type *)::operator new(sizeof(value_type) * new_cap);
-    for (size_type i = 0; i < new_cap; ++i) new (new_data + i) value_type();
+    for (size_type i = 0; i < size_; ++i) new (new_data + i) value_type();
 
     std::copy(data_, data_ + size_, new_data);
 
-    for (size_type i = 0; i < size_; ++i)  /// --------?????
-      data_[i].~T();
+    for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
     ::operator delete(data_);
     data_ = new_data;
     capacity_ = new_cap;
@@ -244,7 +243,20 @@ typename vector<T>::size_type vector<T>::capacity() const noexcept {
 }
 
 template <typename T>
-void vector<T>::shrink_to_fit() {}
+void vector<T>::shrink_to_fit() {
+  if (capacity_ > size_) {
+    value_type *new_data =
+        (value_type *)::operator new(sizeof(value_type) * size_);
+    for (size_type i = 0; i < size_; ++i) new (new_data + i) value_type();
+
+    std::copy(data_, data_ + size_, new_data);
+
+    for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
+    ::operator delete(data_);
+    data_ = new_data;
+    capacity_ = size_;
+  }
+}
 
 ///===VECTOR_MODIFIERS=====================================
 template <typename T>
@@ -254,6 +266,56 @@ void vector<T>::clear() noexcept {
   }
 
   size_ = 0;
+}
+
+template <typename T>
+typename vector<T>::iterator vector<T>::insert(iterator pos,
+                                               const_reference value) {
+  size_type diff = pos - begin();
+
+  if (diff > size_) {
+    throw std::out_of_range("insert(): Position is out of range");
+  }
+
+  if (size_ == capacity_) {
+    reserve(capacity_ > 0 ? (2U * capacity_) : (1U));
+  }
+
+  iterator new_pos = begin() + diff;
+
+  for (iterator iter = end(); iter != new_pos; --iter) {
+    *iter = *(iter - 1);
+  }
+  *new_pos = value;
+  size_ += 1;
+
+  return new_pos;
+}
+
+template <typename T>
+void vector<T>::erase(iterator pos) {
+  size_type diff = pos - begin();
+
+  if (diff > size_) {
+    throw std::out_of_range("erase(): Position is out of range");
+  }
+
+  for (iterator iter = pos; iter != end() - 1; ++iter) {
+    *iter = *(iter + 1);
+  }
+
+  std::destroy_at((&(*end())));
+  size_ -= 1;
+}
+
+template <typename T>
+void vector<T>::push_back(const_reference value) {
+  ;
+}
+
+template <typename T>
+void vector<T>::pop_back() {
+  ;
 }
 
 template <typename T>

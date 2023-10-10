@@ -8,6 +8,7 @@ template <typename T>
 class VectorIterator {
  public:
   using reference = T&;
+  using size_type = size_t;
 
   VectorIterator() = delete;
   VectorIterator(T* ptr) noexcept;
@@ -20,6 +21,10 @@ class VectorIterator {
   VectorIterator<T>& operator--();
   bool operator==(const VectorIterator<T>& other) const noexcept;
   bool operator!=(const VectorIterator<T>& other) const noexcept;
+
+  ptrdiff_t operator-(const VectorIterator<T>& other) const;
+  VectorIterator<T> operator-(size_type n) const;
+  VectorIterator<T> operator+(size_type n) const;
 
  private:
   T* pointer_;
@@ -78,6 +83,29 @@ template <typename T>
 bool VectorIterator<T>::operator!=(
     const VectorIterator<T>& other) const noexcept {
   return pointer_ != other.pointer_;
+}
+
+template <typename T>
+ptrdiff_t VectorIterator<T>::operator-(const VectorIterator<T>& other) const {
+  return pointer_ - other.pointer_;
+}
+
+template <typename T>
+VectorIterator<T> VectorIterator<T>::operator-(size_type n) const {
+  VectorIterator tmp(*this);
+
+  for (size_type i = 0; i < n; ++i) tmp--;
+
+  return tmp;
+}
+
+template <typename T>
+VectorIterator<T> VectorIterator<T>::operator+(size_type n) const {
+  VectorIterator tmp(*this);
+
+  for (size_type i = 0; i < n; ++i) tmp++;
+
+  return tmp;
 }
 
 }  //  namespace s21
