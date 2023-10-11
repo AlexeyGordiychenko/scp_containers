@@ -10,7 +10,8 @@ namespace s21 {
 
 // RbTree class declaration
 template <class Key, class Value, class KeyOfValue,
-          class Compare = std::less<Value>>
+          class Compare = std::less<Value>,
+          class Allocator = std::allocator<Value>>
 class RbTree {
  private:
   enum Color : bool { BLACK, RED };
@@ -28,12 +29,17 @@ class RbTree {
   using pointer = value_type *;
   using const_pointer = const value_type *;
 
+  using alloc_traits = std::allocator_traits<Allocator>;
+  using value_alloc = typename alloc_traits::template rebind_alloc<value_type>;
+  using value_alloc_reference = value_alloc &;
+  using node_alloc = typename alloc_traits::template rebind_alloc<Node>;
+
   using size_type = size_t;
 
   // type aliases for smart pointers to Node
   using NodePtr = std::shared_ptr<Node>;
   using NodeParentPtr = std::weak_ptr<Node>;
-  using DataPtr = std::unique_ptr<Value>;
+  using DataPtr = std::unique_ptr<value_type, std::function<void(pointer)>>;
 
   // iterator
   template <bool isConst>
@@ -138,7 +144,7 @@ class RbTree {
     root_ = copy_node_recursive(other.root_, leftmost, rightmost);
     nodes_count_ = other.nodes_count_;
     if (root_) {
-      sentinel_node_ = std::make_shared<Node>();
+      sentinel_node_ = allocate_node();
       sentinel_node_->left_ = leftmost;
       sentinel_node_->right_ = rightmost;
       root_->parent_ = sentinel_node_;
@@ -217,11 +223,11 @@ class RbTree {
       }
     }
 
-    auto new_node = std::make_shared<Node>(data);
+    auto new_node = allocate_node(data);
 
     if (b == nullptr) {
       root_ = new_node;
-      sentinel_node_ = std::make_shared<Node>();
+      sentinel_node_ = allocate_node();
       sentinel_node_->left_ = root_;
       sentinel_node_->right_ = root_;
       set_node_color(root_, BLACK);
@@ -713,16 +719,36 @@ class RbTree {
     Color color_ = RED;
 
     Node() = default;
-    Node(const_reference data) : data_(std::make_unique<value_type>(data)){};
-    Node(const_reference data, Color color)
-        : data_(std::make_unique<value_type>(data)), color_(color){};
+    Node(const_reference data, value_alloc_reference value_alloc)
+        : Node(data, value_alloc, RED) {}
+    Node(const_reference data, value_alloc_reference value_alloc, Color color)
+        : data_(allocate_value(data, value_alloc), get_deleter(value_alloc)),
+          color_(color) {}
     Node &operator=(const Node &) = delete;
     Node(const Node &) = delete;
     ~Node() = default;
+
+   private:
+    pointer allocate_value(const_reference data,
+                           value_alloc_reference value_alloc) {
+      pointer raw_value = value_alloc.allocate(1);
+      alloc_traits::construct(value_alloc, raw_value, data);
+      return raw_value;
+    }
+
+    std::function<void(pointer)> get_deleter(
+        value_alloc_reference value_alloc) {
+      return [&value_alloc](pointer p) {
+        alloc_traits::destroy(value_alloc, p);
+        value_alloc.deallocate(p, 1);
+      };
+    }
   };
 
   NodePtr root_, sentinel_node_;
   size_type nodes_count_ = 0;
+  value_alloc value_alloc_;
+  node_alloc node_alloc_;
 
   using key_compare_func =
       std::function<bool(const key_type &, const key_type &)>;
@@ -787,8 +813,7 @@ class RbTree {
       return nullptr;
     }
 
-    NodePtr new_node =
-        std::make_shared<Node>(*node_to_copy->data_, node_to_copy->color_);
+    auto new_node = allocate_node(*node_to_copy->data_, node_to_copy->color_);
 
     // copy the left subtree and update the leftmost
     new_node->left_ =
@@ -871,6 +896,11 @@ class RbTree {
     }
 
     return result;
+  }
+
+  NodePtr allocate_node() { return std::allocate_shared<Node>(node_alloc_); }
+  NodePtr allocate_node(const_reference data, Color color = RED) {
+    return std::allocate_shared<Node>(node_alloc_, data, value_alloc_, color);
   }
 };
 }  // namespace s21
