@@ -264,6 +264,7 @@ TEST(VectorTest, Clear_1) {
   ASSERT_EQ(test[4], test_2[4]);
 }
 
+// //  Uncomment to see clear() calls destructor
 // TEST(VectorTest, Clear_2) {
 //   s21::vector<ClassWithPrintableDestructor> test(5);
 //   std::vector<ClassWithPrintableDestructor> test_2(5);
@@ -439,6 +440,71 @@ TEST(VectorTest, Erase_3) {
 
   test.erase(iter);
   test_2.erase(iter_2);
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<int>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}
+
+TEST(VectorTest, PushBack_1) {
+  s21::vector<int> test = {1};
+  std::vector<int> test_2 = {1};
+
+  test.push_back(9999);
+  test_2.push_back(9999);
+  test.push_back(8888);
+  test_2.push_back(8888);
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<int>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}
+
+TEST(VectorTest, PopBack_1) {
+  s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+  std::vector<int> test_2 = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+
+  test.pop_back();
+  test_2.pop_back();
+  test.pop_back();
+  test_2.pop_back();
+  test.pop_back();
+  test_2.pop_back();
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<int>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}
+
+TEST(VectorTest, PopBack_2) {
+  s21::vector<int> test = {};
+
+  EXPECT_ANY_THROW(test.pop_back());
+}
+
+TEST(VectorTest, PushPopBack_1) {
+  s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+  std::vector<int> test_2 = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+
+  test.pop_back();
+  test_2.pop_back();
+  test.pop_back();
+  test_2.pop_back();
+  test.pop_back();
+  test_2.pop_back();
+  test.push_back(9999);
+  test_2.push_back(9999);
+  test.push_back(8888);
+  test_2.push_back(8888);
 
   ASSERT_EQ(test.size(), test_2.size());
   ASSERT_EQ(test.capacity(), test_2.capacity());

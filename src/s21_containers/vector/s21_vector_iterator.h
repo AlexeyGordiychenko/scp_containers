@@ -11,7 +11,7 @@ class VectorIterator {
   using size_type = size_t;
 
   VectorIterator() = delete;
-  VectorIterator(T* ptr) noexcept;
+  explicit VectorIterator(T* ptr) noexcept;
   ~VectorIterator();
 
   reference operator*();

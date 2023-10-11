@@ -23,7 +23,7 @@ class vector {
   using const_iterator = VectorConstIterator<T>;
 
   vector();
-  vector(size_type n);
+  explicit vector(size_type n);
   vector(std::initializer_list<value_type> const &items);
   vector(const vector &v);
   vector(vector &&v);
@@ -310,12 +310,12 @@ void vector<T>::erase(iterator pos) {
 
 template <typename T>
 void vector<T>::push_back(const_reference value) {
-  ;
+  insert(end(), value);
 }
 
 template <typename T>
 void vector<T>::pop_back() {
-  ;
+  erase(end() - 1);
 }
 
 template <typename T>

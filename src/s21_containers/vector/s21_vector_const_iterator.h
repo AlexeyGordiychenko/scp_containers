@@ -11,7 +11,7 @@ class VectorConstIterator {
   using size_type = size_t;
 
   VectorConstIterator() = delete;
-  VectorConstIterator(T* ptr) noexcept;
+  explicit VectorConstIterator(T* ptr) noexcept;
   ~VectorConstIterator();
 
   reference operator*();
