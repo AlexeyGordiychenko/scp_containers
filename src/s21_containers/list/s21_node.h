@@ -1,5 +1,5 @@
-#ifndef CPP2_S21_CONTAINERS_SRC_LIST_NODE_H_
-#define CPP2_S21_CONTAINERS_SRC_LIST_NODE_H_
+#ifndef CPP2_S21_CONTAINERS_LIST_S21_NODE_H_
+#define CPP2_S21_CONTAINERS_LIST_S21_NODE_H_
 
 #include <cstdlib>
 
@@ -38,4 +38,4 @@ template <class T> inline s21_node<T>::~s21_node() {
 }
 } // namespace s21
 
-#endif
+#endif  // CPP2_S21_CONTAINERS_LIST_S21_NODE_H_

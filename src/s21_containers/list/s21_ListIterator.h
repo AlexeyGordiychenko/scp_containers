@@ -1,8 +1,8 @@
 #ifndef CPP2_S21_CONTAINERS_SRC_LIST_LISTITERATOR_H_
 #define CPP2_S21_CONTAINERS_SRC_LIST_LISTITERATOR_H_
 
-#include "s21_list.hpp"
-#include "s21_node.hpp"
+#include "s21_list.h"
+#include "s21_node.h"
 
 namespace s21 {
 

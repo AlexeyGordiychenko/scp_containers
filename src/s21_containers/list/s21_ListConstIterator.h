@@ -1,7 +1,7 @@
 #ifndef CPP2_S21_CONTAINERS_SRC_LIST_LISTCONSTITERATOR_H_
 #define CPP2_S21_CONTAINERS_SRC_LIST_LISTCONSTITERATOR_H_
-#include "s21_ListIterator.hpp"
-#include "s21_node.hpp"
+#include "s21_ListIterator.h"
+#include "s21_node.h"
 
 namespace s21 {
 template <class T> class ListConstIterator : public ListIterator<T> {

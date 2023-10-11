@@ -13,6 +13,10 @@ ClassNoDefaultConstructor::ClassNoDefaultConstructor(int n) : a(n) {}
 
 ClassNoDefaultConstructor::~ClassNoDefaultConstructor() { a = 0; }
 
+test_obj::test_obj(/* args */) : id(ID++) {}
+
+test_obj::~test_obj() {}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
 #ifdef __APPLE__

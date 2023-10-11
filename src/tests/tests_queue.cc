@@ -1,17 +1,8 @@
-#include "s21_queue.hpp"
-#include "s21_test_obj.hpp"
-#include <gtest/gtest.h>
-#include <iostream>
-#include <utility>
+#include "test.h"
 
 using namespace s21;
 
-int main(int argc, char **argv) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
-
-TEST(s21_queue_test, constr) {
+TEST(QueueTest, constr) {
   test_obj arr[3];
   queue<test_obj, list<test_obj>> queue_a;
   EXPECT_EQ(queue_a.size(), 0);
@@ -41,7 +32,7 @@ TEST(s21_queue_test, constr) {
   EXPECT_EQ(queue_f.size(), 3);
 }
 
-TEST(s21_queue_test, push_pop) {
+TEST(QueueTest, push_pop) {
   queue<test_obj, list<test_obj>> queue_a;
   EXPECT_EQ(queue_a.size(), 0);
   EXPECT_EQ(queue_a.empty(), true);
@@ -70,7 +61,7 @@ TEST(s21_queue_test, push_pop) {
   EXPECT_EQ(queue_a.size(), 0);
 }
 
-TEST(s21_queue_test, swap) {
+TEST(QueueTest, swap) {
   test_obj arr[7];
   queue<test_obj, list<test_obj>> queue_a{arr[0], arr[1], arr[2]};
   EXPECT_EQ(queue_a.back().id, arr[2].id);
@@ -89,7 +80,7 @@ TEST(s21_queue_test, swap) {
   EXPECT_EQ(queue_b.size(), 3);
 }
 
-TEST(s21_queue_test, insert_many_back) {
+TEST(QueueTest, insert_many_back) {
   queue<test_obj, list<test_obj>> q;
   test_obj arr[6];
   q.insert_many_back(arr[0], arr[1], arr[2]);
