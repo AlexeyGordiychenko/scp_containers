@@ -102,6 +102,8 @@ class SetTest : public ::testing::Test {
 
   s21::set<int> s21_s_static;
   std::set<int> std_s_static;
+
+  double max_size_ratio = 2.4;
 };
 
 TEST_F(SetTest, DefaultCtor) {
@@ -470,24 +472,30 @@ TEST_F(SetTest, Capacity) {
     std::set<int> std_s;
     EXPECT_EQ(s21_s.empty(), std_s.empty());
     EXPECT_EQ(s21_s.size(), std_s.size());
-    // EXPECT_EQ(s21_s.max_size(), std_s.max_size());
+    EXPECT_DOUBLE_EQ(static_cast<double>(std_s.max_size()) / s21_s.max_size(),
+                     max_size_ratio);
   }
   {
     s21::set<int> s21_s = {10};
     std::set<int> std_s = {10};
     EXPECT_EQ(s21_s.empty(), std_s.empty());
     EXPECT_EQ(s21_s.size(), std_s.size());
-    // EXPECT_EQ(s21_s.max_size(), std_s.max_size());
+    EXPECT_DOUBLE_EQ(static_cast<double>(std_s.max_size()) / s21_s.max_size(),
+                     max_size_ratio);
   }
   {
     EXPECT_EQ(s21_s_rnd.empty(), std_s_rnd.empty());
     EXPECT_EQ(s21_s_rnd.size(), std_s_rnd.size());
-    // EXPECT_EQ(s21_s_rnd.max_size(), std_s_rnd.max_size());
+    EXPECT_DOUBLE_EQ(
+        static_cast<double>(std_s_rnd.max_size()) / s21_s_rnd.max_size(),
+        max_size_ratio);
   }
   {
     EXPECT_EQ(s21_s_static.empty(), s21_s_static.empty());
     EXPECT_EQ(s21_s_static.size(), s21_s_static.size());
-    // EXPECT_EQ(cms21.max_size(), cmstd.max_size());
+    EXPECT_DOUBLE_EQ(
+        static_cast<double>(std_s_static.max_size()) / s21_s_static.max_size(),
+        max_size_ratio);
   }
 }
 

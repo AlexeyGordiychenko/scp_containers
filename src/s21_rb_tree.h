@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <iostream>
-#include <limits>
 #include <memory>
 
 namespace s21 {
@@ -336,14 +335,7 @@ class RbTree {
 
   size_type size() const { return nodes_count_; }
   bool empty() const { return nodes_count_ == 0; }
-  size_type max_size() const {
-    // this is a rough estimate
-    // 3 * sizeof(void *) - because size of node doesn't include some extra
-    // overhead of smart pointers (shared, weak) so we compensate it with an
-    // extra 2*pointer size (estimate) for each (3 total), so 3*2 = 6
-    size_t node_size = sizeof(Node) + sizeof(Value) + 6 * sizeof(void *);
-    return std::numeric_limits<size_t>::max() / node_size;
-  }
+  size_type max_size() const { return node_alloc_.max_size(); }
 
   void swap(RbTree &other) noexcept {
     std::swap(root_, other.root_);

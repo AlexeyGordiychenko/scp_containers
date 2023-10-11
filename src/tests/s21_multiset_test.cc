@@ -105,6 +105,8 @@ class MultisetTest : public ::testing::Test {
 
   s21::multiset<int> s21_ms_static;
   std::multiset<int> std_ms_static;
+
+  double max_size_ratio = 2.4;
 };
 
 TEST_F(MultisetTest, DefaultCtor) {
@@ -476,24 +478,30 @@ TEST_F(MultisetTest, Capacity) {
     std::multiset<int> std_ms;
     EXPECT_EQ(s21_ms.empty(), std_ms.empty());
     EXPECT_EQ(s21_ms.size(), std_ms.size());
-    // EXPECT_EQ(s21_ms.max_size(), std_ms.max_size());
+    EXPECT_DOUBLE_EQ(static_cast<double>(std_ms.max_size()) / s21_ms.max_size(),
+                     max_size_ratio);
   }
   {
     s21::multiset<int> s21_ms = {10};
     std::multiset<int> std_ms = {10};
     EXPECT_EQ(s21_ms.empty(), std_ms.empty());
     EXPECT_EQ(s21_ms.size(), std_ms.size());
-    // EXPECT_EQ(s21_ms.max_size(), std_ms.max_size());
+    EXPECT_DOUBLE_EQ(static_cast<double>(std_ms.max_size()) / s21_ms.max_size(),
+                     max_size_ratio);
   }
   {
     EXPECT_EQ(s21_ms_rnd.empty(), std_ms_rnd.empty());
     EXPECT_EQ(s21_ms_rnd.size(), std_ms_rnd.size());
-    // EXPECT_EQ(s21_ms_rnd.max_size(), std_ms_rnd.max_size());
+    EXPECT_DOUBLE_EQ(
+        static_cast<double>(std_ms_rnd.max_size()) / s21_ms_rnd.max_size(),
+        max_size_ratio);
   }
   {
     EXPECT_EQ(s21_ms_static.empty(), s21_ms_static.empty());
     EXPECT_EQ(s21_ms_static.size(), s21_ms_static.size());
-    // EXPECT_EQ(cms21.max_size(), cmstd.max_size());
+    EXPECT_DOUBLE_EQ(static_cast<double>(std_ms_static.max_size()) /
+                         s21_ms_static.max_size(),
+                     max_size_ratio);
   }
 }
 

@@ -107,6 +107,8 @@ class MapTest : public ::testing::Test {
 
   s21::map<int, std::string> s21_m_static;
   std::map<int, std::string> std_m_static;
+
+  double max_size_ratio = 1 + 1.0 / 3;
 };
 
 TEST_F(MapTest, DefaultCtor) {
@@ -530,24 +532,28 @@ TEST_F(MapTest, Capacity) {
     std::map<int, int> std_m;
     EXPECT_EQ(s21_m.empty(), std_m.empty());
     EXPECT_EQ(s21_m.size(), std_m.size());
-    // EXPECT_EQ(s21_m.max_size(), std_m.max_size());
   }
   {
     s21::map<int, std::string> s21_m = {{10, "10"}};
     std::map<int, std::string> std_m = {{10, "10"}};
     EXPECT_EQ(s21_m.empty(), std_m.empty());
     EXPECT_EQ(s21_m.size(), std_m.size());
-    // EXPECT_EQ(s21_m.max_size(), std_m.max_size());
+    EXPECT_DOUBLE_EQ(static_cast<double>(std_m.max_size()) / s21_m.max_size(),
+                     max_size_ratio);
   }
   {
     EXPECT_EQ(s21_m_rnd.empty(), std_m_rnd.empty());
     EXPECT_EQ(s21_m_rnd.size(), std_m_rnd.size());
-    // EXPECT_EQ(s21_m_rnd.max_size(), std_m_rnd.max_size());
+    EXPECT_DOUBLE_EQ(
+        static_cast<double>(std_m_rnd.max_size()) / s21_m_rnd.max_size(),
+        max_size_ratio);
   }
   {
     EXPECT_EQ(s21_m_static.empty(), s21_m_static.empty());
     EXPECT_EQ(s21_m_static.size(), s21_m_static.size());
-    // EXPECT_EQ(cms21.max_size(), cmstd.max_size());
+    EXPECT_DOUBLE_EQ(
+        static_cast<double>(std_m_static.max_size()) / s21_m_static.max_size(),
+        max_size_ratio);
   }
 }
 
