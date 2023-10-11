@@ -17,6 +17,19 @@ class RbTree {
   struct Node;  // forward declaration of node
 
  public:
+  // type aliases
+  using key_type = Key;
+  using value_type = Value;
+  using difference_type = std::ptrdiff_t;
+  using key_compare = Compare;
+  using value_compare = Compare;
+  using reference = value_type &;
+  using const_reference = const value_type &;
+  using pointer = value_type *;
+  using const_pointer = const value_type *;
+
+  using size_type = size_t;
+
   // type aliases for smart pointers to Node
   using NodePtr = std::shared_ptr<Node>;
   using NodeParentPtr = std::weak_ptr<Node>;
@@ -103,20 +116,9 @@ class RbTree {
     NodePtr node_;
   };
 
-  // type aliases
-  using key_type = Key;
-  using value_type = Value;
-  using difference_type = std::ptrdiff_t;
-  using key_compare = Compare;
-  using value_compare = Compare;
-  using reference = value_type &;
-  using const_reference = const value_type &;
-  using pointer = value_type *;
-  using const_pointer = const value_type *;
+  // type aliases for the iterator
   using iterator = RbTreeIterator<false>;
   using const_iterator = RbTreeIterator<true>;
-
-  using size_type = size_t;
 
   // Define the opposite comparison function
   struct key_compare_reverse {
