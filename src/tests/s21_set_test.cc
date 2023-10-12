@@ -402,8 +402,22 @@ TEST_F(SetTest, Iterator) {
     MoveForwardBackward(s21_it, std_it);
   }
   {
+    const auto s21_s = s21_s_rnd;
+    const auto std_s = std_s_rnd;
+    auto s21_it = s21_s.begin();
+    auto std_it = std_s.begin();
+    MoveForwardBackward(s21_it, std_it);
+  }
+  {
     auto s21_it = s21_s_rnd.end();
     auto std_it = std_s_rnd.end();
+    MoveBackwardForward(s21_it, std_it);
+  }
+  {
+    const auto s21_s = s21_s_rnd;
+    const auto std_s = std_s_rnd;
+    auto s21_it = s21_s.end();
+    auto std_it = std_s.end();
     MoveBackwardForward(s21_it, std_it);
   }
   {
@@ -412,8 +426,22 @@ TEST_F(SetTest, Iterator) {
     MoveForwardBackward(s21_it, std_it);
   }
   {
+    const auto s21_s = s21_s_rnd;
+    const auto std_s = std_s_rnd;
+    auto s21_it = s21_s.rbegin();
+    auto std_it = std_s.rbegin();
+    MoveForwardBackward(s21_it, std_it);
+  }
+  {
     auto s21_it = s21_s_rnd.rend();
     auto std_it = std_s_rnd.rend();
+    MoveBackwardForward(s21_it, std_it);
+  }
+  {
+    const auto s21_s = s21_s_rnd;
+    const auto std_s = std_s_rnd;
+    auto s21_it = s21_s.rend();
+    auto std_it = std_s.rend();
     MoveBackwardForward(s21_it, std_it);
   }
   {

@@ -178,20 +178,32 @@ class RbTree {
   virtual ~RbTree() = default;
 
   // iterator methods
-  iterator begin() const { return iterator(get_leftmost()); }
+  iterator begin() { return iterator(get_leftmost()); }
 
-  iterator end() const { return iterator(sentinel_node_); }
+  const_iterator begin() const { return const_iterator(get_leftmost()); }
+
+  iterator end() { return iterator(sentinel_node_); }
+
+  const_iterator end() const { return const_iterator(sentinel_node_); }
 
   const_iterator cbegin() const { return const_iterator(get_leftmost()); }
 
   const_iterator cend() const { return const_iterator(sentinel_node_); }
 
-  std::reverse_iterator<iterator> rbegin() const {
+  std::reverse_iterator<iterator> rbegin() {
     return std::reverse_iterator<iterator>(end());
   }
 
-  std::reverse_iterator<iterator> rend() const {
+  std::reverse_iterator<const_iterator> rbegin() const {
+    return std::reverse_iterator<const_iterator>(end());
+  }
+
+  std::reverse_iterator<iterator> rend() {
     return std::reverse_iterator<iterator>(begin());
+  }
+
+  std::reverse_iterator<const_iterator> rend() const {
+    return std::reverse_iterator<const_iterator>(begin());
   }
 
   std::reverse_iterator<const_iterator> crbegin() const {

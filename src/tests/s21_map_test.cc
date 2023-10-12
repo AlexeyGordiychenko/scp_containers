@@ -461,8 +461,22 @@ TEST_F(MapTest, Iterator) {
     MoveForwardBackward(s21_it, std_it);
   }
   {
+    const auto s21_m = s21_m_rnd;
+    const auto std_m = std_m_rnd;
+    auto s21_it = s21_m.begin();
+    auto std_it = std_m.begin();
+    MoveForwardBackward(s21_it, std_it);
+  }
+  {
     auto s21_it = s21_m_rnd.end();
     auto std_it = std_m_rnd.end();
+    MoveBackwardForward(s21_it, std_it);
+  }
+  {
+    const auto s21_m = s21_m_rnd;
+    const auto std_m = std_m_rnd;
+    auto s21_it = s21_m.end();
+    auto std_it = std_m.end();
     MoveBackwardForward(s21_it, std_it);
   }
   {
@@ -471,8 +485,22 @@ TEST_F(MapTest, Iterator) {
     MoveForwardBackward(s21_it, std_it);
   }
   {
+    const auto s21_m = s21_m_rnd;
+    const auto std_m = std_m_rnd;
+    auto s21_it = s21_m.rbegin();
+    auto std_it = std_m.rbegin();
+    MoveForwardBackward(s21_it, std_it);
+  }
+  {
     auto s21_it = s21_m_rnd.rend();
     auto std_it = std_m_rnd.rend();
+    MoveBackwardForward(s21_it, std_it);
+  }
+  {
+    const auto s21_m = s21_m_rnd;
+    const auto std_m = std_m_rnd;
+    auto s21_it = s21_m.rend();
+    auto std_it = std_m.rend();
     MoveBackwardForward(s21_it, std_it);
   }
   {
