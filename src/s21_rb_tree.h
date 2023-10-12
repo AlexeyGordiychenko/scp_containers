@@ -306,20 +306,6 @@ class RbTree {
     return const_iterator(find_node(key));
   };
 
-  node_ptr find_node(const key_type &key) const {
-    node_ptr tnode = root_;
-    while (tnode != nullptr) {
-      if (key == get_key(*tnode->data_)) {
-        return tnode;
-      }
-      if (key_compare()(key, get_key(*tnode->data_))) {
-        tnode = tnode->left_;
-      } else {
-        tnode = tnode->right_;
-      }
-    }
-    return sentinel_node_;
-  };
   iterator lower_bound(const key_type &key) {
     return iterator(bound(key, key_compare()));
   };
@@ -341,6 +327,32 @@ class RbTree {
     std::swap(root_, other.root_);
     std::swap(sentinel_node_, other.sentinel_node_);
     std::swap(nodes_count_, other.nodes_count_);
+  }
+
+  void merge(RbTree &other, bool duplicates = false) {
+    if (this == &other || other.empty()) return;
+    if (this->empty()) {
+      *this = std::move(other);
+      return;
+    }
+
+    node_ptr head = nullptr, tail = nullptr, other_head = nullptr,
+             other_tail = nullptr;
+
+    // Convert both trees to sorted doubly-linked lists
+    tree_to_list(root_, head, tail);
+    tree_to_list(other.root_, other_head, other_tail);
+    tail = key_compare()(get_key(*tail->data_), get_key(*other_tail->data_))
+               ? other_tail
+               : tail;
+
+    // Merge the two sorted lists into one
+    merge_lists(head, other_head, other_tail, duplicates);
+
+    // Convert the merged list and the rest of the other list back to balanced
+    // RB trees
+    list_to_tree(*this, head, tail);
+    list_to_tree(other, other_head, other_tail);
   }
 
   void print(const std::string &prefix, node_rptr node, bool is_left,
@@ -386,6 +398,224 @@ class RbTree {
     node_rptr root_ptr = root_.get();
     if (node_is_red(root_ptr)) return false;
     return is_valid_node(root_ptr, black_count);
+  }
+
+ private:
+  struct Node {
+    value_ptr data_;
+    node_ptr left_;
+    node_ptr right_;
+    node_parent_ptr parent_;
+    Color color_ = RED;
+
+    Node() = default;
+    Node(const_reference data, value_alloc_reference value_alloc)
+        : Node(data, value_alloc, RED) {}
+    Node(const_reference data, value_alloc_reference value_alloc, Color color)
+        : data_(allocate_value(data, value_alloc), get_deleter(value_alloc)),
+          color_(color) {}
+    Node &operator=(const Node &) = delete;
+    Node(const Node &) = delete;
+    ~Node() = default;
+
+    // node methods
+    node_ptr parent() const { return parent_.lock(); }
+
+   private:
+    value_rptr allocate_value(const_reference data,
+                              value_alloc_reference value_alloc) {
+      value_rptr raw_value = value_alloc.allocate(1);
+      alloc_traits::construct(value_alloc, raw_value, data);
+      return raw_value;
+    }
+
+    std::function<void(value_rptr)> get_deleter(
+        value_alloc_reference value_alloc) {
+      return [&value_alloc](value_rptr p) {
+        alloc_traits::destroy(value_alloc, p);
+        value_alloc.deallocate(p, 1);
+      };
+    }
+  };
+
+  node_ptr root_, sentinel_node_;
+  size_type nodes_count_ = 0;
+  value_alloc value_alloc_;
+  node_alloc node_alloc_;
+
+  using key_compare_func =
+      std::function<bool(const key_type &, const key_type &)>;
+
+  const std::string kCyanColor = "\033[0;36m";
+  const std::string kMagentaColor = "\033[0;35m";
+  const std::string kRedColorBold = "\033[1;31m";
+  const std::string kBlackColorBold = "\033[1;30m";
+  const std::string kResetColor = "\033[0m";
+
+  auto get_key(const_reference data) const { return KeyOfValue()(data); }
+
+  node_ptr get_leftmost() const {
+    if (sentinel_node_) {
+      return (sentinel_node_->left_) ? sentinel_node_->left_ : sentinel_node_;
+    } else {
+      return nullptr;
+    }
+  }
+
+  bool node_is_black(const_node_rptr node) const {
+    return !node || node->color_ == BLACK;
+  }
+
+  bool node_is_red(const_node_rptr node) const {
+    return node && node->color_ == RED;
+  }
+
+  void set_node_color(node_rptr node, Color color) {
+    if (node) node->color_ = color;
+  }
+
+  node_ptr find_node(const key_type &key) const {
+    node_ptr tnode = root_;
+    while (tnode != nullptr) {
+      if (key == get_key(*tnode->data_)) {
+        return tnode;
+      }
+      if (key_compare()(key, get_key(*tnode->data_))) {
+        tnode = tnode->left_;
+      } else {
+        tnode = tnode->right_;
+      }
+    }
+    return sentinel_node_;
+  };
+
+  bool is_valid_node(node_rptr node, int &black_count,
+                     int path_black_count = 0) const {
+    if (!node) {
+      // All paths from the root to a leaf have the same number of black nodes
+      if (black_count == 0) {
+        black_count = path_black_count;
+      }
+      return path_black_count == black_count;
+    }
+    node_rptr left = node->left_.get();
+    node_rptr right = node->right_.get();
+    if (node_is_black(node)) {
+      // Count black nodes along the path
+      path_black_count++;
+    } else {
+      // Red nodes can't have red children
+      if (node_is_red(left) || node_is_red(right)) return false;
+    }
+
+    // Check left and right subtrees
+    return is_valid_node(left, black_count, path_black_count) &&
+           is_valid_node(right, black_count, path_black_count);
+  }
+
+  void clear_recursive(node_ptr &node) {
+    if (!node) return;
+    clear_recursive(node->left_);
+    clear_recursive(node->right_);
+    node.reset();
+  }
+
+  node_ptr copy_node_recursive(node_rptr node_to_copy, node_ptr &leftmost,
+                               node_ptr &rightmost) {
+    if (!node_to_copy) {
+      return nullptr;
+    }
+
+    auto new_node = allocate_node(*node_to_copy->data_, node_to_copy->color_);
+
+    // copy the left subtree and update the leftmost
+    new_node->left_ =
+        copy_node_recursive(node_to_copy->left_.get(), leftmost, rightmost);
+    if (!leftmost && !new_node->left_) leftmost = new_node;
+
+    // copy the right subtree and update the rightmost
+    new_node->right_ =
+        copy_node_recursive(node_to_copy->right_.get(), leftmost, rightmost);
+    if (!new_node->right_) rightmost = new_node;
+
+    if (new_node->left_) {
+      new_node->left_->parent_ = new_node;
+    }
+    if (new_node->right_) {
+      new_node->right_->parent_ = new_node;
+    }
+
+    return new_node;
+  }
+
+  void swap_nodes_on_erase(node_ptr &node_to_delete, node_ptr &node) {
+    if (node_to_delete->parent()->left_ == node_to_delete) {
+      node_to_delete->parent()->left_ = node;
+    } else {
+      node_to_delete->parent()->right_ = node;
+    }
+
+    if (node != root_) {
+      if (node->parent()->left_ == node) {
+        node->parent()->left_ = node_to_delete;
+      } else {
+        node->parent()->right_ = node_to_delete;
+      }
+    }
+
+    std::swap(node->parent_, node_to_delete->parent_);
+    std::swap(node->left_, node_to_delete->left_);
+    std::swap(node->right_, node_to_delete->right_);
+    std::swap(node->color_, node_to_delete->color_);
+
+    if (node == root_) {
+      root_ = node_to_delete;
+    }
+
+    if (node->left_) node->left_->parent_ = node;
+    if (node->right_) node->right_->parent_ = node;
+    if (node_to_delete->left_) node_to_delete->left_->parent_ = node_to_delete;
+    if (node_to_delete->right_)
+      node_to_delete->right_->parent_ = node_to_delete;
+  }
+
+  void update_edges_on_erase(node_rptr node) {
+    bool is_root = node == root_.get();
+    bool is_leftmost = (node == sentinel_node_->left_.get());
+    bool is_rightmost = (node == sentinel_node_->right_.get());
+    if (is_root && is_leftmost && is_rightmost) {
+      sentinel_node_->left_ = nullptr;
+      sentinel_node_->right_ = nullptr;
+    } else {
+      if (is_leftmost) {
+        sentinel_node_->left_ = node->right_ ? node->right_ : node->parent();
+      }
+      if (is_rightmost) {
+        sentinel_node_->right_ = node->left_ ? node->left_ : node->parent();
+      }
+    }
+  }
+
+  node_ptr bound(const key_type &key, key_compare_func comp) const {
+    node_ptr current = root_;
+    node_ptr result = sentinel_node_;
+
+    while (current) {
+      if (comp(get_key(*current->data_), key)) {
+        current = current->right_;
+      } else {
+        result = current;
+        current = current->left_;
+      }
+    }
+
+    return result;
+  }
+
+  node_ptr allocate_node() { return std::allocate_shared<Node>(node_alloc_); }
+
+  node_ptr allocate_node(const_reference data, Color color = RED) {
+    return std::allocate_shared<Node>(node_alloc_, data, value_alloc_, color);
   }
 
   // balancing functions
@@ -547,31 +777,7 @@ class RbTree {
     node->parent_ = left_child;
   }
 
-  void merge(RbTree &other, bool duplicates = false) {
-    if (this == &other || other.empty()) return;
-    if (this->empty()) {
-      *this = std::move(other);
-      return;
-    }
-
-    node_ptr head = nullptr, tail = nullptr, other_head = nullptr,
-             other_tail = nullptr;
-
-    // Convert both trees to sorted doubly-linked lists
-    tree_to_list(root_, head, tail);
-    tree_to_list(other.root_, other_head, other_tail);
-    tail = key_compare()(get_key(*tail->data_), get_key(*other_tail->data_))
-               ? other_tail
-               : tail;
-
-    // Merge the two sorted lists into one
-    merge_lists(head, other_head, other_tail, duplicates);
-
-    // Convert the merged list and the rest of the other list back to balanced
-    // RB trees
-    list_to_tree(*this, head, tail);
-    list_to_tree(other, other_head, other_tail);
-  }
+  // merge helper functions
 
   void tree_to_list(node_ptr node, node_ptr &first, node_ptr &last) {
     if (!node) {
@@ -704,205 +910,6 @@ class RbTree {
 
     adjust_tree(node->left_.get(), max_depth, current_depth + 1);
     adjust_tree(node->right_.get(), max_depth, current_depth + 1);
-  }
-
- private:
-  struct Node {
-    value_ptr data_;
-    node_ptr left_;
-    node_ptr right_;
-    node_parent_ptr parent_;
-    Color color_ = RED;
-
-    Node() = default;
-    Node(const_reference data, value_alloc_reference value_alloc)
-        : Node(data, value_alloc, RED) {}
-    Node(const_reference data, value_alloc_reference value_alloc, Color color)
-        : data_(allocate_value(data, value_alloc), get_deleter(value_alloc)),
-          color_(color) {}
-    Node &operator=(const Node &) = delete;
-    Node(const Node &) = delete;
-    ~Node() = default;
-
-    // node methods
-    node_ptr parent() const { return parent_.lock(); }
-
-   private:
-    value_rptr allocate_value(const_reference data,
-                              value_alloc_reference value_alloc) {
-      value_rptr raw_value = value_alloc.allocate(1);
-      alloc_traits::construct(value_alloc, raw_value, data);
-      return raw_value;
-    }
-
-    std::function<void(value_rptr)> get_deleter(
-        value_alloc_reference value_alloc) {
-      return [&value_alloc](value_rptr p) {
-        alloc_traits::destroy(value_alloc, p);
-        value_alloc.deallocate(p, 1);
-      };
-    }
-  };
-
-  node_ptr root_, sentinel_node_;
-  size_type nodes_count_ = 0;
-  value_alloc value_alloc_;
-  node_alloc node_alloc_;
-
-  using key_compare_func =
-      std::function<bool(const key_type &, const key_type &)>;
-
-  const std::string kCyanColor = "\033[0;36m";
-  const std::string kMagentaColor = "\033[0;35m";
-  const std::string kRedColorBold = "\033[1;31m";
-  const std::string kBlackColorBold = "\033[1;30m";
-  const std::string kResetColor = "\033[0m";
-
-  auto get_key(const_reference data) const { return KeyOfValue()(data); }
-  node_ptr get_leftmost() const {
-    if (sentinel_node_) {
-      return (sentinel_node_->left_) ? sentinel_node_->left_ : sentinel_node_;
-    } else {
-      return nullptr;
-    }
-  }
-
-  bool node_is_black(const_node_rptr node) const {
-    return !node || node->color_ == BLACK;
-  }
-  bool node_is_red(const_node_rptr node) const {
-    return node && node->color_ == RED;
-  }
-
-  void set_node_color(node_rptr node, Color color) {
-    if (node) node->color_ = color;
-  }
-
-  bool is_valid_node(node_rptr node, int &black_count,
-                     int path_black_count = 0) const {
-    if (!node) {
-      // All paths from the root to a leaf have the same number of black nodes
-      if (black_count == 0) {
-        black_count = path_black_count;
-      }
-      return path_black_count == black_count;
-    }
-    node_rptr left = node->left_.get();
-    node_rptr right = node->right_.get();
-    if (node_is_black(node)) {
-      // Count black nodes along the path
-      path_black_count++;
-    } else {
-      // Red nodes can't have red children
-      if (node_is_red(left) || node_is_red(right)) return false;
-    }
-
-    // Check left and right subtrees
-    return is_valid_node(left, black_count, path_black_count) &&
-           is_valid_node(right, black_count, path_black_count);
-  }
-
-  void clear_recursive(node_ptr &node) {
-    if (!node) return;
-    clear_recursive(node->left_);
-    clear_recursive(node->right_);
-    node.reset();
-  }
-
-  node_ptr copy_node_recursive(node_rptr node_to_copy, node_ptr &leftmost,
-                               node_ptr &rightmost) {
-    if (!node_to_copy) {
-      return nullptr;
-    }
-
-    auto new_node = allocate_node(*node_to_copy->data_, node_to_copy->color_);
-
-    // copy the left subtree and update the leftmost
-    new_node->left_ =
-        copy_node_recursive(node_to_copy->left_.get(), leftmost, rightmost);
-    if (!leftmost && !new_node->left_) leftmost = new_node;
-
-    // copy the right subtree and update the rightmost
-    new_node->right_ =
-        copy_node_recursive(node_to_copy->right_.get(), leftmost, rightmost);
-    if (!new_node->right_) rightmost = new_node;
-
-    if (new_node->left_) {
-      new_node->left_->parent_ = new_node;
-    }
-    if (new_node->right_) {
-      new_node->right_->parent_ = new_node;
-    }
-
-    return new_node;
-  }
-  void swap_nodes_on_erase(node_ptr &node_to_delete, node_ptr &node) {
-    if (node_to_delete->parent()->left_ == node_to_delete) {
-      node_to_delete->parent()->left_ = node;
-    } else {
-      node_to_delete->parent()->right_ = node;
-    }
-
-    if (node != root_) {
-      if (node->parent()->left_ == node) {
-        node->parent()->left_ = node_to_delete;
-      } else {
-        node->parent()->right_ = node_to_delete;
-      }
-    }
-
-    std::swap(node->parent_, node_to_delete->parent_);
-    std::swap(node->left_, node_to_delete->left_);
-    std::swap(node->right_, node_to_delete->right_);
-    std::swap(node->color_, node_to_delete->color_);
-
-    if (node == root_) {
-      root_ = node_to_delete;
-    }
-
-    if (node->left_) node->left_->parent_ = node;
-    if (node->right_) node->right_->parent_ = node;
-    if (node_to_delete->left_) node_to_delete->left_->parent_ = node_to_delete;
-    if (node_to_delete->right_)
-      node_to_delete->right_->parent_ = node_to_delete;
-  }
-
-  void update_edges_on_erase(node_rptr node) {
-    bool is_root = node == root_.get();
-    bool is_leftmost = (node == sentinel_node_->left_.get());
-    bool is_rightmost = (node == sentinel_node_->right_.get());
-    if (is_root && is_leftmost && is_rightmost) {
-      sentinel_node_->left_ = nullptr;
-      sentinel_node_->right_ = nullptr;
-    } else {
-      if (is_leftmost) {
-        sentinel_node_->left_ = node->right_ ? node->right_ : node->parent();
-      }
-      if (is_rightmost) {
-        sentinel_node_->right_ = node->left_ ? node->left_ : node->parent();
-      }
-    }
-  }
-
-  node_ptr bound(const key_type &key, key_compare_func comp) const {
-    node_ptr current = root_;
-    node_ptr result = sentinel_node_;
-
-    while (current) {
-      if (comp(get_key(*current->data_), key)) {
-        current = current->right_;
-      } else {
-        result = current;
-        current = current->left_;
-      }
-    }
-
-    return result;
-  }
-
-  node_ptr allocate_node() { return std::allocate_shared<Node>(node_alloc_); }
-  node_ptr allocate_node(const_reference data, Color color = RED) {
-    return std::allocate_shared<Node>(node_alloc_, data, value_alloc_, color);
   }
 };
 }  // namespace s21
