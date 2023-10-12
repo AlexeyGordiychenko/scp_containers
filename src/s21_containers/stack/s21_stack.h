@@ -9,16 +9,17 @@
 #include "../list/s21_node.h"
 
 namespace s21 {
-template <class T, class C = list<T>> class stack {
+template <class T, class C = list<T>>
+class stack {
   typedef T value_type;
   typedef T &reference;
   typedef const T &const_reference;
   typedef size_t size_type;
 
-private:
+ private:
   C list_;
 
-public:
+ public:
   stack() noexcept;
   stack(std::initializer_list<value_type> const &items) noexcept;
   stack(const stack &q) noexcept;
@@ -35,12 +36,14 @@ public:
   void pop() noexcept;
   void swap(stack &other) noexcept;
 
-  template <class... Args> void insert_many_front(Args &&...args) noexcept {
+  template <class... Args>
+  void insert_many_front(Args &&...args) noexcept {
     list_.insert_many_back(args...);
   }
 };
 
-template <class T, class C> inline stack<T, C>::stack() noexcept {}
+template <class T, class C>
+inline stack<T, C>::stack() noexcept {}
 
 template <class T, class C>
 inline stack<T, C>::stack(
@@ -48,17 +51,20 @@ inline stack<T, C>::stack(
   list_ = list(items);
 }
 
-template <class T, class C> inline stack<T, C>::stack(const stack &q) noexcept {
+template <class T, class C>
+inline stack<T, C>::stack(const stack &q) noexcept {
   // std::cout << "moved const call\n";
   list_ = list(q.list_);
 }
 
-template <class T, class C> inline stack<T, C>::stack(stack &&q) noexcept {
+template <class T, class C>
+inline stack<T, C>::stack(stack &&q) noexcept {
   // std::cout << "moved const call\n";
   list_ = std::move(q.list_);
 }
 
-template <class T, class C> inline stack<T, C>::~stack() {}
+template <class T, class C>
+inline stack<T, C>::~stack() {}
 
 template <class T, class C>
 inline stack<T, C> &stack<T, C>::operator=(stack &&q) noexcept {
@@ -78,7 +84,8 @@ inline typename stack<T, C>::const_reference stack<T, C>::top() const noexcept {
   return list_.back();
 }
 
-template <class T, class C> inline bool stack<T, C>::empty() const noexcept {
+template <class T, class C>
+inline bool stack<T, C>::empty() const noexcept {
   return list_.empty();
 }
 
@@ -92,7 +99,8 @@ inline void stack<T, C>::push(const_reference value) noexcept {
   list_.push_back(value);
 }
 
-template <class T, class C> inline void stack<T, C>::pop() noexcept {
+template <class T, class C>
+inline void stack<T, C>::pop() noexcept {
   list_.pop_back();
 }
 
@@ -101,6 +109,6 @@ inline void stack<T, C>::swap(stack &other) noexcept {
   list_.swap(other.list_);
 }
 
-} // namespace s21
+}  // namespace s21
 
 #endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_STACK_S21_STACK_H_

@@ -3,11 +3,10 @@
 
 #include <iostream>
 #include <utility>
+#include "gtest/gtest.h"
 
 #include "../s21_containers/s21_containers.h"
 #include "../s21_containersplus/s21_containersplus.h"
-
-#include "gtest/gtest.h"
 
 class ClassWithPrintableDestructor {
  public:
@@ -34,6 +33,7 @@ class test_obj {
   bool operator==(test_obj other) const { return id == other.id; }
   test_obj(/* args */);
   ~test_obj();
+
  private:
   static inline int ID{};
 };

@@ -1,15 +1,17 @@
 #ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LIST_H_
 #define CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LIST_H_
 
-#include "s21_ListConstIterator.h"
-#include "s21_ListIterator.h"
-#include "s21_node.h"
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
 
+#include "s21_list_const_iterator.h"
+#include "s21_list_iterator.h"
+#include "s21_node.h"
+
 namespace s21 {
-template <class T> class list {
+template <class T>
+class list {
   typedef T value_type;
   typedef T &reference;
   typedef const T &const_reference;
@@ -18,7 +20,7 @@ template <class T> class list {
   typedef size_t size_type;
   typedef s21_node<T> node;
 
-private:
+ private:
   s21_node<T> *null_node_;
   size_type size_;
 
@@ -26,7 +28,7 @@ private:
   void add(node *n) noexcept;
   void copy(const list &list) noexcept;
 
-public:
+ public:
   list() noexcept;
   explicit list(size_type n) noexcept;
   list(std::initializer_list<value_type> const &items) noexcept;
@@ -68,27 +70,34 @@ public:
     return iter;
   }
 
-  template <class... Args> void insert_many_back(Args &&...args) noexcept {
+  template <class... Args>
+  void insert_many_back(Args &&...args) noexcept {
     auto pos = end();
     insert_many(pos, args...);
   }
 
-  template <class... Args> void insert_many_front(Args &&...args) noexcept {
+  template <class... Args>
+  void insert_many_front(Args &&...args) noexcept {
     auto pos = begin();
     insert_many(pos, args...);
   }
 };
 
-template <class T> inline void list<T>::init(node *node) noexcept {
+template <class T>
+inline void list<T>::init(node *node) noexcept {
   size_ = 0;
   null_node_ = node;
   null_node_->next_ = null_node_;
   null_node_->prev_ = null_node_;
 }
 
-template <class T> inline list<T>::list() noexcept { init(new node); }
+template <class T>
+inline list<T>::list() noexcept {
+  init(new node);
+}
 
-template <class T> inline list<T>::list(size_type n) noexcept {
+template <class T>
+inline list<T>::list(size_type n) noexcept {
   init(new node);
   size_ = n;
   node *old = null_node_;
@@ -119,7 +128,8 @@ inline list<T>::list(std::initializer_list<value_type> const &items) noexcept {
   null_node_->prev_ = old;
 }
 
-template <class T> inline void list<T>::copy(const list &l) noexcept {
+template <class T>
+inline void list<T>::copy(const list &l) noexcept {
   init(new node);
   size_ = l.size_;
   node *old = null_node_;
@@ -134,12 +144,14 @@ template <class T> inline void list<T>::copy(const list &l) noexcept {
   null_node_->prev_ = old;
 }
 
-template <class T> inline list<T>::list(const list &l) noexcept {
+template <class T>
+inline list<T>::list(const list &l) noexcept {
   // std::cout << "copy constr call list";
   copy(l);
 }
 
-template <class T> inline list<T>::list(list &&l) noexcept {
+template <class T>
+inline list<T>::list(list &&l) noexcept {
   // std::cout << "moved constr call";
   null_node_ = l.null_node_;
   size_ = l.size();
@@ -148,7 +160,8 @@ template <class T> inline list<T>::list(list &&l) noexcept {
   l.size_ = 0;
 }
 
-template <class T> inline list<T> &list<T>::operator=(list &&l) noexcept {
+template <class T>
+inline list<T> &list<T>::operator=(list &&l) noexcept {
   // std::cout << "moved assign call";
   clear();
   delete null_node_;
@@ -158,7 +171,8 @@ template <class T> inline list<T> &list<T>::operator=(list &&l) noexcept {
   return *this;
 }
 
-template <class T> inline list<T> &list<T>::operator=(const list &l) noexcept {
+template <class T>
+inline list<T> &list<T>::operator=(const list &l) noexcept {
   // std::cout << "copy assign call list\n";
   clear();
   delete null_node_;
@@ -166,14 +180,16 @@ template <class T> inline list<T> &list<T>::operator=(const list &l) noexcept {
   return *this;
 }
 
-template <class T> inline list<T>::~list() {
+template <class T>
+inline list<T>::~list() {
   // std::cout << "dest call";
   clear();
   delete null_node_;
   size_ = 0;
 }
 
-template <class T> inline void list<T>::clear() noexcept {
+template <class T>
+inline void list<T>::clear() noexcept {
   node *n = null_node_->next_;
   while (n->data_) {
     node *del = n;
@@ -193,7 +209,8 @@ inline typename list<T>::const_reference list<T>::back() const noexcept {
   return *null_node_->prev_->data_;
 }
 
-template <class T> inline bool list<T>::empty() const noexcept {
+template <class T>
+inline bool list<T>::empty() const noexcept {
   return size_ == 0;
 }
 
@@ -218,8 +235,8 @@ inline typename list<T>::size_type list<T>::max_size() const noexcept {
 }
 
 template <class T>
-inline typename list<T>::iterator
-list<T>::insert(iterator pos, const_reference value) noexcept {
+inline typename list<T>::iterator list<T>::insert(
+    iterator pos, const_reference value) noexcept {
   node *new_node = new node;
   new_node->data_ = new value_type(value);
   new_node->prev_ = pos.ptr_->prev_;
@@ -230,10 +247,10 @@ list<T>::insert(iterator pos, const_reference value) noexcept {
   return iterator(new_node);
 }
 
-template <class T> inline void list<T>::erase(iterator pos) noexcept {
+template <class T>
+inline void list<T>::erase(iterator pos) noexcept {
   node *ptr = pos.ptr_;
-  if (ptr == null_node_)
-    return;
+  if (ptr == null_node_) return;
   node *prev = ptr->prev_;
   node *next = ptr->next_;
   prev->next_ = next;
@@ -249,16 +266,23 @@ inline void list<T>::push_back(const_reference value) noexcept {
   insert(end(), value);
 }
 
-template <class T> inline void list<T>::pop_back() noexcept { erase(--end()); }
+template <class T>
+inline void list<T>::pop_back() noexcept {
+  erase(--end());
+}
 
 template <class T>
 inline void list<T>::push_front(const_reference value) noexcept {
   insert(begin(), value);
 }
 
-template <class T> inline void list<T>::pop_front() noexcept { erase(begin()); }
+template <class T>
+inline void list<T>::pop_front() noexcept {
+  erase(begin());
+}
 
-template <class T> inline void list<T>::swap(list &other) noexcept {
+template <class T>
+inline void list<T>::swap(list &other) noexcept {
   node *tmp_node = this->null_node_;
   this->null_node_ = other.null_node_;
   other.null_node_ = tmp_node;
@@ -280,7 +304,8 @@ inline void list<T>::splice(const_iterator pos, list &other) noexcept {
   other.init(other.null_node_);
 }
 
-template <class T> inline void list<T>::reverse() noexcept {
+template <class T>
+inline void list<T>::reverse() noexcept {
   node *n = null_node_->next_;
   while (n->data_) {
     node *next = n->next_;
@@ -293,20 +318,20 @@ template <class T> inline void list<T>::reverse() noexcept {
   null_node_->prev_ = n;
 }
 
-template <class T> inline void list<T>::unique() noexcept {
+template <class T>
+inline void list<T>::unique() noexcept {
   node *n = null_node_->next_;
   value_type *next_data;
   while ((next_data = n->next_->data_)) {
     node *next = n->next_;
-    if (*next_data == *n->data_)
-      erase(iterator(n));
+    if (*next_data == *n->data_) erase(iterator(n));
     n = next;
   }
 }
 
-template <class T> inline void list<T>::sort() noexcept {
-  if (size_ <= 1)
-    return;
+template <class T>
+inline void list<T>::sort() noexcept {
+  if (size_ <= 1) return;
   list<T> *left = new list;
   list<T> *right = new list;
   node *n = null_node_->next_;
@@ -330,7 +355,8 @@ template <class T> inline void list<T>::sort() noexcept {
   delete left;
 }
 
-template <class T> inline void list<T>::merge(list &other) noexcept {
+template <class T>
+inline void list<T>::merge(list &other) noexcept {
   list *tmp = new list;
   node *n1 = null_node_->next_;
   node *n2 = other.null_node_->next_;
@@ -361,11 +387,12 @@ template <class T> inline void list<T>::merge(list &other) noexcept {
   delete tmp;
 }
 
-template <class T> inline void list<T>::add(node *n) noexcept {
+template <class T>
+inline void list<T>::add(node *n) noexcept {
   null_node_->prev_->set_next(n);
   size_++;
 }
 
-} // namespace s21
+}  // namespace s21
 
 #endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LIST_H_

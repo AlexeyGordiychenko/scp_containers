@@ -10,16 +10,17 @@
 #include "../list/s21_node.h"
 
 namespace s21 {
-template <class T, class C = list<T>> class queue {
+template <class T, class C = list<T>>
+class queue {
   typedef T value_type;
   typedef T &reference;
   typedef const T &const_reference;
   typedef size_t size_type;
 
-private:
+ private:
   C list_;
 
-public:
+ public:
   queue();
   queue(std::initializer_list<value_type> const &items);
   queue(const queue &q);
@@ -37,12 +38,14 @@ public:
   void pop();
   void swap(queue &other);
 
-  template <class... Args> void insert_many_back(Args &&...args) noexcept {
+  template <class... Args>
+  void insert_many_back(Args &&...args) noexcept {
     list_.insert_many_back(args...);
   }
 };
 
-template <class T, class C> inline queue<T, C>::queue() {
+template <class T, class C>
+inline queue<T, C>::queue() {
   // std::cout << "\nconst call";
 }
 
@@ -51,17 +54,20 @@ inline queue<T, C>::queue(std::initializer_list<value_type> const &items) {
   list_ = list(items);
 }
 
-template <class T, class C> inline queue<T, C>::queue(const queue &q) {
+template <class T, class C>
+inline queue<T, C>::queue(const queue &q) {
   // std::cout << "\ncopy const call queue";
   list_ = list(q.list_);
 }
 
-template <class T, class C> inline queue<T, C>::queue(queue &&q) {
+template <class T, class C>
+inline queue<T, C>::queue(queue &&q) {
   // std::cout << "\nmoved const call";
   list_ = std::move(q.list_);
 }
 
-template <class T, class C> inline queue<T, C>::~queue() {}
+template <class T, class C>
+inline queue<T, C>::~queue() {}
 
 template <class T, class C>
 inline queue<T, C> &queue<T, C>::operator=(queue &&q) noexcept {
@@ -87,7 +93,8 @@ inline typename queue<T, C>::const_reference queue<T, C>::back() {
   return list_.back();
 }
 
-template <class T, class C> inline bool queue<T, C>::empty() {
+template <class T, class C>
+inline bool queue<T, C>::empty() {
   return list_.empty();
 }
 
@@ -101,14 +108,16 @@ inline void queue<T, C>::push(const_reference value) {
   list_.push_back(value);
 }
 
-template <class T, class C> inline void queue<T, C>::pop() {
+template <class T, class C>
+inline void queue<T, C>::pop() {
   list_.pop_front();
 }
 
-template <class T, class C> inline void queue<T, C>::swap(queue &other) {
+template <class T, class C>
+inline void queue<T, C>::swap(queue &other) {
   list_.swap(other.list_);
 }
 
-} // namespace s21
+}  // namespace s21
 
 #endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_QUEUE_S21_QUEUE_H_
