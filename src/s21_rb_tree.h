@@ -22,13 +22,16 @@ class RbTree {
   using value_type = Value;
   using difference_type = std::ptrdiff_t;
   using key_compare = Compare;
-  using value_compare = Compare;
   using reference = value_type &;
   using const_reference = const value_type &;
-  using pointer = value_type *;
-  using const_pointer = const value_type *;
-  using node_raw_ptr = Node *;
-  using const_node_raw_ptr = const Node *;
+  using value_rptr = value_type *;
+  using const_value_rptr = const value_type *;
+  using value_ptr =
+      std::unique_ptr<value_type, std::function<void(value_rptr)>>;
+  using node_rptr = Node *;
+  using const_node_rptr = const Node *;
+  using node_ptr = std::shared_ptr<Node>;
+  using node_parent_ptr = std::weak_ptr<Node>;
 
   using alloc_traits = std::allocator_traits<Allocator>;
   using value_alloc = typename alloc_traits::template rebind_alloc<value_type>;
@@ -36,11 +39,6 @@ class RbTree {
   using node_alloc = typename alloc_traits::template rebind_alloc<Node>;
 
   using size_type = size_t;
-
-  // type aliases for smart pointers to Node
-  using NodePtr = std::shared_ptr<Node>;
-  using NodeParentPtr = std::weak_ptr<Node>;
-  using DataPtr = std::unique_ptr<value_type, std::function<void(pointer)>>;
 
   // iterator
   template <bool isConst>
@@ -52,7 +50,7 @@ class RbTree {
     using pointer = value_type *;
     using reference = value_type &;
 
-    RbTreeIterator(NodePtr node) : node_(node) {}
+    RbTreeIterator(node_ptr node) : node_(node) {}
 
     reference operator*() const { return *node_->data_; }
 
@@ -68,7 +66,7 @@ class RbTree {
           node_ = node_->left_;
         }
       } else {
-        NodePtr temp;
+        node_ptr temp;
         while ((temp = node_->parent()) && node_ == temp->right_) {
           node_ = temp;
         }
@@ -88,7 +86,7 @@ class RbTree {
           node_ = node_->right_;
         }
       } else {
-        NodePtr temp;
+        node_ptr temp;
         while ((temp = node_->parent()) && node_ == temp->left_) {
           node_ = temp;
         }
@@ -120,7 +118,7 @@ class RbTree {
     friend class RbTree;
 
    private:
-    NodePtr node_;
+    node_ptr node_;
   };
 
   // type aliases for the iterator
@@ -140,7 +138,7 @@ class RbTree {
   // copy constructor
   RbTree(const RbTree &other) {
     // nodes to keep track of the edges of the tree
-    NodePtr leftmost = nullptr, rightmost = nullptr;
+    node_ptr leftmost = nullptr, rightmost = nullptr;
     // copy the tree
     root_ = copy_node_recursive(other.root_.get(), leftmost, rightmost);
     nodes_count_ = other.nodes_count_;
@@ -207,8 +205,8 @@ class RbTree {
   // RB tree methods
   std::pair<iterator, bool> insert(const_reference data,
                                    bool duplicates = false) {
-    NodePtr a = root_;
-    NodePtr b = nullptr;
+    node_ptr a = root_;
+    node_ptr b = nullptr;
 
     bool is_left = false;
     while (a != nullptr) {
@@ -257,7 +255,7 @@ class RbTree {
   void erase(iterator pos) {
     if (pos == end()) return;
 
-    NodePtr node = pos.node_;
+    node_ptr node = pos.node_;
 
     // If the node has both children, then node_to_delete is set
     // to the inorder successor of the node. Otherwise, node_to_delete is set to
@@ -272,9 +270,9 @@ class RbTree {
     update_edges_on_erase(node.get());
 
     // Set node_to_replace to the non-null child of node, if any.
-    NodePtr node_to_replace = (node->left_ ? node->left_ : node->right_);
+    node_ptr node_to_replace = (node->left_ ? node->left_ : node->right_);
     // Save the parent of the node to delete
-    NodePtr parent = node->parent();
+    node_ptr parent = node->parent();
 
     // Update the parents
     if (node_to_replace) {
@@ -308,8 +306,8 @@ class RbTree {
     return const_iterator(find_node(key));
   };
 
-  NodePtr find_node(const key_type &key) const {
-    NodePtr tnode = root_;
+  node_ptr find_node(const key_type &key) const {
+    node_ptr tnode = root_;
     while (tnode != nullptr) {
       if (key == get_key(*tnode->data_)) {
         return tnode;
@@ -345,7 +343,7 @@ class RbTree {
     std::swap(nodes_count_, other.nodes_count_);
   }
 
-  void print(const std::string &prefix, node_raw_ptr node, bool is_left,
+  void print(const std::string &prefix, node_rptr node, bool is_left,
              bool colored) const {
     std::cout << prefix;
     std::string left_color = "", right_color = "", reset_color = "",
@@ -385,23 +383,23 @@ class RbTree {
   bool is_valid_tree() const {
     int black_count = 0;
     // The root is always black
-    node_raw_ptr root_ptr = root_.get();
+    node_rptr root_ptr = root_.get();
     if (node_is_red(root_ptr)) return false;
     return is_valid_node(root_ptr, black_count);
   }
 
   // balancing functions
 
-  void insert_balance(NodePtr node) {
-    NodePtr parent_node = nullptr;
-    NodePtr grand_parent_node = nullptr;
+  void insert_balance(node_ptr node) {
+    node_ptr parent_node = nullptr;
+    node_ptr grand_parent_node = nullptr;
     while (node_is_red(node.get()) && node != root_ &&
            (parent_node = node->parent()) && node_is_red(parent_node.get()) &&
            (grand_parent_node = parent_node->parent()) &&
            grand_parent_node != sentinel_node_) {
       bool is_left_parent = (parent_node == grand_parent_node->left_);
       bool is_left = (node == parent_node->left_);
-      NodePtr uncle_node =
+      node_ptr uncle_node =
           is_left_parent ? grand_parent_node->right_ : grand_parent_node->left_;
 
       // Case 1: The uncle of node is also red, only recoloring required
@@ -444,11 +442,11 @@ class RbTree {
     set_node_color(root_.get(), BLACK);
   }
 
-  void delete_balance(NodePtr node, NodePtr parent) {
+  void delete_balance(node_ptr node, node_ptr parent) {
     // Continue until the node is the root or the node becomes red
     while (node != root_ && (node_is_black(node.get()))) {
       bool is_left = (node == parent->left_);
-      NodePtr sibling = is_left ? parent->right_ : parent->left_;
+      node_ptr sibling = is_left ? parent->right_ : parent->left_;
 
       // Case 1: The sibling is red
       if (node_is_red(sibling.get())) {
@@ -472,8 +470,8 @@ class RbTree {
       } else {
         // Case 3: The sibling is black, its near child is red, and its far
         // child is black
-        NodePtr near_child = is_left ? sibling->left_ : sibling->right_;
-        NodePtr far_child = is_left ? sibling->right_ : sibling->left_;
+        node_ptr near_child = is_left ? sibling->left_ : sibling->right_;
+        node_ptr far_child = is_left ? sibling->right_ : sibling->left_;
 
         // we need to check only one child, because of the first if
         if (node_is_black(far_child.get())) {
@@ -505,9 +503,9 @@ class RbTree {
     set_node_color(node.get(), BLACK);
   }
 
-  void rotate_left(NodePtr node) {
-    NodePtr right_child = node->right_;
-    NodePtr parent = node->parent();
+  void rotate_left(node_ptr node) {
+    node_ptr right_child = node->right_;
+    node_ptr parent = node->parent();
 
     node->right_ = right_child->left_;
     if (node->right_) {
@@ -527,9 +525,9 @@ class RbTree {
     node->parent_ = right_child;
   }
 
-  void rotate_right(NodePtr node) {
-    NodePtr left_child = node->left_;
-    NodePtr parent = node->parent();
+  void rotate_right(node_ptr node) {
+    node_ptr left_child = node->left_;
+    node_ptr parent = node->parent();
 
     node->left_ = left_child->right_;
     if (node->left_) {
@@ -556,8 +554,8 @@ class RbTree {
       return;
     }
 
-    NodePtr head = nullptr, tail = nullptr, other_head = nullptr,
-            other_tail = nullptr;
+    node_ptr head = nullptr, tail = nullptr, other_head = nullptr,
+             other_tail = nullptr;
 
     // Convert both trees to sorted doubly-linked lists
     tree_to_list(root_, head, tail);
@@ -575,7 +573,7 @@ class RbTree {
     list_to_tree(other, other_head, other_tail);
   }
 
-  void tree_to_list(NodePtr node, NodePtr &first, NodePtr &last) {
+  void tree_to_list(node_ptr node, node_ptr &first, node_ptr &last) {
     if (!node) {
       return;
     }
@@ -590,11 +588,11 @@ class RbTree {
     tree_to_list(node->right_, first, last);
   }
 
-  void merge_lists(NodePtr &head, NodePtr &other_head, NodePtr &other_tail,
+  void merge_lists(node_ptr &head, node_ptr &other_head, node_ptr &other_tail,
                    bool duplicates) {
-    NodePtr it = head;
-    NodePtr other_it = other_head;
-    NodePtr prev = nullptr;  // To keep track of previous node in first list
+    node_ptr it = head;
+    node_ptr other_it = other_head;
+    node_ptr prev = nullptr;  // To keep track of previous node in first list
     // Continue as long as there are nodes left in both lists
     while (it && other_it) {
       if (key_compare()(get_key(*it->data_), get_key(*other_it->data_))) {
@@ -608,7 +606,7 @@ class RbTree {
         other_it = other_it->right_;
       } else {
         // Detach current node from second list
-        NodePtr other_next = other_it->right_;
+        node_ptr other_next = other_it->right_;
         if (other_next) other_next->left_ = other_it->left_;
         if (other_it->left_) other_it->left_->right_ = other_next;
 
@@ -637,7 +635,7 @@ class RbTree {
     // If there are still nodes left in second list, append them to the end of
     // the first list
     if (!it && other_it) {
-      NodePtr other_prev = other_it->left_;
+      node_ptr other_prev = other_it->left_;
       prev->right_ = other_it;
       other_it->left_ = prev;
       if (other_prev) {
@@ -650,7 +648,7 @@ class RbTree {
     }
   }
 
-  void list_to_tree(RbTree &tree, NodePtr head, NodePtr tail) {
+  void list_to_tree(RbTree &tree, node_ptr head, node_ptr tail) {
     size_type max_depth = 0;
     tree.nodes_count_ = 0;
     tree.root_ =
@@ -666,21 +664,21 @@ class RbTree {
     }
   }
 
-  NodePtr list_to_tree_recursive(NodePtr head, NodePtr tail,
-                                 size_type &nodes_count, size_type &max_depth,
-                                 size_type current_depth = 0) {
+  node_ptr list_to_tree_recursive(node_ptr head, node_ptr tail,
+                                  size_type &nodes_count, size_type &max_depth,
+                                  size_type current_depth = 0) {
     if (!head || head == tail) {
       return nullptr;
     }
 
-    NodePtr slow = head;
-    NodePtr fast = head;
+    node_ptr slow = head;
+    node_ptr fast = head;
     while (fast != tail && fast->right_ != tail) {
       slow = slow->right_;
       fast = fast->right_->right_;
     }
 
-    NodePtr root = slow;
+    node_ptr root = slow;
     root->left_ = list_to_tree_recursive(head, slow, nodes_count, max_depth,
                                          current_depth + 1);
     root->right_ = list_to_tree_recursive(slow->right_, tail, nodes_count,
@@ -694,7 +692,7 @@ class RbTree {
     return root;
   }
 
-  void adjust_tree(node_raw_ptr node, int max_depth, int current_depth = 0) {
+  void adjust_tree(node_rptr node, int max_depth, int current_depth = 0) {
     if (!node) return;
 
     // the lowest level is red, then we alternate the other levels
@@ -710,10 +708,10 @@ class RbTree {
 
  private:
   struct Node {
-    DataPtr data_;
-    NodePtr left_;
-    NodePtr right_;
-    NodeParentPtr parent_;
+    value_ptr data_;
+    node_ptr left_;
+    node_ptr right_;
+    node_parent_ptr parent_;
     Color color_ = RED;
 
     Node() = default;
@@ -727,26 +725,26 @@ class RbTree {
     ~Node() = default;
 
     // node methods
-    NodePtr parent() const { return parent_.lock(); }
+    node_ptr parent() const { return parent_.lock(); }
 
    private:
-    pointer allocate_value(const_reference data,
-                           value_alloc_reference value_alloc) {
-      pointer raw_value = value_alloc.allocate(1);
+    value_rptr allocate_value(const_reference data,
+                              value_alloc_reference value_alloc) {
+      value_rptr raw_value = value_alloc.allocate(1);
       alloc_traits::construct(value_alloc, raw_value, data);
       return raw_value;
     }
 
-    std::function<void(pointer)> get_deleter(
+    std::function<void(value_rptr)> get_deleter(
         value_alloc_reference value_alloc) {
-      return [&value_alloc](pointer p) {
+      return [&value_alloc](value_rptr p) {
         alloc_traits::destroy(value_alloc, p);
         value_alloc.deallocate(p, 1);
       };
     }
   };
 
-  NodePtr root_, sentinel_node_;
+  node_ptr root_, sentinel_node_;
   size_type nodes_count_ = 0;
   value_alloc value_alloc_;
   node_alloc node_alloc_;
@@ -761,7 +759,7 @@ class RbTree {
   const std::string kResetColor = "\033[0m";
 
   auto get_key(const_reference data) const { return KeyOfValue()(data); }
-  NodePtr get_leftmost() const {
+  node_ptr get_leftmost() const {
     if (sentinel_node_) {
       return (sentinel_node_->left_) ? sentinel_node_->left_ : sentinel_node_;
     } else {
@@ -769,18 +767,18 @@ class RbTree {
     }
   }
 
-  bool node_is_black(const_node_raw_ptr node) const {
+  bool node_is_black(const_node_rptr node) const {
     return !node || node->color_ == BLACK;
   }
-  bool node_is_red(const_node_raw_ptr node) const {
+  bool node_is_red(const_node_rptr node) const {
     return node && node->color_ == RED;
   }
 
-  void set_node_color(node_raw_ptr node, Color color) {
+  void set_node_color(node_rptr node, Color color) {
     if (node) node->color_ = color;
   }
 
-  bool is_valid_node(node_raw_ptr node, int &black_count,
+  bool is_valid_node(node_rptr node, int &black_count,
                      int path_black_count = 0) const {
     if (!node) {
       // All paths from the root to a leaf have the same number of black nodes
@@ -789,8 +787,8 @@ class RbTree {
       }
       return path_black_count == black_count;
     }
-    node_raw_ptr left = node->left_.get();
-    node_raw_ptr right = node->right_.get();
+    node_rptr left = node->left_.get();
+    node_rptr right = node->right_.get();
     if (node_is_black(node)) {
       // Count black nodes along the path
       path_black_count++;
@@ -804,15 +802,15 @@ class RbTree {
            is_valid_node(right, black_count, path_black_count);
   }
 
-  void clear_recursive(NodePtr &node) {
+  void clear_recursive(node_ptr &node) {
     if (!node) return;
     clear_recursive(node->left_);
     clear_recursive(node->right_);
     node.reset();
   }
 
-  NodePtr copy_node_recursive(node_raw_ptr node_to_copy, NodePtr &leftmost,
-                              NodePtr &rightmost) {
+  node_ptr copy_node_recursive(node_rptr node_to_copy, node_ptr &leftmost,
+                               node_ptr &rightmost) {
     if (!node_to_copy) {
       return nullptr;
     }
@@ -838,7 +836,7 @@ class RbTree {
 
     return new_node;
   }
-  void swap_nodes_on_erase(NodePtr &node_to_delete, NodePtr &node) {
+  void swap_nodes_on_erase(node_ptr &node_to_delete, node_ptr &node) {
     if (node_to_delete->parent()->left_ == node_to_delete) {
       node_to_delete->parent()->left_ = node;
     } else {
@@ -869,7 +867,7 @@ class RbTree {
       node_to_delete->right_->parent_ = node_to_delete;
   }
 
-  void update_edges_on_erase(node_raw_ptr node) {
+  void update_edges_on_erase(node_rptr node) {
     bool is_root = node == root_.get();
     bool is_leftmost = (node == sentinel_node_->left_.get());
     bool is_rightmost = (node == sentinel_node_->right_.get());
@@ -886,9 +884,9 @@ class RbTree {
     }
   }
 
-  NodePtr bound(const key_type &key, key_compare_func comp) const {
-    NodePtr current = root_;
-    NodePtr result = sentinel_node_;
+  node_ptr bound(const key_type &key, key_compare_func comp) const {
+    node_ptr current = root_;
+    node_ptr result = sentinel_node_;
 
     while (current) {
       if (comp(get_key(*current->data_), key)) {
@@ -902,8 +900,8 @@ class RbTree {
     return result;
   }
 
-  NodePtr allocate_node() { return std::allocate_shared<Node>(node_alloc_); }
-  NodePtr allocate_node(const_reference data, Color color = RED) {
+  node_ptr allocate_node() { return std::allocate_shared<Node>(node_alloc_); }
+  node_ptr allocate_node(const_reference data, Color color = RED) {
     return std::allocate_shared<Node>(node_alloc_, data, value_alloc_, color);
   }
 };
