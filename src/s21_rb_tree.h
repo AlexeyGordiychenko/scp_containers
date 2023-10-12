@@ -126,7 +126,7 @@ class RbTree {
   using const_iterator = RbTreeIterator<true>;
 
   // Define the opposite comparison function
-  struct key_compare_reverse {
+  struct KeyCompareReverse {
     bool operator()(const key_type &a, const key_type &b) const {
       return !key_compare()(b, a);
     }
@@ -327,10 +327,10 @@ class RbTree {
     return const_iterator(bound(key, key_compare()));
   };
   iterator upper_bound(const key_type &key) {
-    return iterator(bound(key, key_compare_reverse()));
+    return iterator(bound(key, KeyCompareReverse()));
   };
   const_iterator upper_bound(const key_type &key) const {
-    return const_iterator(bound(key, key_compare_reverse()));
+    return const_iterator(bound(key, KeyCompareReverse()));
   };
 
   size_type size() const { return nodes_count_; }
