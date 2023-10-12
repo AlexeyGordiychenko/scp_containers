@@ -27,6 +27,8 @@ class RbTree {
   using const_reference = const value_type &;
   using pointer = value_type *;
   using const_pointer = const value_type *;
+  using node_raw_ptr = Node *;
+  using const_node_raw_ptr = const Node *;
 
   using alloc_traits = std::allocator_traits<Allocator>;
   using value_alloc = typename alloc_traits::template rebind_alloc<value_type>;
@@ -140,7 +142,7 @@ class RbTree {
     // nodes to keep track of the edges of the tree
     NodePtr leftmost = nullptr, rightmost = nullptr;
     // copy the tree
-    root_ = copy_node_recursive(other.root_, leftmost, rightmost);
+    root_ = copy_node_recursive(other.root_.get(), leftmost, rightmost);
     nodes_count_ = other.nodes_count_;
     if (root_) {
       sentinel_node_ = allocate_node();
@@ -224,12 +226,12 @@ class RbTree {
 
     auto new_node = allocate_node(data);
 
-    if (b == nullptr) {
+    if (!b) {
       root_ = new_node;
       sentinel_node_ = allocate_node();
       sentinel_node_->left_ = root_;
       sentinel_node_->right_ = root_;
-      set_node_color(root_, BLACK);
+      set_node_color(root_.get(), BLACK);
       root_->parent_ = sentinel_node_;
     } else {
       new_node->parent_ = b;
@@ -267,7 +269,7 @@ class RbTree {
     }
 
     // Update the sentinel node
-    update_edges_on_erase(node);
+    update_edges_on_erase(node.get());
 
     // Set node_to_replace to the non-null child of node, if any.
     NodePtr node_to_replace = (node->left_ ? node->left_ : node->right_);
@@ -286,7 +288,7 @@ class RbTree {
       parent->right_ = node_to_replace;
     }
 
-    if (node_is_black(node)) {
+    if (node_is_black(node.get())) {
       // If the node to delete is black, we need to balance the tree
       delete_balance(node_to_replace, parent);
     }
@@ -343,7 +345,7 @@ class RbTree {
     std::swap(nodes_count_, other.nodes_count_);
   }
 
-  void print(const std::string &prefix, const NodePtr &node, bool is_left,
+  void print(const std::string &prefix, node_raw_ptr node, bool is_left,
              bool colored) const {
     std::cout << prefix;
     std::string left_color = "", right_color = "", reset_color = "",
@@ -361,7 +363,7 @@ class RbTree {
       std::cout << right_color + "┣━━" + reset_color;
     }
 
-    if (node != nullptr) {
+    if (node) {
       if (node_is_red(node)) {
         std::cout << red_node_color;
       } else {
@@ -369,20 +371,23 @@ class RbTree {
       }
       std::cout << get_key(*node->data_) << reset_color << std::endl;
       print(prefix + (is_left ? "   " : right_color + "┃  " + reset_color),
-            node->right_, false, colored);
+            node->right_.get(), false, colored);
       print(prefix + (is_left ? "   " : left_color + "┃  " + reset_color),
-            node->left_, true, colored);
+            node->left_.get(), true, colored);
     } else {
       std::cout << std::endl;
     }
   };
-  void print(bool colored = true) const { print("", root_, false, colored); };
+  void print(bool colored = true) const {
+    print("", root_.get(), false, colored);
+  };
 
   bool is_valid_tree() const {
     int black_count = 0;
     // The root is always black
-    if (node_is_red(root_)) return false;
-    return is_valid_node(root_, black_count);
+    node_raw_ptr root_ptr = root_.get();
+    if (node_is_red(root_ptr)) return false;
+    return is_valid_node(root_ptr, black_count);
   }
 
   // balancing functions
@@ -390,8 +395,9 @@ class RbTree {
   void insert_balance(NodePtr node) {
     NodePtr parent_node = nullptr;
     NodePtr grand_parent_node = nullptr;
-    while (node_is_red(node) && node != root_ &&
-           (parent_node = node->parent_.lock()) && node_is_red(parent_node) &&
+    while (node_is_red(node.get()) && node != root_ &&
+           (parent_node = node->parent_.lock()) &&
+           node_is_red(parent_node.get()) &&
            (grand_parent_node = parent_node->parent_.lock()) &&
            grand_parent_node != sentinel_node_) {
       bool is_left_parent = (parent_node == grand_parent_node->left_);
@@ -400,10 +406,10 @@ class RbTree {
           is_left_parent ? grand_parent_node->right_ : grand_parent_node->left_;
 
       // Case 1: The uncle of node is also red, only recoloring required
-      if (node_is_red(uncle_node)) {
-        set_node_color(grand_parent_node, RED);
-        set_node_color(parent_node, BLACK);
-        set_node_color(uncle_node, BLACK);
+      if (node_is_red(uncle_node.get())) {
+        set_node_color(grand_parent_node.get(), RED);
+        set_node_color(parent_node.get(), BLACK);
+        set_node_color(uncle_node.get(), BLACK);
         node = grand_parent_node;
       } else {
         // Case 2: The node is right child of its parent if parent is left child
@@ -436,19 +442,19 @@ class RbTree {
         }
       }
     }
-    set_node_color(root_, BLACK);
+    set_node_color(root_.get(), BLACK);
   }
 
   void delete_balance(NodePtr node, NodePtr parent) {
     // Continue until the node is the root or the node becomes red
-    while (node != root_ && (node_is_black(node))) {
+    while (node != root_ && (node_is_black(node.get()))) {
       bool is_left = (node == parent->left_);
       NodePtr sibling = is_left ? parent->right_ : parent->left_;
 
       // Case 1: The sibling is red
-      if (node_is_red(sibling)) {
-        set_node_color(sibling, BLACK);
-        set_node_color(parent, RED);
+      if (node_is_red(sibling.get())) {
+        set_node_color(sibling.get(), BLACK);
+        set_node_color(parent.get(), RED);
         if (is_left) {
           rotate_left(parent);
           sibling = parent->right_;
@@ -459,8 +465,9 @@ class RbTree {
       }
 
       // Case 2: The sibling is black, and both of its children are black
-      if (node_is_black(sibling->left_) && node_is_black(sibling->right_)) {
-        set_node_color(sibling, RED);
+      if (node_is_black(sibling->left_.get()) &&
+          node_is_black(sibling->right_.get())) {
+        set_node_color(sibling.get(), RED);
         node = parent;
         parent = parent->parent_.lock();
       } else {
@@ -470,9 +477,9 @@ class RbTree {
         NodePtr far_child = is_left ? sibling->right_ : sibling->left_;
 
         // we need to check only one child, because of the first if
-        if (node_is_black(far_child)) {
-          set_node_color(near_child, BLACK);
-          set_node_color(sibling, RED);
+        if (node_is_black(far_child.get())) {
+          set_node_color(near_child.get(), BLACK);
+          set_node_color(sibling.get(), RED);
           if (is_left) {
             rotate_right(sibling);
             sibling = parent->right_;
@@ -484,9 +491,9 @@ class RbTree {
           far_child = is_left ? sibling->right_ : sibling->left_;
         }
         // Case 4: The sibling is black, and its far child is red
-        set_node_color(sibling, parent->color_);
-        set_node_color(parent, BLACK);
-        set_node_color(far_child, BLACK);
+        set_node_color(sibling.get(), parent->color_);
+        set_node_color(parent.get(), BLACK);
+        set_node_color(far_child.get(), BLACK);
         if (is_left) {
           rotate_left(parent);
         } else {
@@ -496,7 +503,7 @@ class RbTree {
       }
     }
     // Ensure the node is always black
-    set_node_color(node, BLACK);
+    set_node_color(node.get(), BLACK);
   }
 
   void rotate_left(NodePtr node) {
@@ -570,7 +577,7 @@ class RbTree {
   }
 
   void tree_to_list(NodePtr node, NodePtr &first, NodePtr &last) {
-    if (node == nullptr) {
+    if (!node) {
       return;
     }
     tree_to_list(node->left_, first, last);
@@ -653,8 +660,8 @@ class RbTree {
       tree.root_->parent_ = tree.sentinel_node_;
       tree.sentinel_node_->left_ = head;
       tree.sentinel_node_->right_ = tail;
-      adjust_tree(tree.root_, max_depth);
-      set_node_color(tree.root_, BLACK);
+      adjust_tree(tree.root_.get(), max_depth);
+      set_node_color(tree.root_.get(), BLACK);
     } else {
       tree.sentinel_node_ = nullptr;
     }
@@ -688,8 +695,8 @@ class RbTree {
     return root;
   }
 
-  void adjust_tree(NodePtr node, int max_depth, int current_depth = 0) {
-    if (node == nullptr) return;
+  void adjust_tree(node_raw_ptr node, int max_depth, int current_depth = 0) {
+    if (!node) return;
 
     // the lowest level is red, then we alternate the other levels
     if ((max_depth - current_depth) % 2 == 0) {
@@ -698,8 +705,8 @@ class RbTree {
       set_node_color(node, BLACK);
     }
 
-    adjust_tree(node->left_, max_depth, current_depth + 1);
-    adjust_tree(node->right_, max_depth, current_depth + 1);
+    adjust_tree(node->left_.get(), max_depth, current_depth + 1);
+    adjust_tree(node->right_.get(), max_depth, current_depth + 1);
   }
 
  private:
@@ -760,18 +767,18 @@ class RbTree {
     }
   }
 
-  bool node_is_black(const NodePtr &node) const {
+  bool node_is_black(const_node_raw_ptr node) const {
     return !node || node->color_ == BLACK;
   }
-  bool node_is_red(const NodePtr node) const {
+  bool node_is_red(const_node_raw_ptr node) const {
     return node && node->color_ == RED;
   }
 
-  void set_node_color(NodePtr &node, Color color) {
+  void set_node_color(node_raw_ptr node, Color color) {
     if (node) node->color_ = color;
   }
 
-  bool is_valid_node(NodePtr node, int &black_count,
+  bool is_valid_node(node_raw_ptr node, int &black_count,
                      int path_black_count = 0) const {
     if (!node) {
       // All paths from the root to a leaf have the same number of black nodes
@@ -779,17 +786,20 @@ class RbTree {
         black_count = path_black_count;
       }
       return path_black_count == black_count;
-    } else if (node_is_black(node)) {
+    }
+    node_raw_ptr left = node->left_.get();
+    node_raw_ptr right = node->right_.get();
+    if (node_is_black(node)) {
       // Count black nodes along the path
       path_black_count++;
     } else {
       // Red nodes can't have red children
-      if (node_is_red(node->left_) || node_is_red(node->right_)) return false;
+      if (node_is_red(left) || node_is_red(right)) return false;
     }
 
     // Check left and right subtrees
-    return is_valid_node(node->left_, black_count, path_black_count) &&
-           is_valid_node(node->right_, black_count, path_black_count);
+    return is_valid_node(left, black_count, path_black_count) &&
+           is_valid_node(right, black_count, path_black_count);
   }
 
   void clear_recursive(NodePtr &node) {
@@ -799,7 +809,7 @@ class RbTree {
     node.reset();
   }
 
-  NodePtr copy_node_recursive(const NodePtr &node_to_copy, NodePtr &leftmost,
+  NodePtr copy_node_recursive(node_raw_ptr node_to_copy, NodePtr &leftmost,
                               NodePtr &rightmost) {
     if (!node_to_copy) {
       return nullptr;
@@ -809,12 +819,12 @@ class RbTree {
 
     // copy the left subtree and update the leftmost
     new_node->left_ =
-        copy_node_recursive(node_to_copy->left_, leftmost, rightmost);
+        copy_node_recursive(node_to_copy->left_.get(), leftmost, rightmost);
     if (!leftmost && !new_node->left_) leftmost = new_node;
 
     // copy the right subtree and update the rightmost
     new_node->right_ =
-        copy_node_recursive(node_to_copy->right_, leftmost, rightmost);
+        copy_node_recursive(node_to_copy->right_.get(), leftmost, rightmost);
     if (!new_node->right_) rightmost = new_node;
 
     if (new_node->left_) {
@@ -857,17 +867,19 @@ class RbTree {
       node_to_delete->right_->parent_ = node_to_delete;
   }
 
-  void update_edges_on_erase(NodePtr node) {
-    if (node == root_ && node == sentinel_node_->left_ &&
-        node == sentinel_node_->right_) {
+  void update_edges_on_erase(node_raw_ptr node) {
+    bool is_root = node == root_.get();
+    bool is_leftmost = (node == sentinel_node_->left_.get());
+    bool is_rightmost = (node == sentinel_node_->right_.get());
+    if (is_root && is_leftmost && is_rightmost) {
       sentinel_node_->left_ = nullptr;
       sentinel_node_->right_ = nullptr;
     } else {
-      if (node == sentinel_node_->left_) {
+      if (is_leftmost) {
         sentinel_node_->left_ =
             node->right_ ? node->right_ : node->parent_.lock();
       }
-      if (node == sentinel_node_->right_) {
+      if (is_rightmost) {
         sentinel_node_->right_ =
             node->left_ ? node->left_ : node->parent_.lock();
       }
