@@ -82,10 +82,12 @@ test:
 gcov_report:
 	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=PROFILE
 	cmake --build build
+	lcov --no-external -c -i --directory . --output-file pre_test.info
 	cd build && ./tests/all_containers_test $(GTEST_FLAGS)
-	lcov --no-external --capture --directory . --output-file test.info
-	lcov --remove test.info '*gtest*' -o filter.info
-	genhtml filter.info -o report 
+	lcov --no-external -c --directory . --output-file test.info
+	lcov -a pre_test.info -a test.info -o full_test.info
+	lcov --remove test.info '*gtest*' '*googletest*' -o filtered_test.info
+	genhtml filtered_test.info -o report 
 
 open:
 ifeq ($(OS),Darwin)
