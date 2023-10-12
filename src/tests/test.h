@@ -38,4 +38,6 @@ class test_obj {
   static inline int ID{};
 };
 
+template class s21::vector<std::string>;
+
 #endif  // CPP2_S21_CONTAINERS_TESTS_TEST_H_

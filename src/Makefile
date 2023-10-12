@@ -65,23 +65,74 @@ lcov_report: $(TEST_GCOV)
 	open $(GCOV_DIR)/index.html
 
 clean:
-	rm -rf $(OBJ_DIR) $(GCOV_DIR) $(TEST) $(TEST_GCOV)
+	rm -rf *.o *.a *.out *.info *.log *.html *.gc* test gcov_report report build*
 
-clean_gcda:
-	rm -rf $(OBJ_DIR)/*.gcda
+test:
+	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++
+	cmake --build build
+	cd build && ./tests/all_containers_test $(GTEST_FLAGS)
 
-rebuild: clean all
+%Test:
+	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++
+	cmake --build build
+	cd build && ./tests/all_containers_test --gtest_filter=$@.*
 
-clang_n:
-	clang-format -n --style=Google $(SRC_DIR)/*.h $(TEST_DIR)/*.h
-	clang-format -n --style=Google $(SRC_DIR)/*.cc $(TEST_DIR)/*.cc
+#======================================================
+#===EXTRA==============================================
+gcov_report:
+	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=PROFILE
+	cmake --build build
+	cd build && ./tests/all_containers_test $(GTEST_FLAGS)
+	lcov --no-external --capture --directory . --output-file test.info
+	lcov --remove test.info '*gtest*' -o filter.info
+	genhtml filter.info -o report 
 
-clang_i:
-	clang-format -i --style=Google $(SRC_DIR)/*.h $(TEST_DIR)/*.h
-	clang-format -i --style=Google $(SRC_DIR)/*.cc $(TEST_DIR)/*.cc
+open:
+ifeq ($(OS),Darwin)
+	open -a "Google Chrome" report/index.html
+else
+	xdg-open report/index.html
+endif
 
-valgrind: $(TEST_BUILD)
-	valgrind --tool=memcheck --leak-check=yes ./$(TEST)
+leak: test
+ifeq ($(OS),Darwin)
+	CK_FORK=no leaks -atExit -- ./build/tests/all_containers_test $(GTEST_FLAGS)
+else
+	CK_FORK=no valgrind --leak-check=full -s --track-origins=yes --log-file=./build/leak.log ./build/tests/all_containers_test $(GTEST_FLAGS)
+	cat ./build/leak.log
+endif
 
-valgrind_mac: $(TEST_BUILD)
-	leaks -atExit -- ./$(TEST) | grep LEAK:
+cppcheck:
+	@echo "-===Checking code...===-"
+	cppcheck -q --language=c++ --std=c++17 --enable=all --suppress=missingInclude --template=gcc $(MY_FILES)
+	@echo "-===Done===-"
+
+clang:
+	@echo "-===Checking style...===-"
+	clang-format -n -style=google $(MY_FILES)
+	@echo "-===Done===-"
+
+clangI:
+	@echo "-===Correcting style...===-"
+	clang-format -i -style=google $(MY_FILES)
+	@echo "-===Done===-"
+
+help:
+	@echo "-===Main project targets:===-"
+	@echo $(BALD)"\tmake test (or make, or make all)"$(NORMAL)" - run all tests"
+	@echo $(BALD)"\tmake clean"$(NORMAL)" - clean unnecessary files and uninstall the app"
+
+	@echo "-===Extra project targets:===-"
+	@echo $(BALD)"\tmake SuiteNameTest"$(NORMAL)" - run all tests in 'SuiteName' test suite"
+	@echo $(BALD)"\tmake gcov_report"$(NORMAL)" - create test coverage HTML-report"
+	@echo $(BALD)"\tmake open"$(NORMAL)" - open test coverage HTML-report"
+	@echo $(BALD)"\tmake leak"$(NORMAL)" - check for memory leaks with Valgrind (Linux) or Leaks (MACOS)"
+	@echo $(BALD)"\tmake cppcheck"$(NORMAL)" - analyse code with static code analyser"
+	@echo $(BALD)"\tmake clang"$(NORMAL)" - analyse code for Google Style"
+	@echo $(BALD)"\tmake clangI"$(NORMAL)" - analyse code for Google Style and correct style mistakes"
+	@echo $(BALD)"\tmake help"$(NORMAL)" - show helpful information for the project"
+
+.PHONY: all clean gcov_report cppcheck clang clangI leak help
+
+.SILENT: help clang clangI cppcheck
+#======================================================
