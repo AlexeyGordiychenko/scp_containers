@@ -69,7 +69,7 @@ class RbTree {
         }
       } else {
         NodePtr temp;
-        while ((temp = node_->parent_.lock()) && node_ == temp->right_) {
+        while ((temp = node_->parent()) && node_ == temp->right_) {
           node_ = temp;
         }
         if (temp) node_ = temp;
@@ -78,7 +78,7 @@ class RbTree {
     }
 
     RbTreeIterator &operator--() {
-      if (!node_->parent_.lock()) {
+      if (!node_->parent()) {
         // if the parent is null it means that it's a sentinel node, so we can
         // use its right child (the rightmost node of the tree)
         node_ = node_->right_;
@@ -89,7 +89,7 @@ class RbTree {
         }
       } else {
         NodePtr temp;
-        while ((temp = node_->parent_.lock()) && node_ == temp->left_) {
+        while ((temp = node_->parent()) && node_ == temp->left_) {
           node_ = temp;
         }
         if (temp) node_ = temp;
@@ -274,7 +274,7 @@ class RbTree {
     // Set node_to_replace to the non-null child of node, if any.
     NodePtr node_to_replace = (node->left_ ? node->left_ : node->right_);
     // Save the parent of the node to delete
-    NodePtr parent = node->parent_.lock();
+    NodePtr parent = node->parent();
 
     // Update the parents
     if (node_to_replace) {
@@ -396,9 +396,8 @@ class RbTree {
     NodePtr parent_node = nullptr;
     NodePtr grand_parent_node = nullptr;
     while (node_is_red(node.get()) && node != root_ &&
-           (parent_node = node->parent_.lock()) &&
-           node_is_red(parent_node.get()) &&
-           (grand_parent_node = parent_node->parent_.lock()) &&
+           (parent_node = node->parent()) && node_is_red(parent_node.get()) &&
+           (grand_parent_node = parent_node->parent()) &&
            grand_parent_node != sentinel_node_) {
       bool is_left_parent = (parent_node == grand_parent_node->left_);
       bool is_left = (node == parent_node->left_);
@@ -421,8 +420,8 @@ class RbTree {
             rotate_right(parent_node);
           }
           node = parent_node;
-          parent_node = node->parent_.lock();
-          grand_parent_node = parent_node->parent_.lock();
+          parent_node = node->parent();
+          grand_parent_node = parent_node->parent();
           is_left = (node == parent_node->left_);
           is_left_parent = (parent_node == grand_parent_node->left_);
           uncle_node = is_left_parent ? grand_parent_node->right_
@@ -469,7 +468,7 @@ class RbTree {
           node_is_black(sibling->right_.get())) {
         set_node_color(sibling.get(), RED);
         node = parent;
-        parent = parent->parent_.lock();
+        parent = parent->parent();
       } else {
         // Case 3: The sibling is black, its near child is red, and its far
         // child is black
@@ -508,7 +507,7 @@ class RbTree {
 
   void rotate_left(NodePtr node) {
     NodePtr right_child = node->right_;
-    NodePtr parent = node->parent_.lock();
+    NodePtr parent = node->parent();
 
     node->right_ = right_child->left_;
     if (node->right_) {
@@ -530,7 +529,7 @@ class RbTree {
 
   void rotate_right(NodePtr node) {
     NodePtr left_child = node->left_;
-    NodePtr parent = node->parent_.lock();
+    NodePtr parent = node->parent();
 
     node->left_ = left_child->right_;
     if (node->left_) {
@@ -727,6 +726,9 @@ class RbTree {
     Node(const Node &) = delete;
     ~Node() = default;
 
+    // node methods
+    NodePtr parent() const { return parent_.lock(); }
+
    private:
     pointer allocate_value(const_reference data,
                            value_alloc_reference value_alloc) {
@@ -837,17 +839,17 @@ class RbTree {
     return new_node;
   }
   void swap_nodes_on_erase(NodePtr &node_to_delete, NodePtr &node) {
-    if (node_to_delete->parent_.lock()->left_ == node_to_delete) {
-      node_to_delete->parent_.lock()->left_ = node;
+    if (node_to_delete->parent()->left_ == node_to_delete) {
+      node_to_delete->parent()->left_ = node;
     } else {
-      node_to_delete->parent_.lock()->right_ = node;
+      node_to_delete->parent()->right_ = node;
     }
 
     if (node != root_) {
-      if (node->parent_.lock()->left_ == node) {
-        node->parent_.lock()->left_ = node_to_delete;
+      if (node->parent()->left_ == node) {
+        node->parent()->left_ = node_to_delete;
       } else {
-        node->parent_.lock()->right_ = node_to_delete;
+        node->parent()->right_ = node_to_delete;
       }
     }
 
@@ -876,12 +878,10 @@ class RbTree {
       sentinel_node_->right_ = nullptr;
     } else {
       if (is_leftmost) {
-        sentinel_node_->left_ =
-            node->right_ ? node->right_ : node->parent_.lock();
+        sentinel_node_->left_ = node->right_ ? node->right_ : node->parent();
       }
       if (is_rightmost) {
-        sentinel_node_->right_ =
-            node->left_ ? node->left_ : node->parent_.lock();
+        sentinel_node_->right_ = node->left_ ? node->left_ : node->parent();
       }
     }
   }
