@@ -341,6 +341,7 @@ TEST(VectorTest, Swap_1) {
   ASSERT_EQ(two, 2U);
   ASSERT_EQ(test.size(), two);
   ASSERT_EQ(test_2.size(), one);
+  ASSERT_EQ(test[0], "second");
 }
 
 TEST(VectorTest, Insert_1) {
