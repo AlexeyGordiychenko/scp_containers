@@ -367,7 +367,7 @@ class RbTree {
     list_to_tree(other, other_head, other_tail);
   }
 
-  void print(const std::string &prefix, node_rptr node, bool is_left,
+  void print(const std::string &prefix, const_node_rptr node, bool is_left,
              bool colored) const {
     std::cout << prefix;
     std::string left_color = "", right_color = "", reset_color = "",
@@ -407,7 +407,7 @@ class RbTree {
   bool is_valid_tree() const {
     int black_count = 0;
     // The root is always black
-    node_rptr root_ptr = root_.get();
+    const_node_rptr root_ptr = root_.get();
     if (node_is_red(root_ptr)) return false;
     return is_valid_node(root_ptr, black_count);
   }
@@ -499,7 +499,7 @@ class RbTree {
     return sentinel_node_;
   };
 
-  bool is_valid_node(node_rptr node, int &black_count,
+  bool is_valid_node(const_node_rptr node, int &black_count,
                      int path_black_count = 0) const {
     if (!node) {
       // All paths from the root to a leaf have the same number of black nodes
@@ -530,7 +530,7 @@ class RbTree {
     node.reset();
   }
 
-  node_ptr copy_node_recursive(node_rptr node_to_copy, node_ptr &leftmost,
+  node_ptr copy_node_recursive(const_node_rptr node_to_copy, node_ptr &leftmost,
                                node_ptr &rightmost) {
     if (!node_to_copy) {
       return nullptr;
@@ -589,7 +589,7 @@ class RbTree {
       node_to_delete->right_->parent_ = node_to_delete;
   }
 
-  void update_edges_on_erase(node_rptr node) {
+  void update_edges_on_erase(const_node_rptr node) {
     bool is_root = node == root_.get();
     bool is_leftmost = (node == sentinel_node_->left_.get());
     bool is_rightmost = (node == sentinel_node_->right_.get());
