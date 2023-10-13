@@ -60,7 +60,7 @@ gcov_report: $(TEST_GCOV)
 
 lcov_report: $(TEST_GCOV)
 	mkdir -p $(GCOV_DIR)
-	lcov --capture --directory $(SRC_DIR) --output-file $(GCOV_DIR)/coverage.info --no-external
+	lcov --capture --directory $(SRC_DIR) --exclude "$(CURDIR)/tests/*" --output-file $(GCOV_DIR)/coverage.info --no-external
 	genhtml -o $(GCOV_DIR) $(GCOV_DIR)/coverage.info 
 	open $(GCOV_DIR)/index.html
 
