@@ -26,7 +26,7 @@ class VectorConstIterator {
   VectorConstIterator<T> operator-(size_type n) const;
   VectorConstIterator<T> operator+(size_type n) const;
 
- private:
+ protected:
   const T* pointer_;
 };
 
