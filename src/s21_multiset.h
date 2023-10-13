@@ -11,7 +11,7 @@ template <class Key, class Compare = std::less<Key>>
 class multiset final {
  private:
   struct GetKey {
-    const Key operator()(const Key& value) const { return value; }
+    const Key operator()(const Key& value) const noexcept { return value; }
   };
   using BalancedTree = RbTree<Key, Key, GetKey, Compare>;
 
@@ -32,7 +32,7 @@ class multiset final {
     }
   }
   multiset(const multiset& ms) : tree_(ms.tree_) {}
-  multiset(multiset&& ms) : tree_(std::move(ms.tree_)) {}
+  multiset(multiset&& ms) noexcept : tree_(std::move(ms.tree_)) {}
   ~multiset() {}
 
   // assignment operator oveload for copying an object
@@ -96,7 +96,7 @@ class multiset final {
   }
 
   // set lookup
-  size_type count(const Key& key) const {
+  size_type count(const Key& key) const noexcept {
     auto it = tree_.lower_bound(key);
     size_type count = 0;
     while (it != tree_.cend() && *it == key) {
@@ -105,12 +105,13 @@ class multiset final {
     }
     return count;
   }
-  iterator find(const Key& key) { return tree_.find(key); }
-  const_iterator find(const Key& key) const { return tree_.find(key); }
-  bool contains(const Key& key) const {
+  iterator find(const Key& key) noexcept { return tree_.find(key); }
+  const_iterator find(const Key& key) const noexcept { return tree_.find(key); }
+  bool contains(const Key& key) const noexcept {
     return tree_.find(key) != tree_.cend();
   }
-  std::pair<const_iterator, const_iterator> equal_range(const Key& key) const {
+  std::pair<const_iterator, const_iterator> equal_range(
+      const Key& key) const noexcept {
     auto it_lower = tree_.lower_bound(key);
     auto it_upper = it_lower;
     while (it_upper != tree_.cend() && *it_upper == key) {
@@ -118,12 +119,16 @@ class multiset final {
     }
     return std::make_pair(it_lower, it_upper);
   }
-  iterator lower_bound(const Key& key) { return tree_.lower_bound(key); }
-  const_iterator lower_bound(const Key& key) const {
+  iterator lower_bound(const Key& key) noexcept {
     return tree_.lower_bound(key);
   }
-  iterator upper_bound(const Key& key) { return tree_.upper_bound(key); }
-  const_iterator upper_bound(const Key& key) const {
+  const_iterator lower_bound(const Key& key) const noexcept {
+    return tree_.lower_bound(key);
+  }
+  iterator upper_bound(const Key& key) noexcept {
+    return tree_.upper_bound(key);
+  }
+  const_iterator upper_bound(const Key& key) const noexcept {
     return tree_.upper_bound(key);
   }
 

@@ -178,45 +178,51 @@ class RbTree {
   virtual ~RbTree() = default;
 
   // iterator methods
-  iterator begin() { return iterator(get_leftmost()); }
+  iterator begin() noexcept { return iterator(get_leftmost()); }
 
-  const_iterator begin() const { return const_iterator(get_leftmost()); }
+  const_iterator begin() const noexcept {
+    return const_iterator(get_leftmost());
+  }
 
-  iterator end() { return iterator(sentinel_node_); }
+  iterator end() noexcept { return iterator(sentinel_node_); }
 
-  const_iterator end() const { return const_iterator(sentinel_node_); }
+  const_iterator end() const noexcept { return const_iterator(sentinel_node_); }
 
-  const_iterator cbegin() const { return const_iterator(get_leftmost()); }
+  const_iterator cbegin() const noexcept {
+    return const_iterator(get_leftmost());
+  }
 
-  const_iterator cend() const { return const_iterator(sentinel_node_); }
+  const_iterator cend() const noexcept {
+    return const_iterator(sentinel_node_);
+  }
 
-  std::reverse_iterator<iterator> rbegin() {
+  std::reverse_iterator<iterator> rbegin() noexcept {
     return std::reverse_iterator<iterator>(end());
   }
 
-  std::reverse_iterator<const_iterator> rbegin() const {
+  std::reverse_iterator<const_iterator> rbegin() const noexcept {
     return std::reverse_iterator<const_iterator>(end());
   }
 
-  std::reverse_iterator<iterator> rend() {
+  std::reverse_iterator<iterator> rend() noexcept {
     return std::reverse_iterator<iterator>(begin());
   }
 
-  std::reverse_iterator<const_iterator> rend() const {
+  std::reverse_iterator<const_iterator> rend() const noexcept {
     return std::reverse_iterator<const_iterator>(begin());
   }
 
-  std::reverse_iterator<const_iterator> crbegin() const {
+  std::reverse_iterator<const_iterator> crbegin() const noexcept {
     return std::reverse_iterator<const_iterator>(cend());
   }
 
-  std::reverse_iterator<const_iterator> crend() const {
+  std::reverse_iterator<const_iterator> crend() const noexcept {
     return std::reverse_iterator<const_iterator>(cbegin());
   }
 
   // RB tree methods
   std::pair<iterator, bool> insert(const_reference data,
-                                   bool duplicates = false) {
+                                   const bool duplicates = false) {
     node_ptr a = root_;
     node_ptr b = nullptr;
 
@@ -313,27 +319,29 @@ class RbTree {
     nodes_count_ = 0;
   }
 
-  iterator find(const key_type &key) { return iterator(find_node(key)); };
-  const_iterator find(const key_type &key) const {
+  iterator find(const key_type &key) noexcept {
+    return iterator(find_node(key));
+  };
+  const_iterator find(const key_type &key) const noexcept {
     return const_iterator(find_node(key));
   };
 
-  iterator lower_bound(const key_type &key) {
+  iterator lower_bound(const key_type &key) noexcept {
     return iterator(bound(key, key_compare()));
   };
-  const_iterator lower_bound(const key_type &key) const {
+  const_iterator lower_bound(const key_type &key) const noexcept {
     return const_iterator(bound(key, key_compare()));
   };
-  iterator upper_bound(const key_type &key) {
+  iterator upper_bound(const key_type &key) noexcept {
     return iterator(bound(key, KeyCompareReverse()));
   };
-  const_iterator upper_bound(const key_type &key) const {
+  const_iterator upper_bound(const key_type &key) const noexcept {
     return const_iterator(bound(key, KeyCompareReverse()));
   };
 
-  size_type size() const { return nodes_count_; }
-  bool empty() const { return nodes_count_ == 0; }
-  size_type max_size() const { return node_alloc_.max_size(); }
+  size_type size() const noexcept { return nodes_count_; }
+  bool empty() const noexcept { return nodes_count_ == 0; }
+  size_type max_size() const noexcept { return node_alloc_.max_size(); }
 
   void swap(RbTree &other) noexcept {
     std::swap(root_, other.root_);
@@ -341,7 +349,7 @@ class RbTree {
     std::swap(nodes_count_, other.nodes_count_);
   }
 
-  void merge(RbTree &other, bool duplicates = false) {
+  void merge(RbTree &other, const bool duplicates = false) {
     if (this == &other || other.empty()) return;
     if (this->empty()) {
       *this = std::move(other);
@@ -367,8 +375,8 @@ class RbTree {
     list_to_tree(other, other_head, other_tail);
   }
 
-  void print(const std::string &prefix, const_node_rptr node, bool is_left,
-             bool colored) const {
+  void print(const std::string &prefix, const_node_rptr node,
+             const bool is_left, const bool colored) const noexcept {
     std::cout << prefix;
     std::string left_color = "", right_color = "", reset_color = "",
                 red_node_color = "", black_node_color = "";
@@ -400,11 +408,11 @@ class RbTree {
       std::cout << std::endl;
     }
   };
-  void print(bool colored = true) const {
+  void print(const bool colored = true) const noexcept {
     print("", root_.get(), false, colored);
   };
 
-  bool is_valid_tree() const {
+  bool is_valid_tree() const noexcept {
     int black_count = 0;
     // The root is always black
     const_node_rptr root_ptr = root_.get();
@@ -464,7 +472,7 @@ class RbTree {
 
   auto get_key(const_reference data) const { return KeyOfValue()(data); }
 
-  node_ptr get_leftmost() const {
+  node_ptr get_leftmost() const noexcept {
     if (sentinel_node_) {
       return (sentinel_node_->left_) ? sentinel_node_->left_ : sentinel_node_;
     } else {
@@ -472,35 +480,35 @@ class RbTree {
     }
   }
 
-  bool node_is_black(const_node_rptr node) const {
+  bool node_is_black(const_node_rptr node) const noexcept {
     return !node || node->color_ == BLACK;
   }
 
-  bool node_is_red(const_node_rptr node) const {
+  bool node_is_red(const_node_rptr node) const noexcept {
     return node && node->color_ == RED;
   }
 
-  void set_node_color(node_rptr node, Color color) {
+  void set_node_color(node_rptr node, Color color) noexcept {
     if (node) node->color_ = color;
   }
 
-  node_ptr find_node(const key_type &key) const {
-    node_ptr tnode = root_;
-    while (tnode != nullptr) {
-      if (key == get_key(*tnode->data_)) {
-        return tnode;
+  node_ptr find_node(const key_type &key) const noexcept {
+    node_ptr result = root_;
+    while (result != nullptr) {
+      if (key == get_key(*result->data_)) {
+        return result;
       }
-      if (key_compare()(key, get_key(*tnode->data_))) {
-        tnode = tnode->left_;
+      if (key_compare()(key, get_key(*result->data_))) {
+        result = result->left_;
       } else {
-        tnode = tnode->right_;
+        result = result->right_;
       }
     }
     return sentinel_node_;
   };
 
   bool is_valid_node(const_node_rptr node, int &black_count,
-                     int path_black_count = 0) const {
+                     int path_black_count = 0) const noexcept {
     if (!node) {
       // All paths from the root to a leaf have the same number of black nodes
       if (black_count == 0) {
@@ -508,8 +516,8 @@ class RbTree {
       }
       return path_black_count == black_count;
     }
-    node_rptr left = node->left_.get();
-    node_rptr right = node->right_.get();
+    const_node_rptr left = node->left_.get();
+    const_node_rptr right = node->right_.get();
     if (node_is_black(node)) {
       // Count black nodes along the path
       path_black_count++;
@@ -590,9 +598,9 @@ class RbTree {
   }
 
   void update_edges_on_erase(const_node_rptr node) {
-    bool is_root = node == root_.get();
-    bool is_leftmost = (node == sentinel_node_->left_.get());
-    bool is_rightmost = (node == sentinel_node_->right_.get());
+    const bool is_root = node == root_.get();
+    const bool is_leftmost = (node == sentinel_node_->left_.get());
+    const bool is_rightmost = (node == sentinel_node_->right_.get());
     if (is_root && is_leftmost && is_rightmost) {
       sentinel_node_->left_ = nullptr;
       sentinel_node_->right_ = nullptr;
@@ -606,7 +614,8 @@ class RbTree {
     }
   }
 
-  node_ptr bound(const key_type &key, key_compare_func comp) const {
+  node_ptr bound(const key_type &key,
+                 const key_compare_func comp) const noexcept {
     node_ptr current = root_;
     node_ptr result = sentinel_node_;
 
@@ -624,7 +633,7 @@ class RbTree {
 
   node_ptr allocate_node() { return std::allocate_shared<Node>(node_alloc_); }
 
-  node_ptr allocate_node(const_reference data, Color color = RED) {
+  node_ptr allocate_node(const_reference data, const Color color = RED) {
     return std::allocate_shared<Node>(node_alloc_, data, value_alloc_, color);
   }
 
@@ -685,7 +694,7 @@ class RbTree {
   void delete_balance(node_ptr node, node_ptr parent) {
     // Continue until the node is the root or the node becomes red
     while (node != root_ && (node_is_black(node.get()))) {
-      bool is_left = (node == parent->left_);
+      const bool is_left = (node == parent->left_);
       node_ptr sibling = is_left ? parent->right_ : parent->left_;
 
       // Case 1: The sibling is red
@@ -805,7 +814,7 @@ class RbTree {
   }
 
   void merge_lists(node_ptr &head, node_ptr &other_head, node_ptr &other_tail,
-                   bool duplicates) {
+                   const bool duplicates) {
     node_ptr it = head;
     node_ptr other_it = other_head;
     node_ptr prev = nullptr;  // To keep track of previous node in first list
@@ -908,7 +917,8 @@ class RbTree {
     return root;
   }
 
-  void adjust_tree(node_rptr node, int max_depth, int current_depth = 0) {
+  void adjust_tree(node_rptr node, const int max_depth,
+                   const int current_depth = 0) {
     if (!node) return;
 
     // the lowest level is red, then we alternate the other levels

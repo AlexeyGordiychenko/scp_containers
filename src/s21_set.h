@@ -11,7 +11,7 @@ template <class Key, class Compare = std::less<Key>>
 class set final {
  private:
   struct GetKey {
-    const Key operator()(const Key& value) const { return value; }
+    const Key operator()(const Key& value) const noexcept { return value; }
   };
   using BalancedTree = RbTree<Key, Key, GetKey, Compare>;
 
@@ -32,7 +32,7 @@ class set final {
     }
   }
   set(const set& s) : tree_(s.tree_) {}
-  set(set&& s) : tree_(std::move(s.tree_)) {}
+  set(set&& s) noexcept : tree_(std::move(s.tree_)) {}
   ~set() {}
 
   // assignment operator oveload for copying an object
@@ -96,9 +96,9 @@ class set final {
   }
 
   // set lookup
-  iterator find(const Key& key) { return tree_.find(key); }
-  const_iterator find(const Key& key) const { return tree_.find(key); }
-  bool contains(const Key& key) const {
+  iterator find(const Key& key) noexcept { return tree_.find(key); }
+  const_iterator find(const Key& key) const noexcept { return tree_.find(key); }
+  bool contains(const Key& key) const noexcept {
     return tree_.find(key) != tree_.cend();
   }
 

@@ -11,7 +11,7 @@ template <class Key, class Value, class Compare = std::less<Key>>
 class map final {
  private:
   struct GetKey {
-    const Key& operator()(const std::pair<Key, Value>& value) const {
+    const Key& operator()(const std::pair<Key, Value>& value) const noexcept {
       return value.first;
     }
   };
@@ -36,7 +36,7 @@ class map final {
     }
   }
   map(const map& m) : tree_(m.tree_) {}
-  map(map&& m) : tree_(std::move(m.tree_)) {}
+  map(map&& m) noexcept : tree_(std::move(m.tree_)) {}
   ~map() {}
 
   // assignment operator oveload for copying an object
@@ -140,9 +140,9 @@ class map final {
   }
 
   // map lookup
-  iterator find(const Key& key) { return tree_.find(key); }
-  const_iterator find(const Key& key) const { return tree_.find(key); }
-  bool contains(const Key& key) const {
+  iterator find(const Key& key) noexcept { return tree_.find(key); }
+  const_iterator find(const Key& key) const noexcept { return tree_.find(key); }
+  bool contains(const Key& key) const noexcept {
     return tree_.find(key) != tree_.cend();
   }
 
