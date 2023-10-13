@@ -413,7 +413,7 @@ class RbTree {
   };
 
   bool is_valid_tree() const noexcept {
-    int black_count = 0;
+    size_type black_count = 0;
     // The root is always black
     const_node_rptr root_ptr = root_.get();
     if (node_is_red(root_ptr)) return false;
@@ -507,8 +507,8 @@ class RbTree {
     return sentinel_node_;
   };
 
-  bool is_valid_node(const_node_rptr node, int &black_count,
-                     int path_black_count = 0) const noexcept {
+  bool is_valid_node(const_node_rptr node, size_type &black_count,
+                     size_type path_black_count = 0) const noexcept {
     if (!node) {
       // All paths from the root to a leaf have the same number of black nodes
       if (black_count == 0) {
@@ -917,8 +917,8 @@ class RbTree {
     return root;
   }
 
-  void adjust_tree(node_rptr node, const int max_depth,
-                   const int current_depth = 0) {
+  void adjust_tree(node_rptr node, const size_type max_depth,
+                   const size_type current_depth = 0) {
     if (!node) return;
 
     // the lowest level is red, then we alternate the other levels
