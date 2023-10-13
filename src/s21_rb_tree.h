@@ -421,8 +421,6 @@ class RbTree {
     Color color_ = RED;
 
     Node() = default;
-    Node(const_reference data, value_alloc_reference value_alloc)
-        : Node(data, value_alloc, RED) {}
     Node(const_reference data, value_alloc_reference value_alloc, Color color)
         : data_(allocate_value(data, value_alloc), get_deleter(value_alloc)),
           color_(color) {}
