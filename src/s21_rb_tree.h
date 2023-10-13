@@ -40,11 +40,11 @@ class RbTree {
   using size_type = size_t;
 
   // iterator
-  template <bool isConst>
+  template <bool IsConst>
   class RbTreeIterator {
    public:
     using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = std::conditional_t<isConst, const Value, Value>;
+    using value_type = std::conditional_t<IsConst, const Value, Value>;
     using difference_type = std::ptrdiff_t;
     using pointer = value_type *;
     using reference = value_type &;
