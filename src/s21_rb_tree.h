@@ -13,7 +13,6 @@ template <class Key, class Value, class KeyOfValue,
           class Allocator = std::allocator<Value>>
 class RbTree {
  private:
-  enum Color : bool { BLACK, RED };
   struct Node;  // forward declaration of node
 
  public:
@@ -421,6 +420,8 @@ class RbTree {
   }
 
  private:
+  enum Color : bool { BLACK, RED };
+
   struct Node {
     value_ptr data_;
     node_ptr left_;
