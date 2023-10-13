@@ -1,5 +1,6 @@
 CC=g++
-CFLAGS=-Wall -Wextra -Werror -std=c++17 -fmax-errors=1 -g
+CFLAGS=-Wall -Wextra -Werror -std=c++17 -fmax-errors=1
+OFLAGS=-O2
 LDFLAGS=-lgtest -pthread
 
 GCOVFLAGS=--coverage
@@ -25,22 +26,23 @@ TEST_BUILD_GCOV=$(TEST_BUILD)_gcov
 
 all: $(TEST)
 
-#===MAIN===============================================
-all: test
+# temporary rules for testing/debugging standalone .cc files {
+force:
 
 %: %.cc force
 	rm -f $@ || true
-	$(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) -g $< $(LDFLAGS) -o $@
+#}
 
 $(TEST): $(TEST_BUILD)
 	./$@ || true
 
 $(TEST_BUILD): $(OBJS_TEST)
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $(TEST)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(OFLAGS) -o $(TEST)
 
 $(OBJ_DIR_TEST)/%.o: $(TEST_DIR)/%.cc
 	@mkdir -p $(OBJ_DIR_TEST)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
 
 $(TEST_GCOV): $(TEST_BUILD_GCOV)
 	$(MAKE) clean_gcda
