@@ -513,3 +513,45 @@ TEST(VectorTest, PushPopBack_1) {
     ASSERT_EQ(test[i], test_2[i]);
   }
 }
+
+TEST(VectorTest, InsertMany_1) {
+  s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+
+  test.insert_many(test.cbegin() + 2, 13, 1313, 131313, 13131313);
+
+  ASSERT_EQ(test.size(), 11);
+  ASSERT_EQ(test[4], 131313);
+}
+
+TEST(VectorTest, InsertMany_2) {
+  s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+
+  EXPECT_ANY_THROW(test.insert_many(test.cbegin() + 20, 13, 1313, 131313, 13131313));
+}
+
+TEST(VectorTest, InsertMany_3) {
+  s21::vector<int> test = {11, 22, 33, 44, 55555, 66666, 77777};
+
+  test.insert_many(test.cbegin() + 2);
+
+  ASSERT_EQ(test.size(), 7);
+  ASSERT_EQ(test[6], 77777);
+}
+
+TEST(VectorTest, InsertManyBack_1) {
+  s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+
+  test.insert_many_back(13, 1313, 131313, 13131313);
+
+  ASSERT_EQ(test.size(), 11);
+  ASSERT_EQ(test[9], 131313);
+}
+
+TEST(VectorTest, InsertManyBack_2) {
+  s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
+
+  test.insert_many_back();
+
+  ASSERT_EQ(test.size(), 7);
+  ASSERT_EQ(test[6], 11111111);
+}

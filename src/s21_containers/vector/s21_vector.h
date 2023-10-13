@@ -59,6 +59,11 @@ class vector {
   void pop_back();
   void swap(vector &other) noexcept;
 
+  template <typename... Args>
+  iterator insert_many(const_iterator pos, Args&&... args);
+  template <typename... Args>
+  void insert_many_back(Args&&... args);
+
  private:
   size_type size_;
   size_type capacity_;
@@ -323,6 +328,27 @@ void vector<T>::swap(vector<T> &other) noexcept {
   std::swap(size_, other.size_);
   std::swap(capacity_, other.capacity_);
   std::swap(data_, other.data_);
+}
+
+template <typename T>
+template <typename... Args>
+typename vector<T>::iterator vector<T>::insert_many(const_iterator pos, Args&&... args) {
+  vector<value_type> buffer = {args...};
+  size_type diff = pos - cbegin();
+  iterator new_pos = begin() + diff;
+
+  for (size_type i = 0; i < buffer.size(); ++i) {
+    new_pos = insert(new_pos, buffer[i]);
+    ++new_pos;
+  }
+
+  return new_pos;
+}
+
+template <typename T>
+template <typename... Args>
+void vector<T>::insert_many_back(Args &&...args) {
+  insert_many(cend(), args...);
 }
 }  // namespace s21
 
