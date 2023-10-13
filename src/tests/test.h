@@ -39,5 +39,6 @@ class test_obj {
 };
 
 template class s21::vector<std::string>;
+template class s21::array<int, 2>;
 
 #endif  // CPP2_S21_CONTAINERS_TESTS_TEST_H_

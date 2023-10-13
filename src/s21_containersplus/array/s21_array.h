@@ -8,25 +8,16 @@
 #include "../../s21_containers/vector/s21_vector_const_iterator.h"
 
 namespace s21 {
-template <class T>
-class ArrayIterator : protected VectorIterator<T> {};
-
-template <class T>
-class ArrayConstIterator : protected VectorConstIterator<T> {};
-
 template <class T, std::size_t N>
 class array {
  public:
-  class ArrayIterator<T>;
-  class ArrayConstIterator<T>;
-
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
   using size_type = std::size_t;
 
-  using iterator = ArrayIterator<T>;
-  using const_iterator = ArrayConstIterator<T>;
+  using iterator = T*;
+  using const_iterator = const T*;
 
   array();
   array(std::initializer_list<value_type> const &items);
@@ -43,14 +34,14 @@ class array {
   const_reference front() const;
   reference back();
   const_reference back() const;
-  T* data() const noexcept;
+  T* data() noexcept;
 
-  iterator begin() const noexcept;
-  iterator end() const noexcept;
+  iterator begin() noexcept;
+  iterator end() noexcept;
   const_iterator cbegin() const noexcept;
   const_iterator cend() const noexcept;
 
-  bool empty() const noexcept;
+  bool empty() noexcept;
   size_type size() const noexcept;
   size_type max_size() const noexcept;
 
@@ -139,38 +130,38 @@ typename array<T, N>::const_reference array<T, N>::back() const {
 }
 
 template <typename T, std::size_t N>
-T* array<T, N>::data() const noexcept {
+T* array<T, N>::data() noexcept {
   return data_;
 }
 
 template <typename T, std::size_t N>
-typename array<T, N>::iterator array<T, N>::begin() const noexcept {
-  return iterator(data_);
+typename array<T, N>::iterator array<T, N>::begin() noexcept {
+  return data_;
 }
 
 template <typename T, std::size_t N>
-typename array<T, N>::iterator array<T, N>::end() const noexcept {
-  return iterator(data_ + N);
+typename array<T, N>::iterator array<T, N>::end() noexcept {
+  return data_ + N;
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::const_iterator array<T, N>::cbegin() const noexcept {
-  return const_iterator(data_);
+  return data_;
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::const_iterator array<T, N>::cend() const noexcept {
-  return const_iterator(data_ + N);
+  return data_ + N;
 }
 
 template <typename T, std::size_t N>
-bool array<T, N>::empty() const noexcept {
+bool array<T, N>::empty() noexcept {
   return begin() == end();
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::size_type array<T, N>::size() const noexcept {
-  return std::distance(begin(), end());
+  return N;
 }
 
 template <typename T, std::size_t N>
