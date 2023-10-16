@@ -117,8 +117,6 @@ TEST(VectorTest, OperatorEquals_1) {
 
   ASSERT_EQ(test_3.size(), test.size());
   ASSERT_EQ(test_3.capacity(), test.capacity());
-  ASSERT_EQ(test_2.size(), 0);
-  ASSERT_EQ(test_2.capacity(), 0);
 }
 
 TEST(VectorTest, OperatorEquals_2) {
@@ -132,8 +130,6 @@ TEST(VectorTest, OperatorEquals_2) {
 
   ASSERT_EQ(test_2.size(), test_s21_2.size());
   ASSERT_EQ(test_2.capacity(), test_s21_2.capacity());
-  EXPECT_EQ(test.data(), nullptr);
-  EXPECT_EQ(test_s21.data(), nullptr);
 }
 
 TEST(VectorTest, At_1) {
@@ -589,6 +585,34 @@ TEST(VectorTest, PushPopBack_1) {
     ASSERT_EQ(test[i], test_2[i]);
   }
 }
+
+TEST(VectorTest, CopyOperator_1) {
+  s21::vector<int> test {11, 22, 33, 44, 1111111, 11111111, 11111111};
+  s21::vector<int> test_2;
+
+  test_2 = test;
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test_2[6], 11111111);
+}
+
+TEST(VectorTest, Empty_1) {
+  s21::vector<std::string> test;
+
+  ASSERT_EQ(test.empty(), true);
+
+  test.push_back("pushed");
+
+  ASSERT_EQ(test.empty(), false);
+  ASSERT_EQ(test[0], "pushed");
+}
+
+TEST(VectorTest, Reserve_EXCEPTION_SIZE) {
+  s21::vector<std::string> test;
+
+  EXPECT_ANY_THROW(test.reserve(18446744073709551615UL));
+}
+
 
 TEST(VectorTest, InsertMany_1) {
   s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};

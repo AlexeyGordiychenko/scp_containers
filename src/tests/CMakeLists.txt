@@ -24,7 +24,7 @@ add_executable(
 
 target_compile_options(
   all_containers_test PRIVATE
-  -Wall -Werror -Wextra -pedantic -g 
+  -Wall -Werror -Wextra -pedantic
 )
 
 target_link_libraries(

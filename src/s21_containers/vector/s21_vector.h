@@ -77,7 +77,6 @@ vector<T>::vector() : size_(0U), capacity_(0U), data_(nullptr) {}
 
 template <typename T>
 vector<T>::~vector() noexcept {
-  // for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
   std::destroy_n(data_, size_);
   ::operator delete(data_);
 
@@ -128,7 +127,6 @@ template <typename T>
 vector<T> &vector<T>::operator=(vector<T> &&v) noexcept {
   if (this != &v) {
     this->swap(v);
-    std::destroy_at(&v);
   }
 
   return *this;
@@ -137,9 +135,14 @@ vector<T> &vector<T>::operator=(vector<T> &&v) noexcept {
 template <typename T>
 vector<T> &vector<T>::operator=(const vector<T> &other) {
   if (this != &other) {
-    for (size_type i = 0; i < size_; ++i) {
+    data_ = (value_type *)::operator new(sizeof(value_type) * other.size());
+    capacity_ = other.capacity_;
+    size_ = other.size_;
+    for (size_type i = 0; i < other.size(); ++i) {
+      new (data_ + i) value_type;
       data_[i] = other.data_[i];
     }
+
     capacity_ = other.capacity_;
     size_ = other.size_;
   }
@@ -248,8 +251,6 @@ void vector<T>::reserve(size_type new_cap) {
         (value_type *)::operator new(sizeof(value_type) * new_cap);
     for (size_type i = 0; i < size_; ++i) new (new_data + i) value_type(at(i));
 
-    // std::copy(data_, data_ + size_, new_data);
-    // for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
     std::destroy_n(data_, size_);
 
     ::operator delete(data_);
