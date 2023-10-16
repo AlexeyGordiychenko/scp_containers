@@ -1,19 +1,6 @@
-#include <gtest/gtest.h>
+#include "test.h"
 
-#include <algorithm>
-#include <cstdlib>
-#include <string>
-
-#include "../s21_rb_tree.h"
-
-struct GetKeyMap {
-  template <typename K, typename V>
-  const K& operator()(const std::pair<K, V>& value) const {
-    return value.first;
-  }
-};
-
-TEST(TreeValidation, 0) {
+TEST(TreeTest, 0) {
   s21::RbTree<int, std::pair<const int, std::string>, GetKeyMap, std::less<int>>
       tree1, tree2;
 
@@ -38,7 +25,7 @@ TEST(TreeValidation, 0) {
   EXPECT_TRUE(tree2.is_valid_tree());
 }
 
-TEST(TreeValidation, 1) {
+TEST(TreeTest, 1) {
   s21::RbTree<int, std::pair<const int, std::string>, GetKeyMap, std::less<int>>
       tree1, tree2;
 
