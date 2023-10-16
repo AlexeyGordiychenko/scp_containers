@@ -23,12 +23,13 @@ class vector {
   using const_iterator = VectorConstIterator<T>;
 
   vector();
-  explicit vector(size_type n);
+  vector(size_type n);
   vector(std::initializer_list<value_type> const &items);
   vector(const vector &v);
   vector(vector &&v);
   ~vector() noexcept;
   vector<T> &operator=(vector<T> &&v) noexcept;
+  vector<T> &operator=(const vector<T> &other);
 
   reference at(size_type pos);
   const_reference at(size_type pos) const;
@@ -60,9 +61,9 @@ class vector {
   void swap(vector &other) noexcept;
 
   template <typename... Args>
-  iterator insert_many(const_iterator pos, Args&&... args);
+  iterator insert_many(const_iterator pos, Args &&...args);
   template <typename... Args>
-  void insert_many_back(Args&&... args);
+  void insert_many_back(Args &&...args);
 
  private:
   size_type size_;
@@ -76,8 +77,9 @@ vector<T>::vector() : size_(0U), capacity_(0U), data_(nullptr) {}
 
 template <typename T>
 vector<T>::~vector() noexcept {
-  for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
-  if (data_) ::operator delete(data_);
+  // for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
+  std::destroy_n(data_, size_);
+  ::operator delete(data_);
 
   size_ = 0;
   capacity_ = 0;
@@ -94,7 +96,7 @@ vector<T>::vector(size_type n)
     throw std::bad_alloc();
   }
 
-  for (size_type i = 0; i < n; ++i) new (data_ + i) value_type();
+  for (size_type i = 0; i < n; ++i) new (data_ + i) value_type;
 }
 
 template <typename T>
@@ -127,6 +129,19 @@ vector<T> &vector<T>::operator=(vector<T> &&v) noexcept {
   if (this != &v) {
     this->swap(v);
     std::destroy_at(&v);
+  }
+
+  return *this;
+}
+
+template <typename T>
+vector<T> &vector<T>::operator=(const vector<T> &other) {
+  if (this != &other) {
+    for (size_type i = 0; i < size_; ++i) {
+      data_[i] = other.data_[i];
+    }
+    capacity_ = other.capacity_;
+    size_ = other.size_;
   }
 
   return *this;
@@ -231,11 +246,12 @@ void vector<T>::reserve(size_type new_cap) {
   if (new_cap > capacity_) {
     value_type *new_data =
         (value_type *)::operator new(sizeof(value_type) * new_cap);
-    for (size_type i = 0; i < size_; ++i) new (new_data + i) value_type();
+    for (size_type i = 0; i < size_; ++i) new (new_data + i) value_type(at(i));
 
-    std::copy(data_, data_ + size_, new_data);
+    // std::copy(data_, data_ + size_, new_data);
+    // for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
+    std::destroy_n(data_, size_);
 
-    for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
     ::operator delete(data_);
     data_ = new_data;
     capacity_ = new_cap;
@@ -252,11 +268,11 @@ void vector<T>::shrink_to_fit() {
   if (capacity_ > size_) {
     value_type *new_data =
         (value_type *)::operator new(sizeof(value_type) * size_);
-    for (size_type i = 0; i < size_; ++i) new (new_data + i) value_type();
+    for (size_type i = 0; i < size_; ++i) new (new_data + i) value_type(at(i));
 
-    std::copy(data_, data_ + size_, new_data);
-
+    // std::copy(data_, data_ + size_, new_data);
     for (size_type i = 0; i < size_; ++i) std::destroy_at(data_ + i);
+
     ::operator delete(data_);
     data_ = new_data;
     capacity_ = size_;
@@ -285,6 +301,7 @@ typename vector<T>::iterator vector<T>::insert(iterator pos,
   if (size_ == capacity_) {
     reserve(capacity_ > 0 ? (2U * capacity_) : (1U));
   }
+  new (data_ + size_) value_type(value);
 
   iterator new_pos = begin() + diff;
 
@@ -332,7 +349,8 @@ void vector<T>::swap(vector<T> &other) noexcept {
 
 template <typename T>
 template <typename... Args>
-typename vector<T>::iterator vector<T>::insert_many(const_iterator pos, Args&&... args) {
+typename vector<T>::iterator vector<T>::insert_many(const_iterator pos,
+                                                    Args &&...args) {
   vector<value_type> buffer = {args...};
   size_type diff = pos - cbegin();
   iterator new_pos = begin() + diff;

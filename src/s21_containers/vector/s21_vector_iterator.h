@@ -34,9 +34,7 @@ template <typename T>
 VectorIterator<T>::VectorIterator(T* ptr) noexcept : pointer_(ptr) {}
 
 template <typename T>
-VectorIterator<T>::~VectorIterator() {
-  pointer_ = nullptr;
-}
+VectorIterator<T>::~VectorIterator() {}
 
 template <typename T>
 typename VectorIterator<T>::reference VectorIterator<T>::operator*() {

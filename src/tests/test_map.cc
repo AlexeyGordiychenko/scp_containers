@@ -531,38 +531,38 @@ TEST_F(MapTest, Insert) {
   }
 }
 
-TEST_F(MapTest, InsertMany) {
-  {
-    s21::map<int, std::string> s21_m;
-    std::map<int, std::string> std_m;
+TEST_F(MapTest, InsertMany_1) {
+  s21::map<int, std::string> s21_m;
+  std::map<int, std::string> std_m;
 
-    s21_m.insert_many(std::make_pair(10, std::string("10")),
-                      std::make_pair(20, std::string("20")),
-                      std::make_pair(30, std::string("30")),
-                      std::make_pair(40, std::string("40")));
-    std_m.insert({{10, "10"}, {20, "20"}, {30, "30"}, {40, "40"}});
-    EXPECT_TRUE(MapsAreEqual(s21_m, std_m));
-  }
-  {
-    s21::map<int, std::string> s21_m = {{10, "10"}, {20, "20"}};
-    std::map<int, std::string> std_m = {{10, "10"}, {20, "20"}};
+  s21_m.insert_many(std::make_pair(10, std::string("10")),
+                    std::make_pair(20, std::string("20")),
+                    std::make_pair(30, std::string("30")),
+                    std::make_pair(40, std::string("40")));
+  std_m.insert({{10, "10"}, {20, "20"}, {30, "30"}, {40, "40"}});
+  EXPECT_TRUE(MapsAreEqual(s21_m, std_m));
+}
 
-    s21_m.insert_many(std::make_pair(50, std::string("50")),
-                      std::make_pair(30, std::string("30")),
-                      std::make_pair(30, std::string("30")),
-                      std::make_pair(40, std::string("40")));
-    std_m.insert({{50, "50"}, {30, "30"}, {30, "30"}, {40, "40"}});
-    EXPECT_TRUE(MapsAreEqual(s21_m, std_m));
-  }
-  {
-    s21::map<int, std::string> s21_m = {{10, "10"}, {20, "20"}};
-    std::map<int, std::string> std_m = {{10, "10"}, {20, "20"}};
+TEST_F(MapTest, InsertMany_2) {
+  s21::map<int, std::string> s21_m = {{10, "10"}, {20, "20"}};
+  std::map<int, std::string> std_m = {{10, "10"}, {20, "20"}};
 
-    s21_m.insert_many(std::make_pair(10, std::string("10")),
-                      std::make_pair(20, std::string("20")));
-    std_m.insert({{10, "10"}, {20, "20"}});
-    EXPECT_TRUE(MapsAreEqual(s21_m, std_m));
-  }
+  s21_m.insert_many(std::make_pair(50, std::string("50")),
+                    std::make_pair(30, std::string("30")),
+                    std::make_pair(30, std::string("30")),
+                    std::make_pair(40, std::string("40")));
+  std_m.insert({{50, "50"}, {30, "30"}, {30, "30"}, {40, "40"}});
+  EXPECT_TRUE(MapsAreEqual(s21_m, std_m));
+}
+
+TEST_F(MapTest, InsertMany_3) {
+  s21::map<int, std::string> s21_m = {{10, "10"}, {20, "20"}};
+  std::map<int, std::string> std_m = {{10, "10"}, {20, "20"}};
+
+  s21_m.insert_many(std::make_pair(10, std::string("10")),
+                    std::make_pair(20, std::string("20")));
+  std_m.insert({{10, "10"}, {20, "20"}});
+  EXPECT_TRUE(MapsAreEqual(s21_m, std_m));
 }
 
 TEST_F(MapTest, Erase) {

@@ -1,9 +1,8 @@
 #ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_SET_S21_SET_H_
 #define CPP2_S21_CONTAINERS_S21_CONTAINERS_SET_S21_SET_H_
 
-#include <vector>
-
 #include "../../s21_containers/map/s21_rb_tree.h"
+#include "../vector/s21_vector.h"
 
 namespace s21 {
 
@@ -84,8 +83,8 @@ class set final {
   void merge(set& other) { tree_.merge(other.tree_); }
 
   template <typename... Args>
-  std::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
-    std::vector<std::pair<iterator, bool>> inserted;
+  s21::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
+    s21::vector<std::pair<iterator, bool>> inserted;
     inserted.reserve(sizeof...(args));
 
     for (auto&& arg : {args...}) {

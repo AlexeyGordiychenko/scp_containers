@@ -1,19 +1,18 @@
 #ifndef CPP2_S21_CONTAINERS_TESTS_TEST_H_
 #define CPP2_S21_CONTAINERS_TESTS_TEST_H_
 
-#include <iostream>
-#include <utility>
 #include <algorithm>
 #include <array>
 #include <cstdlib>
+#include <iostream>
 #include <map>
 #include <set>
 #include <string>
-
-#include "gtest/gtest.h"
+#include <utility>
 
 #include "../s21_containers/s21_containers.h"
 #include "../s21_containersplus/s21_containersplus.h"
+#include "gtest/gtest.h"
 
 class ClassWithPrintableDestructor {
  public:

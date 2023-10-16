@@ -4,8 +4,8 @@
 #include <initializer_list>
 #include <limits>
 
-#include "../../s21_containers/vector/s21_vector_iterator.h"
 #include "../../s21_containers/vector/s21_vector_const_iterator.h"
+#include "../../s21_containers/vector/s21_vector_iterator.h"
 
 namespace s21 {
 template <class T, std::size_t N>
@@ -16,15 +16,15 @@ class array {
   using const_reference = const T &;
   using size_type = std::size_t;
 
-  using iterator = T*;
-  using const_iterator = const T*;
+  using iterator = T *;
+  using const_iterator = const T *;
 
   array();
   array(std::initializer_list<value_type> const &items);
   array(const array<T, N> &v);
   array(array<T, N> &&v) noexcept;
   ~array() noexcept = default;
-  array<T, N>& operator=(array<T, N> &&v) noexcept;
+  array<T, N> &operator=(array<T, N> &&v) noexcept;
 
   reference at(size_type pos);
   const_reference at(size_type pos) const;
@@ -34,7 +34,7 @@ class array {
   const_reference front() const;
   reference back();
   const_reference back() const;
-  T* data() noexcept;
+  T *data() noexcept;
 
   iterator begin() noexcept;
   iterator end() noexcept;
@@ -73,7 +73,7 @@ array<T, N>::array(array<T, N> &&v) noexcept {
 }
 
 template <typename T, std::size_t N>
-array<T, N>& array<T, N>::operator=(array<T, N> &&v) noexcept {
+array<T, N> &array<T, N>::operator=(array<T, N> &&v) noexcept {
   for (size_type i = 0; i < N; ++i) {
     data_[i] = std::move(v.data_[i]);
   }
@@ -105,7 +105,8 @@ typename array<T, N>::reference array<T, N>::operator[](size_type pos) {
 }
 
 template <typename T, std::size_t N>
-typename array<T, N>::const_reference array<T, N>::operator[](size_type pos) const {
+typename array<T, N>::const_reference array<T, N>::operator[](
+    size_type pos) const {
   return data_[pos];
 }
 
@@ -130,7 +131,7 @@ typename array<T, N>::const_reference array<T, N>::back() const {
 }
 
 template <typename T, std::size_t N>
-T* array<T, N>::data() noexcept {
+T *array<T, N>::data() noexcept {
   return data_;
 }
 

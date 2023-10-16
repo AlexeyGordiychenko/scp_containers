@@ -294,6 +294,23 @@ TEST(VectorTest, Reserve_1) {
   ASSERT_EQ(test.capacity(), test_2.capacity());
 }
 
+TEST(VectorTest, Reserve_2) {
+  s21::vector<std::string> test(5);
+  auto addr_test_1 = std::addressof(*test.data());
+  auto tmp = test[test.size() - 1];
+
+  test.reserve(3);
+  auto addr_test_2 = std::addressof(*test.data());
+
+  ASSERT_EQ(addr_test_1, addr_test_2);
+
+  test.reserve(55);
+  auto addr_test_3 = std::addressof(*test.data());
+
+  ASSERT_NE(addr_test_2, addr_test_3);
+  ASSERT_EQ(test[test.size() - 1], tmp);
+}
+
 TEST(VectorTest, Shrink_to_fit_1) {
   s21::vector<std::vector<std::string>> test(5);
   std::vector<std::vector<std::string>> test_2(5);
@@ -399,6 +416,29 @@ TEST(VectorTest, Insert_3) {
 }
 
 TEST(VectorTest, Insert_4) {
+  s21::vector<std::string> test = {"1"};
+  std::vector<std::string> test_2 = {"1"};
+  auto iter = test.end();
+  auto iter_2 = test_2.end();
+
+  test.insert(iter, "9999");
+  test_2.insert(iter_2, "9999");
+  test.insert(test.end(), "9999");
+  test_2.insert(test_2.end(), "9999");
+  test.insert(test.end(), "9999");
+  test_2.insert(test_2.end(), "9999");
+  test.insert(test.end(), "9999");
+  test_2.insert(test_2.end(), "9999");
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<std::string>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}
+
+TEST(VectorTest, Insert_5) {
   s21::vector<int> test = {1};
   auto iter = test.begin();
   iter = iter + 2;
@@ -467,6 +507,41 @@ TEST(VectorTest, PushBack_1) {
   }
 }
 
+TEST(VectorTest, PushBack_2) {
+  s21::vector<std::string> test;
+  std::vector<std::string> test_2;
+
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+  test.push_back("9999");
+  test_2.push_back("9999");
+
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.capacity(), test_2.capacity());
+
+  for (s21::vector<std::string>::size_type i = 0; i < test.size(); ++i) {
+    ASSERT_EQ(test[i], test_2[i]);
+  }
+}
+
 TEST(VectorTest, PopBack_1) {
   s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
   std::vector<int> test_2 = {11, 22, 33, 44, 1111111, 11111111, 11111111};
@@ -527,7 +602,8 @@ TEST(VectorTest, InsertMany_1) {
 TEST(VectorTest, InsertMany_2) {
   s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};
 
-  EXPECT_ANY_THROW(test.insert_many(test.cbegin() + 20, 13, 1313, 131313, 13131313));
+  EXPECT_ANY_THROW(
+      test.insert_many(test.cbegin() + 20, 13, 1313, 131313, 13131313));
 }
 
 TEST(VectorTest, InsertMany_3) {

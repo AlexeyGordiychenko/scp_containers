@@ -1,9 +1,8 @@
 #ifndef CPP2_S21_CONTAINERS_S21_CONTAINERSPLUS_MULTISET_S21_MULTISET_H_
 #define CPP2_S21_CONTAINERS_S21_CONTAINERSPLUS_MULTISET_S21_MULTISET_H_
 
-#include <vector>
-
 #include "../../s21_containers/map/s21_rb_tree.h"
+#include "../../s21_containers/vector/s21_vector.h"
 
 namespace s21 {
 
@@ -84,8 +83,8 @@ class multiset final {
   void merge(multiset& other) { tree_.merge(other.tree_, true); }
 
   template <typename... Args>
-  std::vector<iterator> insert_many(Args&&... args) {
-    std::vector<iterator> inserted;
+  s21::vector<iterator> insert_many(Args&&... args) {
+    s21::vector<iterator> inserted;
     inserted.reserve(sizeof...(args));
 
     for (auto&& arg : {args...}) {
