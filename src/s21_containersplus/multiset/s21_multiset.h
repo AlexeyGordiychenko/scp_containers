@@ -6,13 +6,14 @@
 
 namespace s21 {
 
-template <class Key, class Compare = std::less<Key>>
+template <class Key, class Compare = std::less<Key>,
+          class Allocator = std::allocator<Key>>
 class multiset final {
  private:
   struct GetKey {
     const Key operator()(const Key& value) const noexcept { return value; }
   };
-  using BalancedTree = RbTree<Key, Key, GetKey, Compare>;
+  using BalancedTree = RbTree<Key, Key, GetKey, Compare, Allocator>;
 
  public:
   using key_type = Key;

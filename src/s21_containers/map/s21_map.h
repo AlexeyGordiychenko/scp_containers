@@ -6,7 +6,8 @@
 
 namespace s21 {
 
-template <class Key, class Value, class Compare = std::less<Key>>
+template <class Key, class Value, class Compare = std::less<Key>,
+          class Allocator = std::allocator<std::pair<const Key, Value>>>
 class map final {
  private:
   struct GetKey {
@@ -15,7 +16,7 @@ class map final {
     }
   };
   using BalancedTree =
-      RbTree<Key, std::pair<const Key, Value>, GetKey, Compare>;
+      RbTree<Key, std::pair<const Key, Value>, GetKey, Compare, Allocator>;
 
  public:
   using key_type = Key;
