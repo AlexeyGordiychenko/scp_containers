@@ -19,12 +19,13 @@ class array {
   using iterator = T *;
   using const_iterator = const T *;
 
-  array();
+  array() = default;
+  array(const array<T, N> &v) = default;
+  array(array<T, N> &&v) = default;
+  ~array() = default;
+  array<T, N> &operator=(array<T, N> &&v) = default;
+  array<T, N> &operator=(const array<T, N> &v) = default;
   array(std::initializer_list<value_type> const &items);
-  array(const array<T, N> &v);
-  array(array<T, N> &&v) noexcept;
-  ~array() noexcept = default;
-  array<T, N> &operator=(array<T, N> &&v) noexcept;
 
   reference at(size_type pos);
   const_reference at(size_type pos) const;
@@ -53,32 +54,8 @@ class array {
 };
 
 template <typename T, std::size_t N>
-array<T, N>::array() {}
-
-template <typename T, std::size_t N>
 array<T, N>::array(std::initializer_list<value_type> const &items) {
   std::copy(items.begin(), items.end(), data_);
-}
-
-template <typename T, std::size_t N>
-array<T, N>::array(const array<T, N> &v) {
-  std::copy(v.data_, v.data_ + N, data_);
-}
-
-template <typename T, std::size_t N>
-array<T, N>::array(array<T, N> &&v) noexcept {
-  for (size_type i = 0; i < N; ++i) {
-    data_[i] = std::move(v.data_[i]);
-  }
-}
-
-template <typename T, std::size_t N>
-array<T, N> &array<T, N>::operator=(array<T, N> &&v) noexcept {
-  for (size_type i = 0; i < N; ++i) {
-    data_[i] = std::move(v.data_[i]);
-  }
-
-  return *this;
 }
 
 template <typename T, std::size_t N>
@@ -112,22 +89,22 @@ typename array<T, N>::const_reference array<T, N>::operator[](
 
 template <typename T, std::size_t N>
 typename array<T, N>::reference array<T, N>::front() {
-  return data_[0];
+  return *data_;
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::const_reference array<T, N>::front() const {
-  return data_[0];
+  return *data_;
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::reference array<T, N>::back() {
-  return data_[size() - 1];
+  return *(data_ + size() - 1);
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::const_reference array<T, N>::back() const {
-  return data_[size() - 1];
+  return *(data_ + size() - 1);
 }
 
 template <typename T, std::size_t N>
@@ -142,7 +119,7 @@ typename array<T, N>::iterator array<T, N>::begin() noexcept {
 
 template <typename T, std::size_t N>
 typename array<T, N>::iterator array<T, N>::end() noexcept {
-  return data_ + N;
+  return data_ + size();
 }
 
 template <typename T, std::size_t N>
@@ -152,7 +129,7 @@ typename array<T, N>::const_iterator array<T, N>::cbegin() const noexcept {
 
 template <typename T, std::size_t N>
 typename array<T, N>::const_iterator array<T, N>::cend() const noexcept {
-  return data_ + N;
+  return data_ + size();
 }
 
 template <typename T, std::size_t N>

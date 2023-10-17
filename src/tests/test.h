@@ -354,6 +354,6 @@ struct GetKeyMap {
 };
 
 template class s21::vector<std::string>;
-template class s21::array<int, 2>;
+template class s21::array<std::string, 5>;
 
 #endif  // CPP2_S21_CONTAINERS_TESTS_TEST_H_
