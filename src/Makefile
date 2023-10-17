@@ -1,70 +1,20 @@
 BALD 				= '\033[1m\033[4m'
 NORMAL 			= '\033[0m'
 
-BUILD_FLAGS := -DCMAKE_CXX_COMPILER=g++
-GTEST_FLAGS := --gtest_brief=1
 OS 					:= $(shell uname)
 MY_FILES 		:= $(shell find . -name "*.cc" -o -name "*.h")
 
-TEST_DIR=tests
-SRC_DIR=.
-OBJ_DIR=obj
-OBJ_DIR_GCOV=$(OBJ_DIR)/$(GCOV_DIR)
-OBJ_DIR_TEST=$(OBJ_DIR)/$(TEST_DIR)
+BUILD_FLAGS := -DCMAKE_CXX_COMPILER=g++
+GTEST_FLAGS := --gtest_brief=1
 
-SRCS=$(wildcard $(SRC_DIR)/s21_*.h)
-SRCS_TEST=$(wildcard $(TEST_DIR)/s21_*.cc)
-OBJS_TEST=$(patsubst $(TEST_DIR)/%.cc,$(OBJ_DIR_TEST)/%.o,$(SRCS_TEST))
-OBJS_GCOV=$(patsubst $(TEST_DIR)/%.cc,$(OBJ_DIR_GCOV)/%.o,$(SRCS_TEST))
+ifeq ($(OS),Darwin)
+	LCOV_MAC_FLAG = -q --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,mismatch
+else
+	LCOV_MAC_FLAG = -q
+endif
 
-TEST=test
-TEST_GCOV=$(TEST)_gcov
-TEST_BUILD=$(TEST)_build
-TEST_BUILD_GCOV=$(TEST_BUILD)_gcov
-
-.PHONY: force all $(TEST) $(TEST_BUILD) $(TEST_GCOV) $(TEST_BUILD_GCOV) gcov_report clean clean_gcda rebuild clang_n clang_i valgrind valgrind_mac
-
-all: $(TEST)
-
-# temporary rules for testing/debugging standalone .cc files {
-force:
-
-%: %.cc force
-	rm -f $@ || true
-	$(CC) $(CFLAGS) -g $< $(LDFLAGS) -o $@
-#}
-
-$(TEST): $(TEST_BUILD)
-	./$@ || true
-
-$(TEST_BUILD): $(OBJS_TEST)
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(OFLAGS) -o $(TEST)
-
-$(OBJ_DIR_TEST)/%.o: $(TEST_DIR)/%.cc
-	@mkdir -p $(OBJ_DIR_TEST)
-	$(CC) $(CFLAGS) $(OFLAGS) -c $< -o $@
-
-$(TEST_GCOV): $(TEST_BUILD_GCOV)
-	$(MAKE) clean_gcda
-	./$@ || true
-
-$(TEST_BUILD_GCOV): $(OBJS_GCOV)
-	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(GCOVFLAGS) -o $(TEST_GCOV)
-
-$(OBJ_DIR_GCOV)/%.o: $(TEST_DIR)/%.cc
-	@mkdir -p $(OBJ_DIR_GCOV)
-	$(CC) $(CFLAGS) $(GCOVFLAGS) -c $< -o $@
-
-gcov_report: $(TEST_GCOV)
-	mkdir -p $(GCOV_DIR)
-	gcovr --html-details  -o $(GCOV_DIR)/index.html --filter s21_\.\*.h
-	open $(GCOV_DIR)/index.html
-
-lcov_report: $(TEST_GCOV)
-	mkdir -p $(GCOV_DIR)
-	lcov --capture --directory $(SRC_DIR) --exclude "$(CURDIR)/tests/*" --output-file $(GCOV_DIR)/coverage.info --no-external
-	genhtml -o $(GCOV_DIR) $(GCOV_DIR)/coverage.info 
-	open $(GCOV_DIR)/index.html
+#===MAIN===============================================
+all: test
 
 clean:
 	rm -rf *.o *.a *.out *.info *.log *.html *.gc* test gcov_report report build*
@@ -90,11 +40,11 @@ _run:
 #===EXTRA==============================================
 gcov_report: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=PROFILE
 gcov_report: _build
-	lcov --no-external -c -i --directory . --output-file build/pre_test.info
+	lcov --no-external -c -i --directory . --output-file build/pre_test.info $(LCOV_MAC_FLAG)
 	@make _run
-	lcov --no-external -c --directory . --output-file build/test.info
-	lcov -a build/pre_test.info -a build/test.info -o build/full_test.info
-	lcov --remove build/full_test.info '*gtest*' '*googletest*' '*tests*' -o build/filtered_test.info
+	lcov --no-external -c --directory . --output-file build/test.info $(LCOV_MAC_FLAG)
+	lcov -a build/pre_test.info -a build/test.info -o build/full_test.info --ignore-errors mismatch $(LCOV_MAC_FLAG)
+	lcov --remove build/full_test.info '*gtest*' '*googletest*' '*tests*' -o build/filtered_test.info --ignore-errors mismatch $(LCOV_MAC_FLAG)
 	genhtml build/filtered_test.info -o report 
 
 leaks: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=RELEASE

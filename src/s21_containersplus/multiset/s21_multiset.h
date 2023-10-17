@@ -19,8 +19,8 @@ class multiset final {
   using value_type = Key;
   using reference = value_type&;
   using const_reference = const value_type&;
-  using iterator = class BalancedTree::iterator;
-  using const_iterator = class BalancedTree::const_iterator;
+  using iterator = typename BalancedTree::iterator;
+  using const_iterator = typename BalancedTree::const_iterator;
   using size_type = size_t;
 
   // constructors and destructor
