@@ -1,5 +1,5 @@
-#ifndef S21_RBTREE_H_
-#define S21_RBTREE_H_
+#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_RB_TREE_H_
+#define CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_RB_TREE_H_
 
 #include <functional>
 #include <iostream>
@@ -934,4 +934,5 @@ class RbTree {
   }
 };
 }  // namespace s21
-#endif  // S21_RBTREE_H_
+
+#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_RB_TREE_H_

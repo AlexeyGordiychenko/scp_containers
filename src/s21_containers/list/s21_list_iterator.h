@@ -36,7 +36,7 @@ inline ListIterator<T>::ListIterator(node *ptr) noexcept : ptr_(ptr) {}
 
 template <class T>
 inline ListIterator<T>::ListIterator(const ListIterator<T> &it) noexcept
-    : ptr_(it.ptr_){};
+    : ptr_(it.ptr_){}
 
 template <class T>
 inline ListIterator<T>::~ListIterator() {}
