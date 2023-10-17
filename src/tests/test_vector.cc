@@ -587,7 +587,7 @@ TEST(VectorTest, PushPopBack_1) {
 }
 
 TEST(VectorTest, CopyOperator_1) {
-  s21::vector<int> test {11, 22, 33, 44, 1111111, 11111111, 11111111};
+  s21::vector<int> test{11, 22, 33, 44, 1111111, 11111111, 11111111};
   s21::vector<int> test_2;
 
   test_2 = test;
@@ -612,7 +612,6 @@ TEST(VectorTest, Reserve_EXCEPTION_SIZE) {
 
   EXPECT_ANY_THROW(test.reserve(18446744073709551615UL));
 }
-
 
 TEST(VectorTest, InsertMany_1) {
   s21::vector<int> test = {11, 22, 33, 44, 1111111, 11111111, 11111111};

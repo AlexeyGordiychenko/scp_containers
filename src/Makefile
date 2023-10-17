@@ -1,10 +1,10 @@
-CC=g++
-CFLAGS=-Wall -Wextra -Werror -std=c++17 -fmax-errors=1
-OFLAGS=-O2
-LDFLAGS=-lgtest -pthread
+BALD 				= '\033[1m\033[4m'
+NORMAL 			= '\033[0m'
 
-GCOVFLAGS=--coverage
-GCOV_DIR=gcov
+BUILD_FLAGS := -DCMAKE_CXX_COMPILER=g++
+GTEST_FLAGS := --gtest_brief=1
+OS 					:= $(shell uname)
+MY_FILES 		:= $(shell find . -name "*.cc" -o -name "*.h")
 
 TEST_DIR=tests
 SRC_DIR=.
@@ -69,46 +69,48 @@ lcov_report: $(TEST_GCOV)
 clean:
 	rm -rf *.o *.a *.out *.info *.log *.html *.gc* test gcov_report report build*
 
-test:
-	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=RELEASE
-	cmake --build build
-	cd build && ./tests/all_containers_test $(GTEST_FLAGS)
+test: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=RELEASE
+test: _build _run
 
 %Test:
-	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=RELEASE
-	cmake --build build
-	cd build && ./tests/all_containers_test --gtest_filter=$@.*
+	@make test GTEST_FLAGS=--gtest_filter=$@.*
 
-test_no_optimization:
-	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++
+test_no_optimization: clean _build _run
+
+#======================================================
+#===INTERNAL===========================================
+_build:
+	cmake -S . -B build $(BUILD_FLAGS)
 	cmake --build build
+
+_run:
 	cd build && ./tests/all_containers_test $(GTEST_FLAGS)
 
 #======================================================
 #===EXTRA==============================================
-gcov_report:
-	cmake -S . -B build -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=PROFILE
-	cmake --build build
+gcov_report: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=PROFILE
+gcov_report: _build
 	lcov --no-external -c -i --directory . --output-file build/pre_test.info
-	cd build && ./tests/all_containers_test $(GTEST_FLAGS)
+	@make _run
 	lcov --no-external -c --directory . --output-file build/test.info
 	lcov -a build/pre_test.info -a build/test.info -o build/full_test.info
 	lcov --remove build/full_test.info '*gtest*' '*googletest*' '*tests*' -o build/filtered_test.info
 	genhtml build/filtered_test.info -o report 
+
+leaks: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=RELEASE
+leaks: _build
+ifeq ($(OS),Darwin)
+	CK_FORK=no leaks -atExit -- ./build/tests/all_containers_test $(GTEST_FLAGS)
+else
+	CK_FORK=no valgrind --leak-check=full -s --track-origins=yes --log-file=./build/leak.log ./build/tests/all_containers_test $(GTEST_FLAGS)
+	cat ./build/leak.log
+endif
 
 open:
 ifeq ($(OS),Darwin)
 	open -a "Google Chrome" report/index.html
 else
 	xdg-open report/index.html
-endif
-
-leak: test
-ifeq ($(OS),Darwin)
-	CK_FORK=no leaks -atExit -- ./build/tests/all_containers_test $(GTEST_FLAGS)
-else
-	CK_FORK=no valgrind --leak-check=full -s --track-origins=yes --log-file=./build/leak.log ./build/tests/all_containers_test $(GTEST_FLAGS)
-	cat ./build/leak.log
 endif
 
 cppcheck:
@@ -135,13 +137,13 @@ help:
 	@echo $(BALD)"\tmake SuiteNameTest"$(NORMAL)" - run all tests in 'SuiteName' test suite"
 	@echo $(BALD)"\tmake gcov_report"$(NORMAL)" - create test coverage HTML-report"
 	@echo $(BALD)"\tmake open"$(NORMAL)" - open test coverage HTML-report"
-	@echo $(BALD)"\tmake leak"$(NORMAL)" - check for memory leaks with Valgrind (Linux) or Leaks (MACOS)"
+	@echo $(BALD)"\tmake leaks"$(NORMAL)" - check for memory leaks with Valgrind (Linux) or Leaks (MACOS)"
 	@echo $(BALD)"\tmake cppcheck"$(NORMAL)" - analyse code with static code analyser"
 	@echo $(BALD)"\tmake clang"$(NORMAL)" - analyse code for Google Style"
 	@echo $(BALD)"\tmake clangI"$(NORMAL)" - analyse code for Google Style and correct style mistakes"
 	@echo $(BALD)"\tmake help"$(NORMAL)" - show helpful information for the project"
 
-.PHONY: all clean gcov_report cppcheck clang clangI leak help
+.PHONY: all clean gcov_report cppcheck clang clangI leaks help
 
 .SILENT: help clang clangI cppcheck
 #======================================================

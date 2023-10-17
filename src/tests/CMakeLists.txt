@@ -22,11 +22,6 @@ add_executable(
   ${TEST_HEADERS}
 )
 
-target_compile_options(
-  all_containers_test PRIVATE
-  -Wall -Werror -Wextra -pedantic
-)
-
 target_link_libraries(
   all_containers_test
   PUBLIC
