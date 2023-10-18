@@ -650,8 +650,10 @@ TEST(VectorTest, InsertManyBack_2) {
 }
 
 TEST(VectorTest, Cbegin_Cend_1) {
-  const s21::vector<std::string> test = {"11", "22", "33", "44", "55", "66", "77"};
-  const std::vector<std::string> test_2 = {"11", "22", "33", "44", "55", "66", "77"};
+  const s21::vector<std::string> test = {"11", "22", "33", "44",
+                                         "55", "66", "77"};
+  const std::vector<std::string> test_2 = {"11", "22", "33", "44",
+                                           "55", "66", "77"};
 
   ASSERT_EQ(test.cend() - test.cend(), 0);
   ASSERT_EQ(*test.cbegin(), *test_2.cbegin());

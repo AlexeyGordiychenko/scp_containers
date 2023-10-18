@@ -24,10 +24,10 @@ inline ListConstIterator<T>::ListConstIterator(s21_node<T> *ptr) noexcept
 
 template <class T>
 inline ListConstIterator<T>::ListConstIterator(ListIterator<T> it) noexcept
-    : ListIterator<T>(it){}
+    : ListIterator<T>(it) {}
 
 template <class T>
-inline ListConstIterator<T>::~ListConstIterator(){}
+inline ListConstIterator<T>::~ListConstIterator() {}
 
 template <class T>
 inline bool ListConstIterator<T>::operator==(

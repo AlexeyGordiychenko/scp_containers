@@ -31,7 +31,8 @@ template <typename T>
 VectorConstIterator<T>::~VectorConstIterator() {}
 
 template <typename T>
-typename VectorConstIterator<T>::const_reference VectorConstIterator<T>::operator*() const {
+typename VectorConstIterator<T>::const_reference
+VectorConstIterator<T>::operator*() const {
   return *pointer_;
 }
 
