@@ -62,7 +62,7 @@ inline bool ListIterator<T>::operator==(
 template <class T>
 inline bool ListIterator<T>::operator!=(
     const ListIterator<T> &other) const noexcept {
-  return ptr_ != other.ptr_;
+  return !(*this == other);
 }
 
 template <class T>

@@ -6,7 +6,6 @@ TEST(ListTest, construct_list_size_with_test_obj) {
   list<test_obj> l(5);
   EXPECT_EQ(l.back().id, 4);
   EXPECT_EQ(l.front().id, 0);
-  EXPECT_EQ(l.max_size(), 384307168202282325);
   EXPECT_EQ(l.empty(), false);
 }
 
@@ -71,6 +70,48 @@ TEST(ListTest, operator_copy_assign) {
   EXPECT_EQ(list_b.back().id, c.id);
   EXPECT_EQ(list_b.front().id, a.id);
   EXPECT_EQ(list_b.size(), 3);
+}
+
+// TEST(ListTest, iterator) {
+//   test_obj a;
+//   test_obj b;
+//   test_obj c;
+//   list<test_obj> list_a{a, b, c};
+//   EXPECT_EQ(list_a.back().id, c.id);
+//   EXPECT_EQ(list_a.front().id, a.id);
+//   EXPECT_EQ((*(list_a.begin())).id, a.id);
+//   EXPECT_EQ((*(++list_a.begin())).id, b.id);
+//   EXPECT_EQ((*(--list_a.end())).id, c.id);
+// }
+
+TEST(ListTest, iterator) {
+  test_obj arr[4];
+  list<test_obj> l{arr[0], arr[1], arr[2]};
+  auto it_begin = l.begin();
+  EXPECT_EQ(*it_begin, arr[0]);
+  EXPECT_EQ(*(++it_begin), arr[1]);
+  EXPECT_EQ(*(++it_begin), arr[2]);
+  EXPECT_EQ(it_begin->id, arr[2].id);
+
+  auto it_end = l.end();
+  EXPECT_EQ(*(--it_end), arr[2]);
+  EXPECT_TRUE(it_begin == it_end);
+  EXPECT_EQ(*(--it_end), arr[1]);
+  EXPECT_EQ(*(--it_end), arr[0]);
+  EXPECT_TRUE(it_begin != it_end);
+
+  auto it_begin_const = l.cbegin();
+  EXPECT_EQ(*it_begin_const, arr[0]);
+  EXPECT_EQ(*(++it_begin_const), arr[1]);
+  EXPECT_EQ(*(++it_begin_const), arr[2]);
+  EXPECT_EQ(it_begin_const->id, arr[2].id);
+
+  auto it_end_cont = l.cend();
+  EXPECT_EQ(*(--it_end_cont), arr[2]);
+  EXPECT_TRUE(it_begin_const == it_end_cont);
+  EXPECT_EQ(*(--it_end_cont), arr[1]);
+  EXPECT_EQ(*(--it_end_cont), arr[0]);
+  EXPECT_TRUE(it_begin_const != it_end_cont);
 }
 
 TEST(ListTest, sort) {
@@ -238,18 +279,6 @@ TEST(ListTest, insert) {
   EXPECT_EQ(list_a.size(), 5);
   int c = arr[0].id;
   for (auto i : list_a) EXPECT_EQ(i.id, c++);
-}
-
-TEST(ListTest, iterator) {
-  test_obj a;
-  test_obj b;
-  test_obj c;
-  list<test_obj> list_a{a, b, c};
-  EXPECT_EQ(list_a.back().id, c.id);
-  EXPECT_EQ(list_a.front().id, a.id);
-  EXPECT_EQ((*(list_a.begin())).id, a.id);
-  EXPECT_EQ((*(++list_a.begin())).id, b.id);
-  EXPECT_EQ((*(--list_a.end())).id, c.id);
 }
 
 TEST(ListTest, list_clear) {

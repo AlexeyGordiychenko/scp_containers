@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
+#include <limits>
 
 #include "s21_list_const_iterator.h"
 #include "s21_list_iterator.h"
@@ -43,6 +44,8 @@ class list {
 
   iterator begin() const noexcept;
   iterator end() const noexcept;
+  const_iterator cbegin() const noexcept;
+  const_iterator cend() const noexcept;
 
   bool empty() const noexcept;
   size_type size() const noexcept;
@@ -146,13 +149,11 @@ inline void list<T>::copy(const list &l) noexcept {
 
 template <class T>
 inline list<T>::list(const list &l) noexcept {
-  // std::cout << "copy constr call list";
   copy(l);
 }
 
 template <class T>
 inline list<T>::list(list &&l) noexcept {
-  // std::cout << "moved constr call";
   null_node_ = l.null_node_;
   size_ = l.size();
 
@@ -162,7 +163,6 @@ inline list<T>::list(list &&l) noexcept {
 
 template <class T>
 inline list<T> &list<T>::operator=(list &&l) noexcept {
-  // std::cout << "moved assign call";
   clear();
   delete null_node_;
   null_node_ = l.null_node_;
@@ -173,7 +173,6 @@ inline list<T> &list<T>::operator=(list &&l) noexcept {
 
 template <class T>
 inline list<T> &list<T>::operator=(const list &l) noexcept {
-  // std::cout << "copy assign call list\n";
   clear();
   delete null_node_;
   copy(l);
@@ -182,7 +181,6 @@ inline list<T> &list<T>::operator=(const list &l) noexcept {
 
 template <class T>
 inline list<T>::~list() {
-  // std::cout << "dest call";
   clear();
   delete null_node_;
   size_ = 0;
@@ -225,13 +223,23 @@ inline typename list<T>::iterator list<T>::end() const noexcept {
 }
 
 template <class T>
+inline typename list<T>::const_iterator list<T>::cbegin() const noexcept {
+  return const_iterator(null_node_->next_);
+}
+
+template <class T>
+inline typename list<T>::const_iterator list<T>::cend() const noexcept {
+  return const_iterator(null_node_);
+}
+
+template <class T>
 inline typename list<T>::size_type list<T>::size() const noexcept {
   return size_;
 }
 
 template <class T>
 inline typename list<T>::size_type list<T>::max_size() const noexcept {
-  return 384307168202282325;
+  return std::numeric_limits<size_t>::max() / sizeof(s21_node<T>) / 2;
 }
 
 template <class T>

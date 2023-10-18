@@ -12,6 +12,8 @@ class ListConstIterator : public ListIterator<T> {
   ListConstIterator(ListIterator<T> it) noexcept;
   ~ListConstIterator();
 
+  ListConstIterator<T> &operator++() noexcept;
+  ListConstIterator<T> &operator--() noexcept;
   bool operator==(const ListConstIterator<T> &other) const noexcept;
   bool operator!=(const ListConstIterator<T> &other) const noexcept;
   const T &operator*() const noexcept;
@@ -49,6 +51,18 @@ inline const T &ListConstIterator<T>::operator*() const noexcept {
 template <class T>
 inline const T *ListConstIterator<T>::operator->() const noexcept {
   return this->ptr_->data_;
+}
+
+template <class T>
+inline ListConstIterator<T> &ListConstIterator<T>::operator++() noexcept {
+  this->ptr_ = this->ptr_->next_;
+  return *this;
+}
+
+template <class T>
+inline ListConstIterator<T> &ListConstIterator<T>::operator--() noexcept {
+  this->ptr_ = this->ptr_->prev_;
+  return *this;
 }
 
 }  // namespace s21
