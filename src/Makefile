@@ -17,7 +17,7 @@ endif
 all: test
 
 clean:
-	rm -rf *.o *.a *.out *.info *.log *.html *.gc* test gcov_report report build*
+	rm -rf *.o *.a *.out *.info *.log *.html *.gc* test gcov_report report gcovr build*
 
 test: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=RELEASE
 test: _build _run
@@ -38,14 +38,20 @@ _run:
 
 #======================================================
 #===EXTRA==============================================
-gcov_report: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=PROFILE
-gcov_report: _build
+lcov_report: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=PROFILE
+lcov_report: _build
 	lcov --no-external -c -i --directory . --output-file build/pre_test.info $(LCOV_MAC_FLAG)
 	@make _run
 	lcov --no-external -c --directory . --output-file build/test.info $(LCOV_MAC_FLAG)
 	lcov -a build/pre_test.info -a build/test.info -o build/full_test.info --ignore-errors mismatch $(LCOV_MAC_FLAG)
 	lcov --remove build/full_test.info '*gtest*' '*googletest*' '*tests*' -o build/filtered_test.info --ignore-errors mismatch $(LCOV_MAC_FLAG)
-	genhtml build/filtered_test.info -o report 
+	genhtml build/filtered_test.info -o report
+
+gcov_report: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=PROFILE
+gcov_report: _build
+	@make _run
+	mkdir -p gcovr
+	gcovr --html-details -o gcovr/index.html --filter s21_\.\*.h
 
 leaks: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=RELEASE
 leaks: _build
@@ -85,7 +91,8 @@ help:
 
 	@echo "-===Extra project targets:===-"
 	@echo $(BALD)"\tmake SuiteNameTest"$(NORMAL)" - run all tests in 'SuiteName' test suite"
-	@echo $(BALD)"\tmake gcov_report"$(NORMAL)" - create test coverage HTML-report"
+	@echo $(BALD)"\tmake gcov_report"$(NORMAL)" - create test coverage HTML-report with gcovr"
+	@echo $(BALD)"\tmake lcov_report"$(NORMAL)" - create test coverage HTML-report with lcov"
 	@echo $(BALD)"\tmake open"$(NORMAL)" - open test coverage HTML-report"
 	@echo $(BALD)"\tmake leaks"$(NORMAL)" - check for memory leaks with Valgrind (Linux) or Leaks (MACOS)"
 	@echo $(BALD)"\tmake cppcheck"$(NORMAL)" - analyse code with static code analyser"
@@ -93,7 +100,7 @@ help:
 	@echo $(BALD)"\tmake clangI"$(NORMAL)" - analyse code for Google Style and correct style mistakes"
 	@echo $(BALD)"\tmake help"$(NORMAL)" - show helpful information for the project"
 
-.PHONY: all clean gcov_report cppcheck clang clangI leaks help
+.PHONY: all clean gcov_report lcov_report cppcheck clang clangI leaks help
 
 .SILENT: help clang clangI cppcheck
 #======================================================
