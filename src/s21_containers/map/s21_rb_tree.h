@@ -374,43 +374,6 @@ class RbTree {
     list_to_tree(other, other_head, other_tail);
   }
 
-  void print(const std::string &prefix, const_node_rptr node,
-             const bool is_left, const bool colored) const noexcept {
-    std::cout << prefix;
-    std::string left_color = "", right_color = "", reset_color = "",
-                red_node_color = "", black_node_color = "";
-    if (colored) {
-      left_color = kCyanColor;
-      right_color = kMagentaColor;
-      reset_color = kResetColor;
-      red_node_color = kRedColorBold;
-      black_node_color = kBlackColorBold;
-    }
-    if (is_left) {
-      std::cout << left_color + "┗━━" << reset_color;
-    } else {
-      std::cout << right_color + "┣━━" + reset_color;
-    }
-
-    if (node) {
-      if (node_is_red(node)) {
-        std::cout << red_node_color;
-      } else {
-        std::cout << black_node_color;
-      }
-      std::cout << get_key(*node->data_) << reset_color << std::endl;
-      print(prefix + (is_left ? "   " : right_color + "┃  " + reset_color),
-            node->right_.get(), false, colored);
-      print(prefix + (is_left ? "   " : left_color + "┃  " + reset_color),
-            node->left_.get(), true, colored);
-    } else {
-      std::cout << std::endl;
-    }
-  };
-  void print(const bool colored = true) const noexcept {
-    print("", root_.get(), false, colored);
-  };
-
   bool is_valid_tree() const noexcept {
     size_type black_count = 0;
     // The root is always black

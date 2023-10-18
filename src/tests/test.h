@@ -353,7 +353,19 @@ struct GetKeyMap {
   }
 };
 
-template class s21::vector<std::string>;
-template class s21::array<std::string, 5>;
+template class s21::vector<int>;
+template class s21::array<int, 5>;
+
+template class s21::list<int>;
+template class s21::ListConstIterator<int>;
+template class s21::ListIterator<int>;
+template class s21::s21_node<int>;
+
+template class s21::queue<int>;
+template class s21::stack<int>;
+
+template class s21::set<int>;
+template class s21::multiset<int>;
+template class s21::map<int, std::pair<int, int>>;
 
 #endif  // CPP2_S21_CONTAINERS_TESTS_TEST_H_
