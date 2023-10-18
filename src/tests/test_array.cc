@@ -60,8 +60,8 @@ TEST(ArrayTest, At_1) {
 }
 
 TEST(ArrayTest, AtConst_1) {
-  s21::array<std::string, 4> test{"one", "two", "three", "four"};
-  std::array<std::string, 4> test_2{"one", "two", "three", "four"};
+  const s21::array<std::string, 4> test{"one", "two", "three", "four"};
+  const std::array<std::string, 4> test_2{"one", "two", "three", "four"};
 
   const std::string& ref = test.at(2);
   const std::string& ref_2 = test_2.at(2);
@@ -79,8 +79,8 @@ TEST(ArrayTest, OperatorBrackets_1) {
 }
 
 TEST(ArrayTest, OperatorBracketsConst_1) {
-  s21::array<std::string, 4> test{"one", "two", "three", "four"};
-  std::array<std::string, 4> test_2{"one", "two", "three", "four"};
+  const s21::array<std::string, 4> test{"one", "two", "three", "four"};
+  const std::array<std::string, 4> test_2{"one", "two", "three", "four"};
 
   const std::string& ref = test[2];
   const std::string& ref_2 = test_2[2];
@@ -112,8 +112,8 @@ TEST(ArrayTest, Front_1) {
 }
 
 TEST(ArrayTest, FrontConst_1) {
-  s21::array<std::string, 4> test{"one", "two", "three", "four"};
-  std::array<std::string, 4> test_2{"one", "two", "three", "four"};
+  const s21::array<std::string, 4> test{"one", "two", "three", "four"};
+  const std::array<std::string, 4> test_2{"one", "two", "three", "four"};
 
   const std::string& copy = test.front();
   const std::string& copy_2 = test_2.front();
@@ -143,8 +143,8 @@ TEST(ArrayTest, Back_2) {
 }
 
 TEST(ArrayTest, BackConst_1) {
-  s21::array<std::string, 4> test{"one", "two", "three", "four"};
-  std::array<std::string, 4> test_2{"one", "two", "three", "four"};
+  const s21::array<std::string, 4> test{"one", "two", "three", "four"};
+  const std::array<std::string, 4> test_2{"one", "two", "three", "four"};
 
   const std::string& copy = test.back();
   const std::string& copy_2 = test_2.back();
@@ -152,17 +152,55 @@ TEST(ArrayTest, BackConst_1) {
   ASSERT_EQ(copy, copy_2);
 }
 
-// TEST(ArrayTest, Empty_1) {
-//   s21::array<std::string, 0> test;
-//   std::array<std::string, 0> test_2;
-//   s21::array<std::string, 3> test_3;
-//   std::array<std::string, 3> test_4;
+TEST(ArrayTest, MaxSize_1) {
+  s21::array<std::string, 4> test{"one", "two", "three", "four"};
+  std::array<std::string, 4> test_2{"one", "two", "three", "four"};
 
-//   ASSERT_TRUE(test.empty());
-//   ASSERT_TRUE(test_2.empty());
-//   ASSERT_FALSE(test_3.empty());
-//   ASSERT_FALSE(test_4.empty());
-// }
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_EQ(test.max_size(), test_2.max_size());
+}
+
+TEST(ArrayTest, Empty_1) {
+  s21::array<std::string, 0> test;
+  std::array<std::string, 0> test_2;
+  s21::array<std::string, 3> test_3;
+  std::array<std::string, 3> test_4;
+
+  ASSERT_TRUE(test.empty());
+  ASSERT_TRUE(test_2.empty());
+  ASSERT_EQ(test.size(), test_2.size());
+  ASSERT_FALSE(test_3.empty());
+  ASSERT_FALSE(test_4.empty());
+  ASSERT_EQ(test_3.size(), test_4.size());
+}
+
+TEST(ArrayTest, End_Cend_Begin_Cbegin_1) {
+  s21::array<std::string, 4> test{"one", "two", "three", "four"};
+  std::array<std::string, 4> test_2{"one", "two", "three", "four"};
+  const s21::array<std::string, 4> test_3{"one", "two", "three", "four"};
+  const std::array<std::string, 4> test_4{"one", "two", "three", "four"};
+
+  s21::array<std::string, 4>::iterator iter = test.begin();
+  auto iter_2 = test_2.begin();
+  s21::array<std::string, 4>::const_iterator iter_3 = test_3.cbegin();
+  auto iter_4 = test_4.cbegin();
+
+  ASSERT_EQ(*(test.end() - 1), *(test_2.end() - 1));
+  ASSERT_EQ(*(test_3.cend() - 1), *(test_4.cend() - 1));
+  ASSERT_EQ(*(test.end() - 1), *(test_3.cend() - 1));
+  ASSERT_EQ(*(test_2.end() - 1), *(test_4.cend() - 1));
+
+  ASSERT_EQ(*iter, *iter_2);
+  ASSERT_EQ(*iter_3, *iter_4);
+  ASSERT_EQ(*iter, *iter_3);
+  ASSERT_EQ(*iter_2, *iter_4);
+
+  iter++;
+  iter_2++;
+
+  ASSERT_EQ(*iter, *iter_2);
+  ASSERT_EQ(*iter_3, *iter_4);
+}
 
 TEST(ArrayTest, Fill_1) {
   s21::array<std::string, 4> test;

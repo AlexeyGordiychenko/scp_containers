@@ -50,7 +50,7 @@ class array {
   void fill(const_reference value);
 
  private:
-  T data_[N];
+  T data_[N > 0 ? N : 1];
 };
 
 template <typename T, std::size_t N>
@@ -89,22 +89,22 @@ typename array<T, N>::const_reference array<T, N>::operator[](
 
 template <typename T, std::size_t N>
 typename array<T, N>::reference array<T, N>::front() {
-  return *data_;
+  return data_[0];
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::const_reference array<T, N>::front() const {
-  return *data_;
+  return data_[0];
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::reference array<T, N>::back() {
-  return *(data_ + size() - 1);
+  return N > 0 ? data_[size() - 1] : data_[size()];
 }
 
 template <typename T, std::size_t N>
 typename array<T, N>::const_reference array<T, N>::back() const {
-  return *(data_ + size() - 1);
+  return N > 0 ? data_[size() - 1] : data_[size()];
 }
 
 template <typename T, std::size_t N>
@@ -144,7 +144,7 @@ typename array<T, N>::size_type array<T, N>::size() const noexcept {
 
 template <typename T, std::size_t N>
 typename array<T, N>::size_type array<T, N>::max_size() const noexcept {
-  return (std::numeric_limits<std::size_t>::max() / sizeof(value_type));
+  return N;
 }
 
 template <typename T, std::size_t N>
