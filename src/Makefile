@@ -69,6 +69,13 @@ else
 	xdg-open report/index.html
 endif
 
+open_gcov:
+ifeq ($(OS),Darwin)
+	open -a "Google Chrome" gcovr/index.html
+else
+	xdg-open gcovr/index.html
+endif
+
 cppcheck:
 	@echo "-===Checking code...===-"
 	cppcheck -q --language=c++ --std=c++17 --enable=all --suppress=missingInclude --template=gcc $(MY_FILES)
