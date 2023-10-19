@@ -25,6 +25,6 @@ endif()
 set_target_properties(
   containersplus_lib PROPERTIES
   LINKER_LANGUAGE CXX
-  PREFIX "s21_"
+  PREFIX "scp_"
   OUTPUT_NAME "containersplus"
 )

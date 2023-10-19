@@ -51,7 +51,7 @@ gcov_report: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=PROFILE
 gcov_report: _build
 	@make _run
 	mkdir -p gcovr
-	gcovr --html-details -o gcovr/index.html --filter s21_\.\*.h
+	gcovr --html-details -o gcovr/index.html --filter scp_\.\*.h
 
 leaks: BUILD_FLAGS := $(BUILD_FLAGS) -DCMAKE_BUILD_TYPE=RELEASE
 leaks: _build

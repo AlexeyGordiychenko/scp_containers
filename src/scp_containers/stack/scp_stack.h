@@ -1,14 +1,14 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_STACK_S21_STACK_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERS_STACK_S21_STACK_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERS_STACK_SCP_STACK_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERS_STACK_SCP_STACK_H_
 
 #include <cstddef>
 #include <initializer_list>
 #include <utility>
 
-#include "../list/s21_list.h"
-#include "../list/s21_node.h"
+#include "../list/scp_list.h"
+#include "../list/scp_node.h"
 
-namespace s21 {
+namespace scp {
 template <class T, class C = list<T>>
 class stack {
   typedef T value_type;
@@ -109,6 +109,6 @@ inline void stack<T, C>::swap(stack &other) noexcept {
   list_.swap(other.list_);
 }
 
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_STACK_S21_STACK_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERS_STACK_SCP_STACK_H_

@@ -1,10 +1,10 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_MAP_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_MAP_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERS_MAP_SCP_MAP_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERS_MAP_SCP_MAP_H_
 
-#include "../vector/s21_vector.h"
-#include "s21_rb_tree.h"
+#include "../vector/scp_vector.h"
+#include "scp_rb_tree.h"
 
-namespace s21 {
+namespace scp {
 
 template <class Key, class Value, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, Value>>>
@@ -128,8 +128,8 @@ class map final {
   void merge(map& other) { tree_.merge(other.tree_); }
 
   template <typename... Args>
-  s21::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
-    s21::vector<std::pair<iterator, bool>> inserted;
+  scp::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
+    scp::vector<std::pair<iterator, bool>> inserted;
     inserted.reserve(sizeof...(args));
 
     for (auto&& arg : {args...}) {
@@ -150,6 +150,6 @@ class map final {
   BalancedTree tree_;
 };
 
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_MAP_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERS_MAP_SCP_MAP_H_

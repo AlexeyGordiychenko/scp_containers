@@ -1,6 +1,6 @@
 #include "test.h"
 
-using namespace s21;
+using namespace scp;
 
 TEST(QueueTest, constr) {
   test_obj arr[3];

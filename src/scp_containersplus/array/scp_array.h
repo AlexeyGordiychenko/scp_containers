@@ -1,13 +1,13 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERSPLUS_ARRAY_S21_ARRAY_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERSPLUS_ARRAY_S21_ARRAY_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERSPLUS_ARRAY_SCP_ARRAY_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERSPLUS_ARRAY_SCP_ARRAY_H_
 
 #include <initializer_list>
 #include <limits>
 
-#include "../../s21_containers/vector/s21_vector_const_iterator.h"
-#include "../../s21_containers/vector/s21_vector_iterator.h"
+#include "../../scp_containers/vector/scp_vector_const_iterator.h"
+#include "../../scp_containers/vector/scp_vector_iterator.h"
 
-namespace s21 {
+namespace scp {
 template <class T, std::size_t N>
 class array {
  public:
@@ -156,6 +156,6 @@ template <typename T, std::size_t N>
 void array<T, N>::fill(const_reference value) {
   std::fill_n(begin(), size(), value);
 }
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERSPLUS_ARRAY_S21_ARRAY_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERSPLUS_ARRAY_SCP_ARRAY_H_

@@ -1,7 +1,7 @@
 #include "test.h"
 
 TEST(TreeTest, 0) {
-  s21::RbTree<int, std::pair<const int, std::string>, GetKeyMap, std::less<int>>
+  scp::RbTree<int, std::pair<const int, std::string>, GetKeyMap, std::less<int>>
       tree1, tree2;
 
   for (int i = 0; i < 100000; ++i) {
@@ -26,7 +26,7 @@ TEST(TreeTest, 0) {
 }
 
 TEST(TreeTest, 1) {
-  s21::RbTree<int, std::pair<const int, std::string>, GetKeyMap, std::less<int>>
+  scp::RbTree<int, std::pair<const int, std::string>, GetKeyMap, std::less<int>>
       tree1, tree2;
 
   for (int i = 0; i < 100000; ++i) {

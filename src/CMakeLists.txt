@@ -10,6 +10,6 @@ set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS} --coverage")
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
 
-add_subdirectory(s21_containers)
-add_subdirectory(s21_containersplus)
+add_subdirectory(scp_containers)
+add_subdirectory(scp_containersplus)
 add_subdirectory(tests)

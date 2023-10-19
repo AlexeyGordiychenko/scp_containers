@@ -1,17 +1,17 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LISTITERATOR_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LISTITERATOR_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LISTITERATOR_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LISTITERATOR_H_
 
-#include "s21_list.h"
-#include "s21_node.h"
+#include "scp_list.h"
+#include "scp_node.h"
 
-namespace s21 {
+namespace scp {
 
 template <class T>
 class list;
 
 template <class T>
 class ListIterator {
-  typedef s21_node<T> node;
+  typedef scp_node<T> node;
 
  protected:
   node *ptr_;
@@ -74,6 +74,6 @@ template <class T>
 inline T *ListIterator<T>::operator->() const noexcept {
   return ptr_->data_;
 }
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LISTITERATOR_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LISTITERATOR_H_

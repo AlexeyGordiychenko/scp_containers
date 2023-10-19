@@ -1,13 +1,13 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERS_VECTOR_SCP_VECTOR_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERS_VECTOR_SCP_VECTOR_H_
 
 #include <initializer_list>
 #include <limits>
 
-#include "s21_vector_const_iterator.h"
-#include "s21_vector_iterator.h"
+#include "scp_vector_const_iterator.h"
+#include "scp_vector_iterator.h"
 
-namespace s21 {
+namespace scp {
 template <typename T>
 class vector {
  public:
@@ -369,6 +369,6 @@ template <typename... Args>
 void vector<T>::insert_many_back(Args &&...args) {
   insert_many(cend(), args...);
 }
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERS_VECTOR_SCP_VECTOR_H_

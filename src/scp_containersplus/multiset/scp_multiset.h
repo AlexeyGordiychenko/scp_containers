@@ -1,10 +1,10 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERSPLUS_MULTISET_S21_MULTISET_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERSPLUS_MULTISET_S21_MULTISET_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERSPLUS_MULTISET_SCP_MULTISET_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERSPLUS_MULTISET_SCP_MULTISET_H_
 
-#include "../../s21_containers/map/s21_rb_tree.h"
-#include "../../s21_containers/vector/s21_vector.h"
+#include "../../scp_containers/map/scp_rb_tree.h"
+#include "../../scp_containers/vector/scp_vector.h"
 
-namespace s21 {
+namespace scp {
 
 template <class Key, class Compare = std::less<Key>,
           class Allocator = std::allocator<Key>>
@@ -84,8 +84,8 @@ class multiset final {
   void merge(multiset& other) { tree_.merge(other.tree_, true); }
 
   template <typename... Args>
-  s21::vector<iterator> insert_many(Args&&... args) {
-    s21::vector<iterator> inserted;
+  scp::vector<iterator> insert_many(Args&&... args) {
+    scp::vector<iterator> inserted;
     inserted.reserve(sizeof...(args));
 
     for (auto&& arg : {args...}) {
@@ -136,6 +136,6 @@ class multiset final {
   BalancedTree tree_;
 };
 
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERSPLUS_MULTISET_S21_MULTISET_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERSPLUS_MULTISET_SCP_MULTISET_H_

@@ -1,9 +1,9 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_CONST_ITERATOR_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_CONST_ITERATOR_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERS_VECTOR_SCP_VECTOR_CONST_ITERATOR_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERS_VECTOR_SCP_VECTOR_CONST_ITERATOR_H_
 
-#include "s21_vector.h"
+#include "scp_vector.h"
 
-namespace s21 {
+namespace scp {
 template <typename T>
 class VectorConstIterator {
  public:
@@ -108,6 +108,6 @@ VectorConstIterator<T> VectorConstIterator<T>::operator+(size_type n) const {
 
   return tmp;
 }
-}  //  namespace s21
+}  //  namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_VECTOR_S21_VECTOR_CONST_ITERATOR_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERS_VECTOR_SCP_VECTOR_CONST_ITERATOR_H_

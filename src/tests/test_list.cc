@@ -1,6 +1,6 @@
 #include "test.h"
 
-using namespace s21;
+using namespace scp;
 
 TEST(ListTest, construct_list_size_with_test_obj) {
   list<test_obj> l(5);

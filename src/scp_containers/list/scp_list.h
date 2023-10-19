@@ -1,16 +1,16 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LIST_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LIST_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LIST_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LIST_H_
 
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
 #include <limits>
 
-#include "s21_list_const_iterator.h"
-#include "s21_list_iterator.h"
-#include "s21_node.h"
+#include "scp_list_const_iterator.h"
+#include "scp_list_iterator.h"
+#include "scp_node.h"
 
-namespace s21 {
+namespace scp {
 template <class T>
 class list {
   typedef T value_type;
@@ -19,10 +19,10 @@ class list {
   typedef ListIterator<T> iterator;
   typedef ListConstIterator<T> const_iterator;
   typedef size_t size_type;
-  typedef s21_node<T> node;
+  typedef scp_node<T> node;
 
  private:
-  s21_node<T> *null_node_;
+  scp_node<T> *null_node_;
   size_type size_;
 
   void init(node *node) noexcept;
@@ -239,7 +239,7 @@ inline typename list<T>::size_type list<T>::size() const noexcept {
 
 template <class T>
 inline typename list<T>::size_type list<T>::max_size() const noexcept {
-  return std::numeric_limits<size_t>::max() / sizeof(s21_node<T>) / 2;
+  return std::numeric_limits<size_t>::max() / sizeof(scp_node<T>) / 2;
 }
 
 template <class T>
@@ -401,6 +401,6 @@ inline void list<T>::add(node *n) noexcept {
   size_++;
 }
 
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LIST_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LIST_H_

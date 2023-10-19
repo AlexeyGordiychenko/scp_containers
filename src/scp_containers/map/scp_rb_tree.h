@@ -1,11 +1,11 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_RB_TREE_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_RB_TREE_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERS_MAP_SCP_RB_TREE_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERS_MAP_SCP_RB_TREE_H_
 
 #include <functional>
 #include <iostream>
 #include <memory>
 
-namespace s21 {
+namespace scp {
 
 // RbTree class declaration
 template <class Key, class Value, class KeyOfValue,
@@ -896,6 +896,6 @@ class RbTree {
     adjust_tree(node->right_.get(), max_depth, current_depth + 1);
   }
 };
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_MAP_S21_RB_TREE_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERS_MAP_SCP_RB_TREE_H_

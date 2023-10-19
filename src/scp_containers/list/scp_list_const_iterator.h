@@ -1,14 +1,14 @@
-#ifndef CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LISTCONSTITERATOR_H_
-#define CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LISTCONSTITERATOR_H_
+#ifndef CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LISTCONSTITERATOR_H_
+#define CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LISTCONSTITERATOR_H_
 
-#include "s21_list_iterator.h"
-#include "s21_node.h"
+#include "scp_list_iterator.h"
+#include "scp_node.h"
 
-namespace s21 {
+namespace scp {
 template <class T>
 class ListConstIterator : public ListIterator<T> {
  public:
-  ListConstIterator(s21_node<T> *ptr) noexcept;
+  ListConstIterator(scp_node<T> *ptr) noexcept;
   ListConstIterator(ListIterator<T> it) noexcept;
   ~ListConstIterator();
 
@@ -21,7 +21,7 @@ class ListConstIterator : public ListIterator<T> {
 };
 
 template <class T>
-inline ListConstIterator<T>::ListConstIterator(s21_node<T> *ptr) noexcept
+inline ListConstIterator<T>::ListConstIterator(scp_node<T> *ptr) noexcept
     : ListIterator<T>(ptr) {}
 
 template <class T>
@@ -65,6 +65,6 @@ inline ListConstIterator<T> &ListConstIterator<T>::operator--() noexcept {
   return *this;
 }
 
-}  // namespace s21
+}  // namespace scp
 
-#endif  // CPP2_S21_CONTAINERS_S21_CONTAINERS_LIST_S21_LISTCONSTITERATOR_H_
+#endif  // CPP2_SCP_CONTAINERS_SCP_CONTAINERS_LIST_SCP_LISTCONSTITERATOR_H_
