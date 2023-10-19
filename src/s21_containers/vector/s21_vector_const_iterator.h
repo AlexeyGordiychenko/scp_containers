@@ -14,14 +14,21 @@ class VectorConstIterator {
   explicit VectorConstIterator(T* ptr) noexcept;
   ~VectorConstIterator();
 
-  const_reference operator*() const;
+  const_reference operator*();
+  VectorConstIterator<T> operator++(int);
+  VectorConstIterator<T>& operator++();
+  VectorConstIterator<T> operator--(int);
+  VectorConstIterator<T>& operator--();
+
   bool operator==(const VectorConstIterator<T>& other) const noexcept;
   bool operator!=(const VectorConstIterator<T>& other) const noexcept;
 
   ptrdiff_t operator-(const VectorConstIterator<T>& other) const;
+  VectorConstIterator<T> operator-(size_type n) const;
+  VectorConstIterator<T> operator+(size_type n) const;
 
  protected:
-  const T* pointer_;
+  T* pointer_;
 };
 
 template <typename T>
@@ -32,7 +39,7 @@ VectorConstIterator<T>::~VectorConstIterator() {}
 
 template <typename T>
 typename VectorConstIterator<T>::const_reference
-VectorConstIterator<T>::operator*() const {
+VectorConstIterator<T>::operator*() {
   return *pointer_;
 }
 
@@ -52,6 +59,54 @@ template <typename T>
 ptrdiff_t VectorConstIterator<T>::operator-(
     const VectorConstIterator<T>& other) const {
   return pointer_ - other.pointer_;
+}
+
+template <typename T>
+VectorConstIterator<T> VectorConstIterator<T>::operator++(int) {
+  VectorConstIterator tmp(*this);
+  ++pointer_;
+
+  return tmp;
+}
+
+template <typename T>
+VectorConstIterator<T>& VectorConstIterator<T>::operator++() {
+  ++pointer_;
+
+  return *this;
+}
+
+template <typename T>
+VectorConstIterator<T> VectorConstIterator<T>::operator--(int) {
+  VectorConstIterator tmp(*this);
+  --pointer_;
+
+  return tmp;
+}
+
+template <typename T>
+VectorConstIterator<T>& VectorConstIterator<T>::operator--() {
+  --pointer_;
+
+  return *this;
+}
+
+template <typename T>
+VectorConstIterator<T> VectorConstIterator<T>::operator-(size_type n) const {
+  VectorConstIterator tmp(*this);
+
+  for (size_type i = 0; i < n; ++i) tmp--;
+
+  return tmp;
+}
+
+template <typename T>
+VectorConstIterator<T> VectorConstIterator<T>::operator+(size_type n) const {
+  VectorConstIterator tmp(*this);
+
+  for (size_type i = 0; i < n; ++i) tmp++;
+
+  return tmp;
 }
 }  //  namespace s21
 

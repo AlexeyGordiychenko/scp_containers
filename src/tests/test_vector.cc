@@ -652,11 +652,26 @@ TEST(VectorTest, InsertManyBack_2) {
 TEST(VectorTest, Cbegin_Cend_1) {
   const s21::vector<std::string> test = {"11", "22", "33", "44",
                                          "55", "66", "77"};
+  s21::vector<std::string> test_no_const = {"11", "22", "33", "44",
+                                            "55", "66", "77"};
   const std::vector<std::string> test_2 = {"11", "22", "33", "44",
                                            "55", "66", "77"};
+
+  auto const_iter = test.cbegin();
+  auto iter = test_no_const.begin();
+  *iter = "ff";
+  *iter = "11";
+  // *const_iter = "ff"; // can't do this
 
   ASSERT_EQ(test.cend() - test.cend(), 0);
   ASSERT_EQ(*test.cbegin(), *test_2.cbegin());
   ASSERT_TRUE(test.cbegin() == test.cbegin());
   ASSERT_FALSE(test.cbegin() != test.cbegin());
+  ASSERT_EQ(*(test.cend() - 1), *(test_2.cend() - 1));
+
+  ASSERT_NO_THROW(const_iter++);
+  ASSERT_NO_THROW(++const_iter);
+  ASSERT_NO_THROW(const_iter--);
+  ASSERT_NO_THROW(--const_iter);
+  ASSERT_NO_THROW(const_iter + 2);
 }

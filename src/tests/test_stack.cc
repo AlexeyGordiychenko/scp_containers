@@ -3,32 +3,32 @@
 TEST(StackTest, constr) {
   test_obj arr[6];
 
-  //default constructor
+  // default constructor
   s21::stack<test_obj, s21::list<test_obj>> stack_a;
   EXPECT_EQ(stack_a.size(), 0);
   EXPECT_EQ(stack_a.empty(), true);
 
-  //initializer list constructor
+  // initializer list constructor
   s21::stack<test_obj, s21::list<test_obj>> stack_b{arr[0], arr[1], arr[2]};
   EXPECT_EQ(stack_b.top().id, arr[2].id);
   EXPECT_EQ(stack_b.size(), 3);
   EXPECT_EQ(stack_b.empty(), false);
 
-  //copy constructor
+  // copy constructor
   s21::stack<test_obj, s21::list<test_obj>> stack_g{arr[0], arr[1], arr[2]};
   s21::stack<test_obj, s21::list<test_obj>> stack_c(stack_g);
   EXPECT_EQ(stack_c.top().id, arr[2].id);
   EXPECT_EQ(stack_c.size(), 3);
   EXPECT_EQ(stack_c.empty(), false);
 
-  //move constructor
+  // move constructor
   s21::stack<test_obj, s21::list<test_obj>> stack_d{std::move(
       s21::stack<test_obj, s21::list<test_obj>>{arr[0], arr[1], arr[2]})};
   EXPECT_EQ(stack_d.top().id, arr[2].id);
   EXPECT_EQ(stack_d.size(), 3);
   EXPECT_EQ(stack_d.empty(), false);
 
-  //move assign operator
+  // move assign operator
   s21::stack<test_obj, s21::list<test_obj>> stack_e{arr[3], arr[4], arr[5]};
   s21::stack<test_obj, s21::list<test_obj>> stack_f{arr[0], arr[1], arr[2]};
   stack_f = std::move(
@@ -37,7 +37,7 @@ TEST(StackTest, constr) {
   EXPECT_EQ(stack_f.size(), 3);
   EXPECT_EQ(stack_f.empty(), false);
 
-  //copy assign operator
+  // copy assign operator
   stack_f = stack_g;
   EXPECT_EQ(stack_f.top().id, arr[2].id);
   EXPECT_EQ(stack_f.size(), 3);

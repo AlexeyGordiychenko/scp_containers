@@ -354,6 +354,8 @@ struct GetKeyMap {
 };
 
 template class s21::vector<int>;
+template class s21::VectorIterator<int>;
+template class s21::VectorConstIterator<int>;
 template class s21::array<int, 5>;
 
 template class s21::list<int>;
