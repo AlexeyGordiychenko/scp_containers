@@ -151,13 +151,11 @@ TEST(VectorTest, EXCEPT_At_3) {
   std::vector<std::string> test_2 = {"Hello", "World!!!"};
 
   try {
-    test.at(130);
+    test.at(2);
     FAIL() << "Expected std::out_of_range";
   } catch (std::out_of_range const& err) {
     EXPECT_EQ(err.what(), std::string("at(): Position is out of range"));
   }
-
-  EXPECT_THROW(test_2.at(130), std::out_of_range);
 }
 
 TEST(VectorTest, ConstAt_1) {
@@ -172,13 +170,13 @@ TEST(VectorTest, EXCEPT_ConstAt_2) {
   const std::vector<std::string> test_2 = {"Hello", "World!!!"};
 
   try {
-    test.at(130);
+    test.at(2);
     FAIL() << "Expected std::out_of_range";
   } catch (std::out_of_range const& err) {
     EXPECT_EQ(err.what(), std::string("at(const): Position is out of range"));
   }
 
-  EXPECT_THROW(test_2.at(130), std::out_of_range);
+  EXPECT_THROW(test_2.at(2), std::out_of_range);
 }
 
 TEST(VectorTest, OperatorSqBr_1) {
@@ -199,8 +197,8 @@ TEST(VectorTest, EXCEPT_OperatorSqBr_3) {
   s21::vector<std::string> test = {"Hello", "World!!!"};
   std::vector<std::string> test_2 = {"Hello", "World!!!"};
 
-  EXPECT_NO_THROW(test[130]);
-  EXPECT_NO_THROW(test_2[130]);
+  EXPECT_NO_THROW(test[2]);
+  EXPECT_NO_THROW(test_2[2]);
 }
 
 TEST(VectorTest, ConstOperatorSqBr_1) {

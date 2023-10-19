@@ -8,16 +8,25 @@ set(HEADERS ${FILE_HEADERS})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(
-  containers_lib
-  ${SOURCES}
-  ${HEADERS}
-)
+
+if (APPLE)
+  add_library(
+    containers_lib INTERFACE
+    ${SOURCES}
+    ${HEADERS}
+  )
+else()
+  add_library(
+    containers_lib
+    ${SOURCES}
+    ${HEADERS}
+  )
+endif()
+
 
 set_target_properties(
   containers_lib PROPERTIES
   LINKER_LANGUAGE CXX
   PREFIX "s21_"
   OUTPUT_NAME "containers"
-  # ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}" 
 )
