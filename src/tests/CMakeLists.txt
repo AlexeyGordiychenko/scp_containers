@@ -31,13 +31,23 @@ target_include_directories(
   ${GTEST_INCLUDE_DIRS}
 )
 
-target_link_libraries(
-  all_containers_test
-  PUBLIC
-  gtest
-  containers_lib
-  containersplus_lib
-)
+if (APPLE)
+  target_link_libraries(
+    all_containers_test
+    PUBLIC
+    gtest
+    containers_lib
+    containersplus_lib
+  )
+else()
+  target_link_libraries(
+    all_containers_test
+    PUBLIC
+    GTest::gtest
+    containers_lib
+    containersplus_lib
+  )
+endif()
 
 include(GoogleTest)
 gtest_discover_tests(all_containers_test)
