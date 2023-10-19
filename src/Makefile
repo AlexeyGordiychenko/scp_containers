@@ -2,7 +2,7 @@ BALD 				= '\033[1m\033[4m'
 NORMAL 			= '\033[0m'
 
 OS 					:= $(shell uname)
-MY_FILES 		:= $(shell find . -name "*.cc" -o -name "*.h")
+MY_FILES 		:= $(shell find . \( -name "*.cc" -o -name "*.h" \) -not -path "./build/*")
 
 BUILD_FLAGS := -DCMAKE_CXX_COMPILER=g++
 GTEST_FLAGS := --gtest_brief=1
