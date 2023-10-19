@@ -76,11 +76,6 @@ else
 	xdg-open gcovr/index.html
 endif
 
-cppcheck:
-	@echo "-===Checking code...===-"
-	cppcheck -q --language=c++ --std=c++17 --enable=all --suppress=missingInclude --template=gcc $(MY_FILES)
-	@echo "-===Done===-"
-
 clang:
 	@echo "-===Checking style...===-"
 	clang-format -n -style=google $(MY_FILES)
@@ -100,9 +95,9 @@ help:
 	@echo $(BALD)"\tmake SuiteNameTest"$(NORMAL)" - run all tests in 'SuiteName' test suite"
 	@echo $(BALD)"\tmake gcov_report"$(NORMAL)" - create test coverage HTML-report with gcovr"
 	@echo $(BALD)"\tmake lcov_report"$(NORMAL)" - create test coverage HTML-report with lcov"
-	@echo $(BALD)"\tmake open"$(NORMAL)" - open test coverage HTML-report"
+	@echo $(BALD)"\tmake open"$(NORMAL)" - open test coverage HTML-report made by lcov"
+	@echo $(BALD)"\tmake open_gcov"$(NORMAL)" - open test coverage HTML-report mady by gcovr"
 	@echo $(BALD)"\tmake leaks"$(NORMAL)" - check for memory leaks with Valgrind (Linux) or Leaks (MACOS)"
-	@echo $(BALD)"\tmake cppcheck"$(NORMAL)" - analyse code with static code analyser"
 	@echo $(BALD)"\tmake clang"$(NORMAL)" - analyse code for Google Style"
 	@echo $(BALD)"\tmake clangI"$(NORMAL)" - analyse code for Google Style and correct style mistakes"
 	@echo $(BALD)"\tmake help"$(NORMAL)" - show helpful information for the project"
