@@ -72,21 +72,10 @@ TEST(ListTest, operator_copy_assign) {
   EXPECT_EQ(list_b.size(), 3);
 }
 
-// TEST(ListTest, iterator) {
-//   test_obj a;
-//   test_obj b;
-//   test_obj c;
-//   list<test_obj> list_a{a, b, c};
-//   EXPECT_EQ(list_a.back().id, c.id);
-//   EXPECT_EQ(list_a.front().id, a.id);
-//   EXPECT_EQ((*(list_a.begin())).id, a.id);
-//   EXPECT_EQ((*(++list_a.begin())).id, b.id);
-//   EXPECT_EQ((*(--list_a.end())).id, c.id);
-// }
-
 TEST(ListTest, iterator) {
   test_obj arr[4];
   list<test_obj> l{arr[0], arr[1], arr[2]};
+  EXPECT_TRUE(l.max_size() != 0);
   auto it_begin = l.begin();
   EXPECT_EQ(*it_begin, arr[0]);
   EXPECT_EQ(*(++it_begin), arr[1]);
@@ -115,7 +104,7 @@ TEST(ListTest, iterator) {
 }
 
 TEST(ListTest, sort) {
-  list<int> list_a{1, 4, 3, 2, 5};
+  list<int> list_a{4, 1, 3, 2, 5};
   EXPECT_EQ(list_a.size(), 5);
   list_a.sort();
   EXPECT_EQ(list_a.size(), 5);
