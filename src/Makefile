@@ -8,7 +8,7 @@ BUILD_FLAGS := -DCMAKE_CXX_COMPILER=g++
 GTEST_FLAGS := --gtest_brief=1
 
 ifeq ($(OS),Darwin)
-	LCOV_MAC_FLAG = -q --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,mismatch
+	LCOV_MAC_FLAG = -q --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,mismatch,unused
 else
 	LCOV_MAC_FLAG = -q
 endif
